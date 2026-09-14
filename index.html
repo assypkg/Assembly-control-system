@@ -3,110 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Master Portal Assembly - Cloud System</title>
+    <title>Assembly Control Portal</title>
     <style>
         :root {
             --navy-blue: #0A192F;
             --emerald-green: #10B981;
             --white: #FFFFFF;
             --bg-light: #F3F4F6;
+            --text-muted: #94A3B8;
         }
-        body {
+
+        * {
+            box-sizing: border-box;
             margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
             background-color: var(--bg-light);
             display: flex;
+            flex-direction: column;
             height: 100vh;
             overflow: hidden;
         }
-        .sidebar {
-            width: 260px;
+
+        /* Top Bar Container */
+        .top-navbar {
             background-color: var(--navy-blue);
             color: var(--white);
             display: flex;
             flex-direction: column;
-            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
-            z-index: 50;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 100;
         }
-        .sidebar-header {
-            padding: 24px 20px;
-            font-size: 1.1rem;
-            font-weight: 900;
-            text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            letter-spacing: 1px;
-        }
-        .nav-menu {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            flex: 1;
-        }
-        .nav-item {
-            padding: 18px 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-left: 4px solid transparent;
-            font-size: 0.9rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .nav-item:hover {
-            background-color: rgba(255,255,255,0.05);
-        }
-        .nav-item.active {
-            background-color: rgba(16, 185, 129, 0.1);
-            border-left: 4px solid var(--emerald-green);
-            color: var(--emerald-green);
-        }
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--white);
-        }
-        .top-header {
-            background-color: var(--white);
-            padding: 15px 30px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+
+        /* Top Brand & Status Line */
+        .brand-header {
+            padding: 10px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 10;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .top-header h2 {
-            margin: 0;
-            font-size: 1.2rem;
-            color: var(--navy-blue);
+
+        .brand-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
-        .cloud-status {
+
+        .brand-title span {
             color: var(--emerald-green);
-            font-weight: 700;
-            font-size: 0.85rem;
+        }
+
+        .cloud-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--emerald-green);
+            background: rgba(16, 185, 129, 0.12);
+            padding: 4px 10px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
         }
+
         .cloud-dot {
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             background-color: var(--emerald-green);
             border-radius: 50%;
             animation: pulse 1.5s infinite;
         }
+
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
             70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
             100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
-        .app-frame-container {
+
+        /* Modern Scrollable Top Menu */
+        .nav-menu-top {
+            display: flex;
+            overflow-x: auto;
+            white-space: nowrap;
+            list-style: none;
+            scrollbar-width: none; /* Firefox */
+        }
+
+        .nav-menu-top::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        .nav-item-top {
+            padding: 12px 16px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            border-bottom: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .nav-item-top:hover {
+            color: var(--white);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .nav-item-top.active {
+            color: var(--white);
+            border-bottom: 3px solid var(--emerald-green);
+            background: rgba(16, 185, 129, 0.08);
+        }
+
+        /* Area Konten Aplikasi Utama */
+        .app-workspace {
             flex: 1;
             width: 100%;
             height: 100%;
-            overflow: hidden;
+            background-color: var(--bg-light);
+            position: relative;
         }
+
         iframe {
             width: 100%;
             height: 100%;
@@ -117,45 +141,42 @@
 </head>
 <body>
 
-    <div class="sidebar">
-        <div class="sidebar-header">ASSEMBLY<br><span style="color: var(--emerald-green);">CLOUD PORTAL</span></div>
-        <ul class="nav-menu">
-            <li class="nav-item active" onclick="loadApp('performance.html', 'Performance Assembly', this)">
-                ⚙️ 1. Performance
-            </li>
-            <li class="nav-item" onclick="loadApp('reject_assy.html', 'Reject Per-Tahun & Bulanan', this)">
-                📊 2. Reject Assembly
-            </li>
-            <li class="nav-item" onclick="loadApp('dashboard_lhpr.html', 'Dashboard LHPR Reject QC', this)">
-                📈 3. Dashboard LHPR
-            </li>
-            <li class="nav-item" onclick="loadApp('generate_lhpr.html', 'Master Generator LHPR (Cloud)', this)">
-                ☁️ 4. Generate LHPR
-            </li>
-        </ul>
-        <div style="padding: 20px; text-align: center; font-size: 10px; color: #666;">
-            Ver. 2.0 - Hybrid Cloud
-        </div>
-    </div>
-
-    <div class="main-content">
-        <div class="top-header">
-            <h2 id="current-app-title">Performance Assembly</h2>
-            <div class="cloud-status">
-                <div class="cloud-dot"></div> Hybrid Cloud Connected
+    <!-- Header & Top Navigasi -->
+    <header class="top-navbar">
+        <div class="brand-header">
+            <div class="brand-title">Assembly <span>Cloud Portal</span></div>
+            <div class="cloud-badge">
+                <div class="cloud-dot"></div> Connected
             </div>
         </div>
 
-        <div class="app-frame-container">
-            <iframe id="app-frame" src="performance.html" title="Application Area"></iframe>
-        </div>
-    </div>
+        <ul class="nav-menu-top">
+            <li class="nav-item-top active" onclick="loadApp('performance.html', this)">
+                ⚙️ 1. Performance
+            </li>
+            <li class="nav-item-top" onclick="loadApp('reject_assy.html', this)">
+                📊 2. Reject Assembly
+            </li>
+            <li class="nav-item-top" onclick="loadApp('dashboard_lhpr.html', this)">
+                📈 3. Dashboard LHPR
+            </li>
+            <li class="nav-item-top" onclick="loadApp('generate_lhpr.html', this)">
+                ☁️ 4. Generate LHPR
+            </li>
+        </ul>
+    </header>
+
+    <!-- Workspace Utama (Full Width untuk Layar HP) -->
+    <main class="app-workspace">
+        <iframe id="app-frame" src="performance.html" title="Assembly Module Workspace"></iframe>
+    </main>
 
     <script>
-        function loadApp(url, title, element) {
+        function loadApp(url, element) {
             document.getElementById('app-frame').src = url;
-            document.getElementById('current-app-title').innerText = title;
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            // Perbarui status menu aktif
+            document.querySelectorAll('.nav-item-top').forEach(el => el.classList.remove('active'));
             element.classList.add('active');
         }
     </script>
