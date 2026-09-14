@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Master Generator LHPR (Cloud)</title>
-    <!-- Library Eksternal Asli -->
+    <!-- Library Eksternal -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <!-- Firebase SDK (Compatibility Mode) -->
@@ -36,7 +36,7 @@
                 <p class="text-xs text-slate-500">Kelola dan generate laporan LHPR dengan sinkronisasi Firebase Cloud.</p>
             </div>
             <div class="flex items-center gap-2">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
+                <span id="cloudStatusBadge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
                     <span class="w-2 h-2 mr-1.5 bg-emerald-500 rounded-full animate-pulse"></span> Firebase Sync Active
                 </span>
             </div>
@@ -47,7 +47,7 @@
             <h2 class="text-md font-bold text-slate-700 border-b pb-2">Manajemen Kamus & Data Cloud</h2>
             <div class="flex flex-wrap items-center gap-3">
                 <label class="cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-2 px-4 rounded-lg shadow transition">
-                    📁 Restore Kamus (Upload JSON ke Cloud)
+                    📁 Restore Kamus (Simpan Permanen ke Cloud)
                     <input type="file" id="inputRestoreJSON" accept=".json" class="hidden" onchange="restoreKamusToCloud(event)">
                 </label>
                 <button onclick="backupKamusJSON()" class="bg-slate-700 hover:bg-slate-800 text-white text-xs font-semibold py-2 px-4 rounded-lg shadow transition">
@@ -81,31 +81,29 @@
 
     <script>
         // -----------------------------------------------------------------
-        // 1. Inisialisasi Firebase Cloud
+        // 1. Kredensial Firebase Cloud
+        // PASTA KREDENSIAL ASLI DARI FIREBASE CONSOLE DI SINI
         // -----------------------------------------------------------------
         const firebaseConfig = {
-            apiKey: "AIzaSyDummyKey-YourActualKeyHere",
-            authDomain: "your-app.firebaseapp.com",
-            projectId: "your-app-id",
-            storageBucket: "your-app.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456789:web:example"
+            apiKey: "PASTE_API_KEY_ASLI_DI_SINI",
+            authDomain: "PASTE_AUTH_DOMAIN_DI_SINI",
+            projectId: "PASTE_PROJECT_ID_DI_SINI",
+            storageBucket: "PASTE_STORAGE_BUCKET_DI_SINI",
+            messagingSenderId: "PASTE_MESSAGING_SENDER_ID_DI_SINI",
+            appId: "PASTE_APP_ID_DI_SINI"
         };
 
-        // Hindari re-inisialisasi ganda jika dipanggil berulang
+        // Inisialisasi Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.firestore();
 
-        // Key LocalStorage Backup
         const LOCAL_STORAGE_KEY = 'kamusLHPR_backup';
-
-        // Variable Memori Utama Kamus
         let stateKamusData = [];
 
         // -----------------------------------------------------------------
-        // 2. Realtime Auto-Load Data dari Cloud saat Halaman Dibuka
+        // 2. Load & Sync Realtime dari Cloud Saat Web Dibuka
         // -----------------------------------------------------------------
         function initCloudSync() {
             db.collection('kamus_lhpr').doc('master_data')
@@ -113,18 +111,16 @@
                     if (doc.exists && doc.data().listKamus) {
                         stateKamusData = doc.data().listKamus;
                         
-                        // Sync ke LocalStorage untuk fallback
+                        // Simpan backup ke LocalStorage
                         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(stateKamusData));
                         
-                        // Render UI Tabel
                         renderTabelKamus(stateKamusData);
                         console.log("Data Kamus Cloud berhasil disinkronkan.");
                     } else {
-                        // Jika Cloud masih kosong, coba load dari LocalStorage
                         loadFromLocalStorageFallback();
                     }
                 }, (error) => {
-                    console.warn("Koneksi Firestore gagal, menggunakan data lokal fallback:", error);
+                    console.warn("Firestore error / belum terkonfigurasi, menggunakan LocalStorage:", error);
                     loadFromLocalStorageFallback();
                 });
         }
@@ -136,7 +132,7 @@
                     stateKamusData = JSON.parse(localData);
                     renderTabelKamus(stateKamusData);
                 } catch (e) {
-                    console.error("Gagal membaca LocalStorage:", e);
+                    console.error("Error reading LocalStorage:", e);
                 }
             } else {
                 renderTabelKamus([]);
@@ -144,7 +140,7 @@
         }
 
         // -----------------------------------------------------------------
-        // 3. Fungsi Restore Permanen (Unggah ke Cloud Firebase)
+        // 3. Simpan Data Restore Permanen ke Firestore Cloud
         // -----------------------------------------------------------------
         async function restoreKamusToCloud(event) {
             const file = event.target.files[0];
@@ -155,7 +151,6 @@
                 try {
                     const parsedJSON = JSON.parse(e.target.result);
                     
-                    // Validasi format data (Array atau Object)
                     let listKamusToSave = [];
                     if (Array.isArray(parsedJSON)) {
                         listKamusToSave = parsedJSON;
@@ -165,27 +160,29 @@
                         listKamusToSave = [parsedJSON];
                     }
 
-                    // A. Simpan Permanen ke Firebase Firestore
+                    // A. Tulis ke LocalStorage langsung
+                    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(listKamusToSave));
+                    stateKamusData = listKamusToSave;
+                    renderTabelKamus(stateKamusData);
+
+                    // B. Tulis Permanen ke Firestore Database
                     await db.collection('kamus_lhpr').doc('master_data').set({
                         listKamus: listKamusToSave,
                         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                     }, { merge: true });
 
-                    // B. Simpan ke LocalStorage
-                    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(listKamusToSave));
+                    alert("Data Kamus berhasil tersimpan permanen di Cloud! Data tidak akan hilang saat refresh dan otomatis sync ke HP/Laptop lain.");
 
-                    alert("Data Kamus berhasil di-restore dan tersimpan permanen di Cloud! Semua perangkat yang membuka aplikasi ini akan otomatis menggunakan data terbaru.");
-                    
                 } catch (err) {
-                    console.error("Gagal me-restore data:", err);
-                    alert("Gagal me-restore file JSON. Pastikan format file benar. Error: " + err.message);
+                    console.error("Detail Error Restore:", err);
+                    alert("Gagal mengunggah ke Cloud. Pastikan firebaseConfig sudah diisi dengan kredensial asli. Error: " + err.message);
                 }
             };
             reader.readAsText(file);
         }
 
         // -----------------------------------------------------------------
-        // 4. Fungsi Backup Data Kamus (.JSON)
+        // 4. Backup Data Kamus (.JSON)
         // -----------------------------------------------------------------
         function backupKamusJSON() {
             if (!stateKamusData || stateKamusData.length === 0) {
@@ -202,7 +199,7 @@
         }
 
         // -----------------------------------------------------------------
-        // 5. Fungsi Render UI Tabel Kamus
+        // 5. Render UI Tabel
         // -----------------------------------------------------------------
         function renderTabelKamus(data) {
             const tbody = document.getElementById('tableKamusBody');
@@ -224,7 +221,7 @@
         }
 
         // -----------------------------------------------------------------
-        // 6. Init Aplikasi saat Load
+        // 6. Jalankan saat Pertama Load Halaman
         // -----------------------------------------------------------------
         document.addEventListener('DOMContentLoaded', () => {
             initCloudSync();
