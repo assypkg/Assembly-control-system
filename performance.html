@@ -1,0 +1,1901 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PERFORMANCE ASSY</title>
+    <!-- Import Google Fonts: Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Pustaka Google Charts -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <!-- Pustaka html2canvas untuk fitur unduh gambar -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <style>
+        :root {
+            --navy-blue: #1a237e;
+            --emerald-green: #2e7d32;
+            --purple-dark: #6a1b9a;
+            --teal-theme: #00695c;
+            --bluegrey-theme: #374151;
+            --bg-gray: #f4f6f9;
+            --border-color: #dce1e6;
+            --table-pad-y: 8px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; }
+        body { display: flex; height: 100vh; overflow: hidden; background-color: #e9ecef; }
+
+        /* --- SIDEBAR EDITOR --- */
+        .editor-sidebar {
+            width: 480px;
+            background-color: var(--bg-gray);
+            border-right: 2px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        
+        .editor-header {
+            padding: 20px;
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .editor-header h2 { color: var(--navy-blue); font-size: 18px; font-weight: 800; margin-bottom: 5px; }
+        .editor-header p { font-size: 11px; color: #666; line-height: 1.4; font-weight: 600; }
+
+        .editor-form { padding: 20px; }
+        .form-section {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: white;
+        }
+        .form-section legend {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--navy-blue);
+            padding: 0 10px;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+        .legend-title { flex: 1; }
+        .btn-section-clear {
+            background: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .btn-section-clear:hover { background: #b71c1c; }
+        
+        .form-group { margin-bottom: 10px; }
+        .form-row { display: flex; gap: 8px; margin-bottom: 10px; }
+        .form-row .form-group { flex: 1; margin-bottom: 0; }
+        
+        label { display: block; font-size: 11px; font-weight: 700; color: #444; margin-bottom: 4px; }
+        input[type="text"], input[type="number"], input[type="file"], input[type="range"], textarea {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            transition: border 0.2s;
+        }
+        textarea { resize: vertical; min-height: 50px; }
+        input:focus, textarea:focus { border-color: var(--navy-blue); outline: none; }
+
+        .excel-paste-box {
+            background: #e8f5e9;
+            border: 1px dashed var(--emerald-green);
+            padding: 8px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+        .excel-paste-box label { color: var(--emerald-green); font-size: 10px; }
+
+        .item-editor {
+            background: #fdfdfd;
+            border: 1px dashed #ccc;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        .btn-action {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 11px;
+        }
+        .btn-add { background: var(--emerald-green); color: white; width: 100%; margin-top: 5px; }
+        .btn-del { background: #d32f2f; color: white; position: absolute; top: 10px; right: 10px; padding: 2px 6px; }
+
+        /* --- PREVIEW AREA --- */
+        .preview-area {
+            flex: 1;
+            background-color: #d1d5db;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .preview-topbar {
+            background-color: #374151;
+            color: #9ca3af;
+            font-size: 11px;
+            padding: 8px 20px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .preview-content {
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* --- DASHBOARD DESIGN --- */
+        .dashboard {
+            width: 1200px;
+            background: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        .dash-header {
+            background-color: var(--navy-blue);
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+        }
+        .dash-header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(26, 35, 126, 0.45);
+            border-radius: 8px;
+            z-index: 1;
+        }
+        .dash-header-content { position: relative; z-index: 2; }
+        .dash-header h3 { font-size: 16px; font-weight: 700; margin-bottom: 5px; letter-spacing: 0.5px; }
+        .dash-header h1 { font-size: 42px; font-weight: 900; margin-bottom: 10px; letter-spacing: 1.5px; }
+        .dash-header .badge {
+            background-color: var(--emerald-green);
+            padding: 6px 18px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .section-title {
+            background-color: var(--navy-blue);
+            color: white;
+            padding: 10px 15px;
+            font-size: 13px;
+            font-weight: 700;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+        }
+        .section-title.purple { background-color: var(--purple-dark); }
+        .section-title.orange-theme { background-color: #ef6c00; }
+        .section-title.teal-theme { background-color: var(--teal-theme); }
+        .section-title.bluegrey-theme { background-color: var(--bluegrey-theme); }
+        .section-title.pink-theme { background-color: #c2185b; }
+        .section-title.indigo-theme { background-color: #3949ab; }
+        
+        .icon-svg { width: 16px; height: 16px; fill: currentColor; flex-shrink: 0; }
+
+        .text-green { color: var(--emerald-green); }
+        .text-red { color: #d32f2f; }
+        .text-bold { font-weight: 800 !important; }
+        .text-blue-link { color: #1976d2; text-decoration: underline; }
+
+        /* --- SECTION 1 TABLE STYLES (MODERN SLATE DESIGN) --- */
+        .perf-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            font-size: 11px; 
+            border-radius: 6px; 
+            overflow: hidden; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            margin-bottom: 5px;
+        }
+        .perf-table th, .perf-table td { 
+            padding: var(--table-pad-y) 8px; 
+            border: 1px solid #e2e8f0; 
+            text-align: right; 
+            font-weight: 600; 
+        }
+        .perf-table th { 
+            background-color: #475569; 
+            color: #f8fafc; 
+            font-size: 11px; 
+            text-align: center; 
+            font-weight: 700; 
+            letter-spacing: 0.5px; 
+        }
+        .perf-table .main-th { 
+            font-size: 12px; 
+            font-weight: 800; 
+            text-align: left; 
+            background: #1e293b; 
+            color: white; 
+            border-bottom: 2px solid #3b82f6; 
+        }
+        .perf-table td:first-child { 
+            text-align: left; 
+            background: #f8fafc; 
+            font-weight: 700; 
+            color: #334155; 
+        }
+        .col-total { 
+            background-color: #f1f5f9; 
+            font-weight: 800; 
+            color: #0f172a; 
+        }
+
+        /* --- GOOGLE CHARTS CONTAINER --- */
+        .histogram-container {
+            background: #fdfdfd;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 20px;
+            margin-top: 10px;
+        }
+        .histogram-layout {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            margin-top: 10px;
+        }
+        .hist-column-box {
+            flex: 1;
+            position: relative;
+        }
+        .hist-column-box:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 15px;
+            bottom: 45px;
+            width: 2px;
+            background-color: #dce1e6;
+        }
+
+        /* --- GOOGLE CHARTS WRAPPERS --- */
+        .gchart-section-box {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .empty-chart-msg {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-weight: 600;
+            font-size: 12px;
+            font-style: italic;
+        }
+
+        /* --- STANDARD TABLE STYLES --- */
+        table.std-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 11px; }
+        table.std-table th, table.std-table td { 
+            padding: var(--table-pad-y) 10px;
+            border: 1px solid #ddd; 
+            text-align: center; 
+            font-weight: 600; 
+            transition: padding 0.2s ease;
+        }
+        table.std-table th { background-color: var(--purple-dark); color: white; font-weight: 700; letter-spacing: 0.3px; }
+        table.std-table th.orange-th { background-color: #ef6c00; }
+        table.std-table th.teal-th { background-color: var(--teal-theme); }
+        table.std-table th.bluegrey-th { background-color: var(--bluegrey-theme); }
+        table.std-table th.pink-th { background-color: #c2185b; }
+        table.std-table th.indigo-th { background-color: #3949ab; }
+        table.std-table td.text-left { text-align: left; }
+        table.std-table td.text-right { text-align: right; }
+        .row-total { background-color: var(--purple-dark) !important; color: white; font-weight: 700; }
+
+        .fokus-masalah-cell { font-size: 10px; color: #555; line-height: 1.4; font-weight: 600; }
+        .nama-produk-cell { font-size: 10px; color: #333; line-height: 1.3; font-weight: 600; }
+
+        /* --- PRINT / PDF OPTIMIZATION STYLES (MARGIN: NONE) --- */
+        @media print {
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            @page { size: A4 landscape; margin: 0; }
+            
+            body { 
+                background-color: white !important; 
+                display: block !important; 
+                height: auto !important; 
+                overflow: visible !important; 
+                margin: 0 !important; 
+            }
+            .editor-sidebar, .preview-topbar { display: none !important; }
+            .preview-area { 
+                background: white !important; 
+                padding: 0 !important; 
+                overflow: visible !important; 
+                height: auto !important; 
+                display: block !important; 
+            }
+            .preview-content { padding: 0 !important; display: block !important; overflow: visible !important; }
+            .dashboard { 
+                width: 100% !important; 
+                max-width: none !important; 
+                box-shadow: none !important; 
+                padding: 10px !important; 
+                margin: 0 !important; 
+                height: auto !important; 
+            }
+            
+            [id^="sec-"] {
+                break-inside: auto;
+                page-break-inside: auto;
+                margin-bottom: 20px;
+            }
+
+            /* Blok pengaman agar Judul dan Tabel Utama tidak pernah terpisah */
+            .sec-block {
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+            }
+
+            /* Header Utama di awal dokumen */
+            #out-header-bg {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                break-after: avoid;
+                page-break-after: avoid;
+                margin-bottom: 15px;
+            }
+
+            /* Header Klon untuk section lanjutan */
+            .dash-header:not(#out-header-bg) {
+                break-before: page;
+                page-break-before: always;
+                break-after: avoid;
+                page-break-after: avoid;
+                break-inside: avoid;
+                page-break-inside: avoid;
+                margin-top: 0;
+                margin-bottom: 15px;
+            }
+
+            /* Pengaturan Tabel & Baris */
+            table { width: 100% !important; break-inside: auto; }
+            thead { display: table-header-group !important; }
+            tr { break-inside: avoid !important; page-break-inside: avoid !important; }
+            td, th { break-inside: avoid !important; }
+
+            /* Grafik Google Charts & Kotak Tabel */
+            .gchart-section-box, .histogram-container, .perf-table, .std-table {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR EDITOR -->
+    <div class="editor-sidebar">
+        <div class="editor-header">
+            <h2>PERFORMANCE ASSY EDITOR</h2>
+            <p>Kelola data lengkap & visibilitas laporan performa assembly.</p>
+        </div>
+        
+        <div class="editor-form">
+            <!-- SECTION VISIBILITY SETTINGS -->
+            <fieldset class="form-section" style="background-color: #e8f4fd; border-color: #2196f3;">
+                <legend style="background-color: #e8f4fd;">
+                    <span class="legend-title" style="color: #0d47a1;">PENGATURAN TAMPILAN POIN (SECTION)</span>
+                </legend>
+                <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px; font-size: 11px; font-weight: 700;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="toggle-sec-1" checked onchange="toggleSections()"> 1. Performance Assembly
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="toggle-sec-2" checked onchange="toggleSections()"> 2. Result Assembly - Line Leaders
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="toggle-sec-3" checked onchange="toggleSections()"> 3. Performance Analysis
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="toggle-sec-4" checked onchange="toggleSections()"> 4. KPI Tracker
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="toggle-sec-5" checked onchange="toggleSections()"> 5. Laporan Pergantian SPA Assembling
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="toggle-sec-6" checked onchange="toggleSections()"> 6. Machine Issues &lt;85%
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="toggle-sec-7" checked onchange="toggleSections()"> 7. Quality Issues &lt;85%
+                    </label>
+                </div>
+            </fieldset>
+
+            <!-- PAGE LAYOUT SETTINGS -->
+            <fieldset class="form-section" style="background-color: #fff9c4; border-color: #fbc02d;">
+                <legend style="background-color: #fff9c4;">
+                    <span class="legend-title" style="color: #f57f17;">PAGE LAYOUT SETTINGS (CETAK)</span>
+                </legend>
+                <div class="form-group" style="margin-top: 8px;">
+                    <label>Jarak / Tinggi Baris Tabel</label>
+                    <input type="range" id="in-table-padding" min="4" max="25" value="8" oninput="updateTablePadding()">
+                    <div style="display: flex; justify-content: space-between; font-size: 10px; color: #666; margin-top: 4px;">
+                        <span>Rapat</span><span>Renggang</span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-- BACKUP & RESTORE SECTION -->
+            <fieldset class="form-section" style="background-color: #f0f4f8; border-color: #1a237e;">
+                <legend style="background-color: #f0f4f8;">
+                    <span class="legend-title" style="color: var(--navy-blue);">DATA BACKUP & RESTORE</span>
+                </legend>
+                <div style="margin-top: 8px;">
+                    <button type="button" onclick="backupData()" style="width: 100%; padding: 10px; background: var(--navy-blue); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 700; margin-bottom: 10px; font-size: 11px;">Download Backup (.JSON)</button>
+                    <label style="margin-bottom: 4px; color: #333;">Restore Data (.JSON)</label>
+                    <input type="file" id="in-restore" accept=".json" onchange="restoreData(event)" style="padding: 4px; font-size: 11px;">
+                </div>
+            </fieldset>
+
+            <!-- HEADER SETTINGS -->
+            <fieldset class="form-section">
+                <legend>
+                    <span class="legend-title">HEADER SETTINGS</span>
+                    <button type="button" class="btn-section-clear" onclick="clearSection('header')">Reset</button>
+                </legend>
+                <div class="form-group" style="margin-top: 8px;">
+                    <label>Nama Plant</label>
+                    <input type="text" id="in-plant" value="">
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Week</label><input type="text" id="in-week" value=""></div>
+                    <div class="form-group"><label>Periode</label><input type="text" id="in-periode" value=""></div>
+                </div>
+                <div class="form-group">
+                    <label>Upload Foto Background Header</label>
+                    <input type="file" id="in-photo" accept="image/*">
+                </div>
+            </fieldset>
+
+            <!-- 1. PERFORMANCE ASSEMBLY -->
+            <fieldset class="form-section">
+                <legend>
+                    <span class="legend-title">1. PERFORMANCE ASSEMBLY</span>
+                    <button type="button" class="btn-section-clear" onclick="clearSection(1)">Hapus Data</button>
+                </legend>
+                
+                <div style="font-size: 11px; font-weight: 800; margin: 8px 0 6px 0; color: #1e293b; background: #e2e8f0; padding: 6px; text-align: center; border-radius: 4px;">
+                    TAMPILAN KOLOM MINGGU (W1 - W5)
+                </div>
+                <div style="display: flex; justify-content: space-around; margin-bottom: 15px; font-size: 11px; font-weight: 700; background: #fafafa; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    <label style="cursor: pointer;"><input type="checkbox" id="toggle-w1" checked onchange="calcMatrixPerformance()"> W1</label>
+                    <label style="cursor: pointer;"><input type="checkbox" id="toggle-w2" checked onchange="calcMatrixPerformance()"> W2</label>
+                    <label style="cursor: pointer;"><input type="checkbox" id="toggle-w3" checked onchange="calcMatrixPerformance()"> W3</label>
+                    <label style="cursor: pointer;"><input type="checkbox" id="toggle-w4" checked onchange="calcMatrixPerformance()"> W4</label>
+                    <label style="cursor: pointer; color: #1976d2;"><input type="checkbox" id="toggle-w5" onchange="calcMatrixPerformance()"> W5 (Opsional)</label>
+                </div>
+
+                <div style="font-size: 11px; font-weight: 800; margin: 12px 0 8px 0; color: var(--navy-blue); background: #eee; padding: 4px; text-align: center;">A. PERFORMANCE (pcs)</div>
+                <div class="form-row"><div class="form-group"><label>W1 Plan</label><input type="number" id="in-a-w1-plan" value="0"></div><div class="form-group"><label>W1 Act</label><input type="number" id="in-a-w1-act" value="0"></div></div>
+                <div class="form-row"><div class="form-group"><label>W2 Plan</label><input type="number" id="in-a-w2-plan" value="0"></div><div class="form-group"><label>W2 Act</label><input type="number" id="in-a-w2-act" value="0"></div></div>
+                <div class="form-row"><div class="form-group"><label>W3 Plan</label><input type="number" id="in-a-w3-plan" value="0"></div><div class="form-group"><label>W3 Act</label><input type="number" id="in-a-w3-act" value="0"></div></div>
+                <div class="form-row"><div class="form-group"><label>W4 Plan</label><input type="number" id="in-a-w4-plan" value="0"></div><div class="form-group"><label>W4 Act</label><input type="number" id="in-a-w4-act" value="0"></div></div>
+                <div class="form-row" id="row-in-a-w5"><div class="form-group"><label>W5 Plan</label><input type="number" id="in-a-w5-plan" value="0"></div><div class="form-group"><label>W5 Act</label><input type="number" id="in-a-w5-act" value="0"></div></div>
+
+                <div style="font-size: 11px; font-weight: 800; margin: 15px 0 8px 0; color: var(--navy-blue); background: #eee; padding: 4px; text-align: center;">B. PRODUCTION TIME (jam)</div>
+                <div class="form-row"><div class="form-group"><label>W1 Plan Time</label><input type="number" id="in-b-w1-plan" value="0"></div><div class="form-group"><label>W1 Act Time</label><input type="number" id="in-b-w1-act" value="0"></div></div>
+                <div class="form-row"><div class="form-group"><label>W2 Plan Time</label><input type="number" id="in-b-w2-plan" value="0"></div><div class="form-group"><label>W2 Act Time</label><input type="number" id="in-b-w2-act" value="0"></div></div>
+                <div class="form-row"><div class="form-group"><label>W3 Plan Time</label><input type="number" id="in-b-w3-plan" value="0"></div><div class="form-group"><label>W3 Act Time</label><input type="number" id="in-b-w3-act" value="0"></div></div>
+                <div class="form-row"><div class="form-group"><label>W4 Plan Time</label><input type="number" id="in-b-w4-plan" value="0"></div><div class="form-group"><label>W4 Act Time</label><input type="number" id="in-b-w4-act" value="0"></div></div>
+                <div class="form-row" id="row-in-b-w5"><div class="form-group"><label>W5 Plan Time</label><input type="number" id="in-b-w5-plan" value="0"></div><div class="form-group"><label>W5 Act Time</label><input type="number" id="in-b-w5-act" value="0"></div></div>
+
+                <div style="font-size: 11px; font-weight: 800; margin: 15px 0 8px 0; color: var(--navy-blue); background: #eee; padding: 4px; text-align: center;">C. PEMAKAIAN OPERATOR</div>
+                <div class="form-row"><div class="form-group"><label>W1 Std Opr</label><input type="number" id="in-c-w1-std" value="0"></div><div class="form-group"><label>W1 Act Opr</label><input type="number" id="in-c-w1-act" value="0"></div></div>
+                <div class="form-row"><div class="form-group"><label>W2 Std Opr</label><input type="number" id="in-c-w2-std" value="0"></div><div class="form-group"><label>W2 Act Opr</label><input type="number" id="in-c-w2-act" value="0"></div></div>
+                <div class="form-row"><div class="form-group"><label>W3 Std Opr</label><input type="number" id="in-c-w3-std" value="0"></div><div class="form-group"><label>W3 Act Opr</label><input type="number" id="in-c-w3-act" value="0"></div></div>
+                <div class="form-row"><div class="form-group"><label>W4 Std Opr</label><input type="number" id="in-c-w4-std" value="0"></div><div class="form-group"><label>W4 Act Opr</label><input type="number" id="in-c-w4-act" value="0"></div></div>
+                <div class="form-row" id="row-in-c-w5"><div class="form-group"><label>W5 Std Opr</label><input type="number" id="in-c-w5-std" value="0"></div><div class="form-group"><label>W5 Act Opr</label><input type="number" id="in-c-w5-act" value="0"></div></div>
+            </fieldset>
+
+            <!-- 2. RESULT ASSEMBLY - LINE LEADERS -->
+            <fieldset class="form-section">
+                <legend>
+                    <span class="legend-title">2. RESULT ASSEMBLY - LINE LEADERS</span>
+                    <button type="button" class="btn-section-clear" onclick="clearSection(2)">Hapus Data</button>
+                </legend>
+                <div class="excel-paste-box">
+                    <label>📋 Paste Baris Excel (Leader, Plan, Act):</label>
+                    <textarea placeholder="Blok & paste data excel di sini..." onpaste="handleExcelPaste(event, 'leaders')"></textarea>
+                </div>
+                
+                <div class="form-row" style="background:#e3f2fd; padding:10px; border-radius:4px; margin-bottom:10px; border: 1px dashed #1565c0;">
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label style="color:#1565c0; font-size:10px;">Override Total Plan (Opsional)</label>
+                        <input type="number" id="override-plan" placeholder="Ketik manual di sini..." oninput="renderLeaderTable()">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label style="color:#1565c0; font-size:10px;">Override Total Act (Opsional)</label>
+                        <input type="number" id="override-act" placeholder="Otomatis jika kosong..." oninput="renderLeaderTable()">
+                    </div>
+                </div>
+
+                <div id="leader-container"></div>
+                <button type="button" class="btn-action btn-add" onclick="addLeaderRow()">+ Tambah Line Leader</button>
+            </fieldset>
+
+            <!-- 3. PERFORMANCE ANALYSIS -->
+            <fieldset class="form-section">
+                <legend>
+                    <span class="legend-title">3. PERFORMANCE ANALYSIS</span>
+                    <button type="button" class="btn-section-clear" onclick="clearSection(3)">Hapus Data</button>
+                </legend>
+                <div class="excel-paste-box">
+                    <label>📋 Paste Excel (Item Code, Nama, Opr, Fail, Fail%, Avg, Low, Fokus):</label>
+                    <textarea placeholder="Blok data tabel Excel lalu paste (Ctrl+V) di sini..." onpaste="handleExcelPaste(event, 'analyses')"></textarea>
+                </div>
+                <div id="analysis-container"></div>
+                <button type="button" class="btn-action btn-add" onclick="addAnalysisRow()">+ Tambah Analisis</button>
+            </fieldset>
+
+            <!-- 4. KPI TRACKER -->
+            <fieldset class="form-section">
+                <legend>
+                    <span class="legend-title">4. KPI TRACKER</span>
+                    <button type="button" class="btn-section-clear" onclick="clearSection(4)">Hapus Data</button>
+                </legend>
+                <div class="excel-paste-box">
+                    <label>📋 Paste Excel (Category, Performance &lt;85%):</label>
+                    <textarea placeholder="Blok data tabel Excel lalu paste (Ctrl+V) di sini..." onpaste="handleExcelPaste(event, 'prodLogs')"></textarea>
+                </div>
+                <div id="prod-log-container"></div>
+                <button type="button" class="btn-action btn-add" onclick="addProdLogRow()">+ Tambah KPI Tracker</button>
+            </fieldset>
+
+            <!-- 5. LAPORAN PERGANTIAN SPA ASSEMBLING -->
+            <fieldset class="form-section">
+                <legend>
+                    <span class="legend-title">5. LAPORAN PERGANTIAN SPA</span>
+                    <button type="button" class="btn-section-clear" onclick="clearSection(5)">Hapus Data</button>
+                </legend>
+                <div class="excel-paste-box">
+                    <label>📋 Paste Excel (Week, Tanggal, Line, SPA1 Item, SPA1 Job, SPA2 Item, SPA2 Job, Ket):</label>
+                    <textarea placeholder="Blok & paste data excel di sini..." onpaste="handleExcelPaste(event, 'spaChanges')"></textarea>
+                </div>
+                <div id="spa-change-container"></div>
+                <button type="button" class="btn-action btn-add" onclick="addSpaChangeRow()">+ Tambah Pergantian SPA</button>
+            </fieldset>
+
+            <!-- 6. MACHINE ISSUES BY PERFORMANCE <85% -->
+            <fieldset class="form-section">
+                <legend>
+                    <span class="legend-title">6. MACHINE ISSUES &lt;85%</span>
+                    <button type="button" class="btn-section-clear" onclick="clearSection(6)">Hapus Data</button>
+                </legend>
+                <div class="excel-paste-box">
+                    <label>📋 Paste Excel (Tanggal, Kp.Line, Code, Produk, %, Masalah):</label>
+                    <textarea placeholder="Blok & paste data excel di sini..." onpaste="handleExcelPaste(event, 'machineIssues')"></textarea>
+                </div>
+                <div id="machine-issue-container"></div>
+                <button type="button" class="btn-action btn-add" onclick="addMachineIssueRow()">+ Tambah Masalah Mesin</button>
+            </fieldset>
+
+            <!-- 7. QUALITY ISSUES BY PERFORMANCE <85% -->
+            <fieldset class="form-section">
+                <legend>
+                    <span class="legend-title">7. QUALITY ISSUES &lt;85%</span>
+                    <button type="button" class="btn-section-clear" onclick="clearSection(7)">Hapus Data</button>
+                </legend>
+                <div class="excel-paste-box">
+                    <label>📋 Paste Baris Excel (Tanggal, Kp.Line, Code, Produk, %, Masalah):</label>
+                    <textarea placeholder="Blok & paste data excel di sini..." onpaste="handleExcelPaste(event, 'qualityIssues')"></textarea>
+                </div>
+                <div id="quality-issue-container"></div>
+                <button type="button" class="btn-action btn-add" onclick="addQualityIssueRow()">+ Tambah Masalah Kualitas</button>
+            </fieldset>
+            
+            <button onclick="clearAllData()" style="width: 100%; padding: 12px; background: #b71c1c; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 700; margin-top: 10px;">Kosongkan Semua Data</button>
+            <button onclick="window.print()" style="width: 100%; padding: 12px; background: var(--navy-blue); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 700; margin-top: 10px;">Cetak Laporan / PDF</button>
+            <button onclick="downloadAsImage(this)" style="width: 100%; padding: 12px; background: var(--emerald-green); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 700; margin-top: 10px; margin-bottom: 30px;">Unduh Gambar (.PNG)</button>
+        </div>
+    </div>
+
+    <!-- PREVIEW AREA -->
+    <div class="preview-area">
+        <div class="preview-topbar">LIVE PREVIEW - 1200 x Auto px</div>
+        
+        <div class="preview-content">
+            <div class="dashboard" id="printable-dashboard">
+                
+                <!-- Header Utama -->
+                <div class="dash-header" id="out-header-bg">
+                    <div class="dash-header-content">
+                        <h3>LAPORAN PERFORMANCE ASSEMBLY</h3>
+                        <h1 id="out-plant"></h1>
+                        <div class="badge">
+                            <span id="out-week"></span> | <span id="out-periode"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sec 1 Container -->
+                <div id="sec-1-container" data-sec-id="1">
+                    <div class="sec-block">
+                        <div class="section-title">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/></svg>
+                            1. PERFORMANCE ASSEMBLY
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px;">
+                        <!-- TABLE A -->
+                        <table class="perf-table">
+                            <thead>
+                                <tr>
+                                    <th colspan="7" class="main-th">
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/></svg>
+                                            A. PERFORMANCE
+                                        </div>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th style="width: 20%; background: #fdfdfd;"></th>
+                                    <th style="width: 13%;" class="col-w1">WEEK 1</th>
+                                    <th style="width: 13%;" class="col-w2">WEEK 2</th>
+                                    <th style="width: 13%;" class="col-w3">WEEK 3</th>
+                                    <th style="width: 13%;" class="col-w4">WEEK 4</th>
+                                    <th style="width: 13%; background: #0f172a;" class="col-w5">WEEK 5</th>
+                                    <th style="width: 15%; background: var(--navy-blue);">TOTAL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Planning</td>
+                                    <td id="out-a-w1-plan" class="col-w1">0 pcs</td>
+                                    <td id="out-a-w2-plan" class="col-w2">0 pcs</td>
+                                    <td id="out-a-w3-plan" class="col-w3">0 pcs</td>
+                                    <td id="out-a-w4-plan" class="col-w4">0 pcs</td>
+                                    <td id="out-a-w5-plan" class="col-w5">0 pcs</td>
+                                    <td id="out-a-tot-plan" class="col-total">0 pcs</td>
+                                </tr>
+                                <tr>
+                                    <td>Actual Production</td>
+                                    <td id="out-a-w1-act" class="col-w1">0 pcs</td>
+                                    <td id="out-a-w2-act" class="col-w2">0 pcs</td>
+                                    <td id="out-a-w3-act" class="col-w3">0 pcs</td>
+                                    <td id="out-a-w4-act" class="col-w4">0 pcs</td>
+                                    <td id="out-a-w5-act" class="col-w5">0 pcs</td>
+                                    <td id="out-a-tot-act" class="col-total">0 pcs</td>
+                                </tr>
+                                <tr>
+                                    <td>Achievement</td>
+                                    <td id="out-a-w1-ach" class="col-w1">0%</td>
+                                    <td id="out-a-w2-ach" class="col-w2">0%</td>
+                                    <td id="out-a-w3-ach" class="col-w3">0%</td>
+                                    <td id="out-a-w4-ach" class="col-w4">0%</td>
+                                    <td id="out-a-w5-ach" class="col-w5">0%</td>
+                                    <td id="out-a-tot-ach" class="col-total">0%</td>
+                                </tr>
+                                <tr>
+                                    <td>Gap</td>
+                                    <td id="out-a-w1-gap" class="col-w1">0 pcs</td>
+                                    <td id="out-a-w2-gap" class="col-w2">0 pcs</td>
+                                    <td id="out-a-w3-gap" class="col-w3">0 pcs</td>
+                                    <td id="out-a-w4-gap" class="col-w4">0 pcs</td>
+                                    <td id="out-a-w5-gap" class="col-w5">0 pcs</td>
+                                    <td id="out-a-tot-gap" class="col-total">0 pcs</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- TABLE B -->
+                        <table class="perf-table">
+                            <thead>
+                                <tr>
+                                    <th colspan="7" class="main-th">
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                                            B. PRODUCTION TIME
+                                        </div>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th style="width: 20%; background: #fdfdfd;"></th>
+                                    <th style="width: 13%;" class="col-w1">WEEK 1</th>
+                                    <th style="width: 13%;" class="col-w2">WEEK 2</th>
+                                    <th style="width: 13%;" class="col-w3">WEEK 3</th>
+                                    <th style="width: 13%;" class="col-w4">WEEK 4</th>
+                                    <th style="width: 13%; background: #0f172a;" class="col-w5">WEEK 5</th>
+                                    <th style="width: 15%; background: var(--navy-blue);">TOTAL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Planning Time (PPIC)</td>
+                                    <td id="out-b-w1-plan" class="col-w1">0 jam</td>
+                                    <td id="out-b-w2-plan" class="col-w2">0 jam</td>
+                                    <td id="out-b-w3-plan" class="col-w3">0 jam</td>
+                                    <td id="out-b-w4-plan" class="col-w4">0 jam</td>
+                                    <td id="out-b-w5-plan" class="col-w5">0 jam</td>
+                                    <td id="out-b-tot-plan" class="col-total">0 jam</td>
+                                </tr>
+                                <tr>
+                                    <td>Actual Prod. Time</td>
+                                    <td id="out-b-w1-act" class="col-w1">0 jam</td>
+                                    <td id="out-b-w2-act" class="col-w2">0 jam</td>
+                                    <td id="out-b-w3-act" class="col-w3">0 jam</td>
+                                    <td id="out-b-w4-act" class="col-w4">0 jam</td>
+                                    <td id="out-b-w5-act" class="col-w5">0 jam</td>
+                                    <td id="out-b-tot-act" class="col-total">0 jam</td>
+                                </tr>
+                                <tr>
+                                    <td>Saving</td>
+                                    <td id="out-b-w1-ach" class="col-w1">0%</td>
+                                    <td id="out-b-w2-ach" class="col-w2">0%</td>
+                                    <td id="out-b-w3-ach" class="col-w3">0%</td>
+                                    <td id="out-b-w4-ach" class="col-w4">0%</td>
+                                    <td id="out-b-w5-ach" class="col-w5">0%</td>
+                                    <td id="out-b-tot-ach" class="col-total">0%</td>
+                                </tr>
+                                <tr>
+                                    <td>Time Saving</td>
+                                    <td id="out-b-w1-save" class="col-w1">0 jam</td>
+                                    <td id="out-b-w2-save" class="col-w2">0 jam</td>
+                                    <td id="out-b-w3-save" class="col-w3">0 jam</td>
+                                    <td id="out-b-w4-save" class="col-w4">0 jam</td>
+                                    <td id="out-b-w5-save" class="col-w5">0 jam</td>
+                                    <td id="out-b-tot-save" class="col-total">0 jam</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- TABLE C -->
+                        <table class="perf-table">
+                            <thead>
+                                <tr>
+                                    <th colspan="7" class="main-th">
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                                            C. PEMAKAIAN OPERATOR
+                                        </div>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th style="width: 20%; background: #fdfdfd;"></th>
+                                    <th style="width: 13%;" class="col-w1">WEEK 1</th>
+                                    <th style="width: 13%;" class="col-w2">WEEK 2</th>
+                                    <th style="width: 13%;" class="col-w3">WEEK 3</th>
+                                    <th style="width: 13%;" class="col-w4">WEEK 4</th>
+                                    <th style="width: 13%; background: #0f172a;" class="col-w5">WEEK 5</th>
+                                    <th style="width: 15%; background: var(--navy-blue);">TOTAL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Standard Operator</td>
+                                    <td id="out-c-w1-std" class="col-w1">0</td>
+                                    <td id="out-c-w2-std" class="col-w2">0</td>
+                                    <td id="out-c-w3-std" class="col-w3">0</td>
+                                    <td id="out-c-w4-std" class="col-w4">0</td>
+                                    <td id="out-c-w5-std" class="col-w5">0</td>
+                                    <td id="out-c-tot-std" class="col-total">0</td>
+                                </tr>
+                                <tr>
+                                    <td>Actual Operator</td>
+                                    <td id="out-c-w1-act" class="col-w1">0</td>
+                                    <td id="out-c-w2-act" class="col-w2">0</td>
+                                    <td id="out-c-w3-act" class="col-w3">0</td>
+                                    <td id="out-c-w4-act" class="col-w4">0</td>
+                                    <td id="out-c-w5-act" class="col-w5">0</td>
+                                    <td id="out-c-tot-act" class="col-total">0</td>
+                                </tr>
+                                <tr>
+                                    <td>Standard vs Pemakaian</td>
+                                    <td id="out-c-w1-ach" class="col-w1">0%</td>
+                                    <td id="out-c-w2-ach" class="col-w2">0%</td>
+                                    <td id="out-c-w3-ach" class="col-w3">0%</td>
+                                    <td id="out-c-w4-ach" class="col-w4">0%</td>
+                                    <td id="out-c-w5-ach" class="col-w5">0%</td>
+                                    <td id="out-c-tot-ach" class="col-total">0%</td>
+                                </tr>
+                                <tr>
+                                    <td>Gap</td>
+                                    <td id="out-c-w1-gap" class="col-w1">0</td>
+                                    <td id="out-c-w2-gap" class="col-w2">0</td>
+                                    <td id="out-c-w3-gap" class="col-w3">0</td>
+                                    <td id="out-c-w4-gap" class="col-w4">0</td>
+                                    <td id="out-c-w5-gap" class="col-w5">0</td>
+                                    <td id="out-c-tot-gap" class="col-total">0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Google Charts ComboChart -->
+                        <div class="histogram-container">
+                            <div style="text-align: center; margin-bottom: 5px;">
+                                <h4 style="color: #1e293b; font-size: 15px; font-weight: 800; letter-spacing: 0.5px;">WEEKLY ACHIEVEMENT TREND</h4>
+                                <p style="font-size: 10px; color: #555; font-weight: 600;">(Trend Efisiensi & Pencapaian Tiap Minggu)</p>
+                            </div>
+                            
+                            <div class="histogram-layout">
+                                <div class="hist-column-box">
+                                    <div id="chart_perf_3d" style="width: 100%; height: 240px;"></div>
+                                </div>
+                                <div class="hist-column-box">
+                                    <div id="chart_time_3d" style="width: 100%; height: 240px;"></div>
+                                </div>
+                                <div class="hist-column-box">
+                                    <div id="chart_opr_3d" style="width: 100%; height: 240px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sec 2 Container -->
+                <div id="sec-2-container" data-sec-id="2">
+                    <div class="sec-block">
+                        <div class="section-title purple">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 12.75c1.63 0 3.07.39 4.22 1.08.9.54 1.78 1.43 1.78 2.67V18H6v-1.5c0-1.24.88-2.13 1.78-2.67 1.15-.69 2.59-1.08 4.22-1.08zm0-5.5c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                            2. RESULT ASSEMBLY TEMPLATE - PENCAPAIAN LINE LEADER
+                        </div>
+                        <table class="std-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%;">Nomor</th>
+                                    <th style="width: 40%; text-align: left; padding-left: 15px;">Line Leader</th>
+                                    <th style="width: 17%;">Planning (pcs)</th>
+                                    <th style="width: 17%;">Actual (pcs)</th>
+                                    <th style="width: 16%;">Achievement</th>
+                                </tr>
+                            </thead>
+                            <tbody id="out-leader-tbody"></tbody>
+                            <tfoot>
+                                <tr class="row-total">
+                                    <td colspan="2" class="text-left" style="padding-left: 15px;">TOTAL - ALL LINE LEADER</td>
+                                    <td id="tot-plan">0</td>
+                                    <td id="tot-act">0</td>
+                                    <td id="tot-ach">0%</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Header Klon 1 (untuk Sec 3) -->
+                <div class="dash-header" id="header-clone-3">
+                    <div class="dash-header-content">
+                        <h3>LAPORAN PERFORMANCE ASSEMBLY</h3>
+                        <h1 class="out-plant-clone"></h1>
+                        <div class="badge">
+                            <span class="out-week-clone"></span> | <span class="out-periode-clone"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sec 3 Container -->
+                <div id="sec-3-container" data-sec-id="3">
+                    <div class="sec-block">
+                        <div class="section-title orange-theme">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+                            3. PERFORMANCE ANALYSIS
+                        </div>
+                        <table class="std-table">
+                            <thead>
+                                <tr>
+                                    <th class="orange-th" style="width: 4%;">Nomor</th>
+                                    <th class="orange-th" style="width: 12%; text-align: left; padding-left: 15px;">Item Code</th>
+                                    <th class="orange-th" style="width: 16%; text-align: left;">Nama Produk</th>
+                                    <th class="orange-th" style="width: 7%;">Total Opr.</th>
+                                    <th class="orange-th" style="width: 6%;">Failure</th>
+                                    <th class="orange-th" style="width: 8%;">Failure %</th>
+                                    <th class="orange-th" style="width: 9%;">Avg Prod.</th>
+                                    <th class="orange-th" style="width: 9%;">Low Prod.</th>
+                                    <th class="orange-th" style="width: 29%; text-align: left;">Fokus Masalah</th>
+                                </tr>
+                            </thead>
+                            <tbody id="out-analysis-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Header Klon 2 (untuk Sec 4) -->
+                <div class="dash-header" id="header-clone-4">
+                    <div class="dash-header-content">
+                        <h3>LAPORAN PERFORMANCE ASSEMBLY</h3>
+                        <h1 class="out-plant-clone"></h1>
+                        <div class="badge">
+                            <span class="out-week-clone"></span> | <span class="out-periode-clone"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sec 4 Container -->
+                <div id="sec-4-container" data-sec-id="4">
+                    <div class="sec-block">
+                        <div class="section-title teal-theme">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                            4. KPI TRACKER
+                        </div>
+                        
+                        <div style="display: flex; gap: 20px; align-items: flex-start; margin-bottom: 25px;">
+                            <div style="flex: 1.2;">
+                                <table class="std-table" style="margin-bottom: 0;">
+                                   <thead>
+                                        <tr>
+                                            <th class="teal-th" style="width: 70%; text-align: left; padding-left: 15px;">Primary Cause Category</th>
+                                            <th class="teal-th" style="width: 30%;">Performance &lt;85%</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="out-prod-log-tbody"></tbody>
+                                </table>
+                            </div>
+                            <div style="flex: 1.8;" class="gchart-section-box">
+                                <div id="kpi_google_chart" style="width: 100%; height: 280px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sec 5 Container -->
+                <div id="sec-5-container" data-sec-id="5">
+                    <div class="sec-block">
+                        <div class="section-title bluegrey-theme">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.6-7.4-1.6L6.5 4.3l-2.8 2.8 2.9 2.8c-1 2.4-.4 5.4 1.6 7.4 1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l1.4-1.4c.4-.4.4-1 0-1.4z"/></svg>
+                            5. LAPORAN PERGANTIAN SPA ASSEMBLING
+                        </div>
+                        <table class="std-table">
+                            <thead>
+                                <tr>
+                                    <th class="bluegrey-th" rowspan="2" style="width: 9%;">WEEK</th>
+                                    <th class="bluegrey-th" rowspan="2" style="width: 11%;">TANGGAL</th>
+                                    <th class="bluegrey-th" rowspan="2" style="width: 14%; text-align: left; padding-left: 10px;">KP LINE</th>
+                                    <th class="bluegrey-th" colspan="2" style="width: 28%;">SPA 1</th>
+                                    <th class="bluegrey-th" colspan="2" style="width: 28%;">SPA 2</th>
+                                    <th class="bluegrey-th" rowspan="2" style="width: 20%;">KETERANGAN</th>
+                                </tr>
+                                <tr>
+                                    <th class="bluegrey-th" style="width: 20%; text-align: left; padding-left: 8px;">NAMA ITEM</th>
+                                    <th class="bluegrey-th" style="width: 8%;">NO JOB</th>
+                                    <th class="bluegrey-th" style="width: 20%; text-align: left; padding-left: 8px;">NAMA ITEM</th>
+                                    <th class="bluegrey-th" style="width: 8%;">NO JOB</th>
+                                </tr>
+                            </thead>
+                            <tbody id="out-spa-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Header Klon 3 (untuk Sec 6) -->
+                <div class="dash-header" id="header-clone-6">
+                    <div class="dash-header-content">
+                        <h3>LAPORAN PERFORMANCE ASSEMBLY</h3>
+                        <h1 class="out-plant-clone"></h1>
+                        <div class="badge">
+                            <span class="out-week-clone"></span> | <span class="out-periode-clone"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sec 6 Container -->
+                <div id="sec-6-container" data-sec-id="6">
+                    <div class="sec-block">
+                        <div class="section-title pink-theme">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 C9.72,21.83,9.92,22,10.16,22h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+                            6. MACHINE ISSUES BY PERFORMANCE &lt;85%
+                        </div>
+                        <table class="std-table">
+                            <thead>
+                                <tr>
+                                    <th class="pink-th" style="width: 5%;">Nomor</th>
+                                    <th class="pink-th" style="width: 12%;">Tanggal (mm/dd/yy)</th>
+                                    <th class="pink-th" style="width: 15%; text-align: left;">Kp. Line</th>
+                                    <th class="pink-th" style="width: 15%; text-align: left;">Item Code</th>
+                                    <th class="pink-th" style="width: 18%; text-align: left;">Nama Produk</th>
+                                    <th class="pink-th" style="width: 10%;">% (Planning vs Hasil)</th>
+                                    <th class="pink-th" style="width: 25%; text-align: left; padding-left: 15px;">Masalah Mesin</th>
+                                </tr>
+                            </thead>
+                            <tbody id="out-machine-issue-tbody"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="gchart-section-box">
+                        <div id="machine_google_chart" style="width: 100%; height: 350px;"></div>
+                    </div>
+                </div>
+
+                <!-- Header Klon 4 (untuk Sec 7) -->
+                <div class="dash-header" id="header-clone-7">
+                    <div class="dash-header-content">
+                        <h3>LAPORAN PERFORMANCE ASSEMBLY</h3>
+                        <h1 class="out-plant-clone"></h1>
+                        <div class="badge">
+                            <span class="out-week-clone"></span> | <span class="out-periode-clone"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sec 7 Container -->
+                <div id="sec-7-container" data-sec-id="7">
+                    <div class="sec-block">
+                        <div class="section-title indigo-theme">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+                            7. QUALITY ISSUES BY PERFORMANCE &lt;85%
+                        </div>
+                        <table class="std-table">
+                            <thead>
+                                <tr>
+                                    <th class="indigo-th" style="width: 5%;">Nomor</th>
+                                    <th class="indigo-th" style="width: 12%;">Tanggal (mm/dd/yy)</th>
+                                    <th class="indigo-th" style="width: 15%; text-align: left;">Kp. Line</th>
+                                    <th class="indigo-th" style="width: 15%; text-align: left;">Item Code</th>
+                                    <th class="indigo-th" style="width: 18%; text-align: left;">Nama Produk</th>
+                                    <th class="indigo-th" style="width: 10%;">% (Planning vs Hasil)</th>
+                                    <th class="indigo-th" style="width: 25%; text-align: left; padding-left: 15px;">Masalah Kualitas</th>
+                                </tr>
+                            </thead>
+                            <tbody id="out-quality-issue-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const formatNumber = (num, decimals = 0) => {
+            return new Intl.NumberFormat('id-ID', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(num);
+        };
+        
+        function parseAnyNumber(str) {
+            if (str === null || str === undefined) return 0;
+            if (typeof str === 'number') return str;
+            let s = str.toString().trim();
+            if (s === '') return 0;
+            
+            if (/^-?\d{1,3}(\.\d{3})*(,\d+)?$/.test(s)) {
+                return parseFloat(s.replace(/\./g, '').replace(',', '.'));
+            }
+            if (/^-?\d{1,3}(,\d{3})*(\.\d+)?$/.test(s)) {
+                return parseFloat(s.replace(/,/g, ''));
+            }
+            
+            let cleaned = s.replace(/[^0-9.,-]/g, '');
+            let lastDot = cleaned.lastIndexOf('.');
+            let lastComma = cleaned.lastIndexOf(',');
+            
+            if (lastComma > lastDot) {
+                cleaned = cleaned.replace(/\./g, '').replace(',', '.');
+            } else if (lastDot > lastComma && lastComma !== -1) {
+                cleaned = cleaned.replace(/,/g, '');
+            } else if (lastComma !== -1) {
+                cleaned = cleaned.replace(',', '.');
+            }
+            return parseFloat(cleaned) || 0;
+        }
+        
+        const bindText = (inputId, outputId) => {
+            document.getElementById(inputId).addEventListener('input', (e) => {
+                const val = e.target.value;
+                document.getElementById(outputId).innerText = val;
+                if(outputId === 'out-plant') document.querySelectorAll('.out-plant-clone').forEach(el => el.innerText = val);
+                if(outputId === 'out-week') document.querySelectorAll('.out-week-clone').forEach(el => el.innerText = val);
+                if(outputId === 'out-periode') document.querySelectorAll('.out-periode-clone').forEach(el => el.innerText = val);
+            });
+        };
+
+        bindText('in-plant', 'out-plant'); bindText('in-week', 'out-week'); bindText('in-periode', 'out-periode');
+
+        function updateTablePadding() {
+            const paddingValue = document.getElementById('in-table-padding').value;
+            document.documentElement.style.setProperty('--table-pad-y', paddingValue + 'px');
+        }
+
+        function toggleSections() {
+            let visibleIndex = 1;
+            const baseNames = {
+                1: "PERFORMANCE ASSEMBLY",
+                2: "RESULT ASSEMBLY TEMPLATE - PENCAPAIAN LINE LEADER",
+                3: "PERFORMANCE ANALYSIS",
+                4: "KPI TRACKER",
+                5: "LAPORAN PERGANTIAN SPA ASSEMBLING",
+                6: "MACHINE ISSUES BY PERFORMANCE &lt;85%",
+                7: "QUALITY ISSUES BY PERFORMANCE &lt;85%"
+            };
+
+            for(let i=1; i<=7; i++) {
+                const cb = document.getElementById(`toggle-sec-${i}`);
+                const container = document.getElementById(`sec-${i}-container`);
+                const headerClone = document.getElementById(`header-clone-${i}`);
+                
+                if(cb && container) {
+                    if(cb.checked) {
+                        container.style.display = '';
+                        if(headerClone) headerClone.style.display = '';
+                        
+                        const titleEl = container.querySelector('.section-title');
+                        if(titleEl) {
+                            const svgEl = titleEl.querySelector('svg');
+                            const svgHtml = svgEl ? svgEl.outerHTML : '';
+                            titleEl.innerHTML = `${svgHtml} ${visibleIndex}. ${baseNames[i]}`;
+                        }
+                        visibleIndex++;
+                    } else {
+                        container.style.display = 'none';
+                        if(headerClone) headerClone.style.display = 'none';
+                    }
+                }
+            }
+        }
+
+        // --- DATA STATE (DIKOSONGKAN) ---
+        let leaders = [];
+        let analyses = [];
+        let prodLogs = [];
+        let spaChanges = [];
+        let machineIssues = [];
+        let qualityIssues = [];
+
+        // --- INISIALISASI GOOGLE CHARTS ---
+        let isGoogleChartsReady = false;
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(() => {
+            isGoogleChartsReady = true;
+            calcMatrixPerformance(); 
+            renderProdLogChart();       
+            renderMachineIssuesChart(); 
+        });
+
+        function handleExcelPaste(e, targetKey) {
+            e.preventDefault();
+            const pastedData = (e.clipboardData || window.clipboardData).getData('Text');
+            if (!pastedData) return;
+        
+            let rows = [];
+            let currentRow = [];
+            let currentCell = "";
+            let inQuotes = false;
+            
+            for (let i = 0; i < pastedData.length; i++) {
+                let char = pastedData[i];
+                let nextChar = pastedData[i+1];
+                
+                if (char === '"' && inQuotes && nextChar === '"') {
+                    currentCell += '"';
+                    i++;
+                } else if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === '\t' && !inQuotes) {
+                    currentRow.push(currentCell);
+                    currentCell = "";
+                } else if ((char === '\n' || char === '\r') && !inQuotes) {
+                    if (char === '\r' && nextChar === '\n') i++; 
+                    currentRow.push(currentCell);
+                    rows.push(currentRow);
+                    currentRow = [];
+                    currentCell = "";
+                } else {
+                    currentCell += char;
+                }
+            }
+            if (currentCell || currentRow.length > 0) {
+                currentRow.push(currentCell);
+                rows.push(currentRow);
+            }
+        
+            let newItems = [];
+            rows.forEach(cols => {
+                if (cols.length === 1 && cols[0].trim() === "") return;
+                
+                if (targetKey === 'leaders' && cols.length >= 3) {
+                    newItems.push({ name: cols[1].trim(), plan: parseAnyNumber(cols[2]), act: parseAnyNumber(cols[3]) });
+                }
+                else if (targetKey === 'analyses' && cols.length >= 8) {
+                    newItems.push({ item_code: cols[1]||'', product_name: cols[2]||'', opr: parseInt(cols[3])||0, fail: parseInt(cols[4])||0, f_pct: cols[5]||'0%', avg_p: cols[6]||'0', low_p: cols[7]||'0', focus: cols[8]||'' });
+                }
+                else if (targetKey === 'prodLogs' && cols.length >= 2) {
+                    newItems.push({ cat: cols[0] ? cols[0].trim() : '', perfVal: parseAnyNumber(cols[1]).toString() });
+                }
+                else if (targetKey === 'spaChanges' && cols.length >= 3) {
+                    newItems.push({
+                        week: cols[0] ? cols[0].trim() : '',
+                        date: cols[1] ? cols[1].trim() : '',
+                        leader: cols[2] ? cols[2].trim() : '',
+                        spa1_item: cols[3] ? cols[3].trim() : '',
+                        spa1_job: cols[4] ? cols[4].trim() : '',
+                        spa2_item: cols[5] ? cols[5].trim() : '',
+                        spa2_job: cols[6] ? cols[6].trim() : '',
+                        notes: cols[7] ? cols[7].trim() : ''
+                    });
+                }
+                else if (targetKey === 'machineIssues' && cols.length >= 6) {
+                    newItems.push({ date: cols[1] ? cols[1].trim() : '', leader: cols[2] ? cols[2].trim() : '', item_code: cols[3] ? cols[3].trim() : '', product: cols[4] ? cols[4].trim() : '', pct: cols[5] ? cols[5].trim() : '0%', issue: cols[6] ? cols[6].trim() : '' });
+                }
+                else if (targetKey === 'qualityIssues' && cols.length >= 6) {
+                    newItems.push({ date: cols[1] ? cols[1].trim() : '', leader: cols[2] ? cols[2].trim() : '', item_code: cols[3] ? cols[3].trim() : '', product: cols[4] ? cols[4].trim() : '', pct: cols[5] ? cols[5].trim() : '0%', issue: cols[6] ? cols[6].trim() : '' });
+                }
+            });
+        
+            if (newItems.length > 0) {
+                if (targetKey === 'leaders') { leaders = newItems; renderLeaderEditor(); }
+                else if (targetKey === 'analyses') { analyses = newItems; renderAnalysisEditor(); }
+                else if (targetKey === 'prodLogs') { prodLogs = newItems; renderProdLogEditor(); }
+                else if (targetKey === 'spaChanges') { spaChanges = newItems; renderSpaChangeEditor(); }
+                else if (targetKey === 'machineIssues') { machineIssues = newItems; renderMachineIssueEditor(); }
+                else if (targetKey === 'qualityIssues') { qualityIssues = newItems; renderQualityIssueEditor(); }
+                e.target.value = ''; 
+                alert(`Berhasil memuat ${newItems.length} baris data dari Excel!`);
+            } else { 
+                alert("Format paste tidak dikenali. Pastikan Anda memblok baris dari Excel dengan benar."); 
+            }
+        }
+
+        // --- EDITORS SECTION ---
+        function renderLeaderEditor() {
+            const container = document.getElementById('leader-container'); container.innerHTML = '';
+            leaders.forEach((leader, index) => {
+                const editorDiv = document.createElement('div'); editorDiv.className = 'item-editor';
+                editorDiv.innerHTML = `
+                    <button type="button" class="btn-action btn-del" onclick="removeLeaderRow(${index})">X</button>
+                    <div class="form-group"><label>Nama Line Leader #${index + 1}</label><input type="text" id="ed-lead-name-${index}" value="${leader.name}" oninput="updateLeaderData(${index})"></div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Planning (pcs)</label><input type="number" id="ed-lead-plan-${index}" value="${leader.plan}" oninput="updateLeaderData(${index})"></div>
+                        <div class="form-group"><label>Actual (pcs)</label><input type="number" id="ed-lead-act-${index}" value="${leader.act}" oninput="updateLeaderData(${index})"></div>
+                    </div>
+                `; container.appendChild(editorDiv);
+            });
+            renderLeaderTable();
+        }
+        function updateLeaderData(index) {
+            leaders[index].name = document.getElementById(`ed-lead-name-${index}`).value;
+            leaders[index].plan = parseFloat(document.getElementById(`ed-lead-plan-${index}`).value) || 0;
+            leaders[index].act = parseFloat(document.getElementById(`ed-lead-act-${index}`).value) || 0;
+            renderLeaderTable();
+        }
+        function renderLeaderTable() {
+            const tbody = document.getElementById('out-leader-tbody'); tbody.innerHTML = '';
+            let totalPlanRaw = 0; let totalActRaw = 0;
+            
+            leaders.forEach((leader, index) => {
+                totalPlanRaw += Number(leader.plan) || 0; 
+                totalActRaw += Number(leader.act) || 0;
+                
+                const ach = leader.plan > 0 ? (leader.act / leader.plan) * 100 : 0;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${index + 1}</td><td class="text-left" style="padding-left: 15px;">${leader.name}</td><td>${formatNumber(leader.plan, 0)}</td><td>${formatNumber(leader.act, 0)}</td><td class="${ach >= 85 ? 'text-green' : 'text-red'}">${ach.toFixed(2)}%</td>`;
+                tbody.appendChild(tr);
+            });
+
+            let overridePlan = parseFloat(document.getElementById('override-plan').value);
+            let overrideAct = parseFloat(document.getElementById('override-act').value);
+            
+            let displayPlan = (!isNaN(overridePlan) && overridePlan > 0) ? overridePlan : totalPlanRaw;
+            let displayAct = (!isNaN(overrideAct) && overrideAct > 0) ? overrideAct : totalActRaw;
+
+            document.getElementById('tot-plan').innerText = formatNumber(displayPlan, 0); 
+            document.getElementById('tot-act').innerText = formatNumber(displayAct, 0);
+            document.getElementById('tot-ach').innerText = (displayPlan > 0 ? (displayAct / displayPlan) * 100 : 0).toFixed(2) + '%';
+        }
+
+        function renderAnalysisEditor() {
+            const container = document.getElementById('analysis-container'); container.innerHTML = '';
+            analyses.forEach((an, index) => {
+                const editorDiv = document.createElement('div'); editorDiv.className = 'item-editor';
+                editorDiv.innerHTML = `
+                    <button type="button" class="btn-action btn-del" onclick="removeAnalysisRow(${index})">X</button>
+                    <div class="form-row">
+                        <div class="form-group"><label>Code</label><input type="text" id="ed-an-code-${index}" value="${an.item_code}" oninput="updateAnalysisData(${index})"></div>
+                        <div class="form-group"><label>Nama</label><input type="text" id="ed-an-name-${index}" value="${an.product_name}" oninput="updateAnalysisData(${index})"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Opr</label><input type="number" id="ed-an-opr-${index}" value="${an.opr}" oninput="updateAnalysisData(${index})"></div>
+                        <div class="form-group"><label>Fail</label><input type="number" id="ed-an-fail-${index}" value="${an.fail}" oninput="updateAnalysisData(${index})"></div>
+                        <div class="form-group"><label>%</label><input type="text" id="ed-an-pct-${index}" value="${an.f_pct}" oninput="updateAnalysisData(${index})"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Avg</label><input type="text" id="ed-an-avg-${index}" value="${an.avg_p}" oninput="updateAnalysisData(${index})"></div>
+                        <div class="form-group"><label>Low</label><input type="text" id="ed-an-low-${index}" value="${an.low_p}" oninput="updateAnalysisData(${index})"></div>
+                    </div>
+                    <div class="form-group"><label>Fokus</label><textarea id="ed-an-focus-${index}" oninput="updateAnalysisData(${index})">${an.focus}</textarea></div>
+                `; container.appendChild(editorDiv);
+            });
+            renderAnalysisTable();
+        }
+        function updateAnalysisData(index) {
+            analyses[index].item_code = document.getElementById(`ed-an-code-${index}`).value;
+            analyses[index].product_name = document.getElementById(`ed-an-name-${index}`).value;
+            analyses[index].opr = parseInt(document.getElementById(`ed-an-opr-${index}`).value) || 0;
+            analyses[index].fail = parseInt(document.getElementById(`ed-an-fail-${index}`).value) || 0;
+            analyses[index].f_pct = document.getElementById(`ed-an-pct-${index}`).value;
+            analyses[index].avg_p = document.getElementById(`ed-an-avg-${index}`).value;
+            analyses[index].low_p = document.getElementById(`ed-an-low-${index}`).value;
+            analyses[index].focus = document.getElementById(`ed-an-focus-${index}`).value;
+            renderAnalysisTable();
+        }
+        function renderAnalysisTable() {
+            const tbody = document.getElementById('out-analysis-tbody'); tbody.innerHTML = '';
+            analyses.forEach((an, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${index + 1}</td><td class="text-left" style="padding-left: 15px; font-weight: 700;">${an.item_code}</td><td class="text-left nama-produk-cell">${an.product_name}</td><td>${an.opr}</td><td>${an.fail}</td><td>${an.f_pct}</td><td>${an.avg_p}</td><td>${an.low_p}</td><td class="text-left fokus-masalah-cell">${an.focus}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- KPI TRACKER ---
+        function renderProdLogEditor() {
+            const container = document.getElementById('prod-log-container'); container.innerHTML = '';
+            prodLogs.forEach((log, index) => {
+                const editorDiv = document.createElement('div'); editorDiv.className = 'item-editor';
+                editorDiv.innerHTML = `
+                    <button type="button" class="btn-action btn-del" onclick="removeProdLogRow(${index})">X</button>
+                    <div class="form-group"><label>Primary Cause Category</label><input type="text" id="ed-log-cat-${index}" value="${log.cat}" oninput="updateProdLogData(${index})"></div>
+                    <div class="form-group"><label>Performance <85%</label><input type="text" id="ed-log-perf-${index}" value="${log.perfVal}" oninput="updateProdLogData(${index})"></div>
+                `; container.appendChild(editorDiv);
+            });
+            renderProdLogTable();
+        }
+        function updateProdLogData(index) {
+            prodLogs[index].cat = document.getElementById(`ed-log-cat-${index}`).value;
+            prodLogs[index].perfVal = document.getElementById(`ed-log-perf-${index}`).value;
+            renderProdLogTable();
+        }
+        function renderProdLogTable() {
+            const tbody = document.getElementById('out-prod-log-tbody'); tbody.innerHTML = '';
+            prodLogs.forEach((log) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="text-left text-blue-link" style="padding-left: 15px;">${log.cat}</td>
+                    <td>${log.perfVal}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            renderProdLogChart();
+        }
+        
+        function renderProdLogChart() {
+            if (!isGoogleChartsReady) return; 
+            const validLogs = prodLogs.map(log => ({ cat: log.cat, val: parseFloat(log.perfVal) || 0 })).filter(log => log.val > 0);
+            if (validLogs.length === 0) {
+                document.getElementById('kpi_google_chart').innerHTML = '<div class="empty-chart-msg">Data kosong. Tambahkan data KPI untuk menampilkan grafik.</div>';
+                return;
+            }
+            const data = new google.visualization.DataTable();
+            data.addColumn('string', 'Category');
+            data.addColumn('number', 'Value');
+            validLogs.forEach(log => { data.addRow([log.cat, log.val]); });
+
+            const options = {
+                title: 'Distribusi Kategori Masalah',
+                titleTextStyle: { fontName: 'Montserrat', fontSize: 13, bold: true, color: '#00695c' },
+                is3D: true, 
+                backgroundColor: 'transparent',
+                colors: ['#00695c', '#0277bd', '#ef6c00', '#2e7d32', '#c2185b', '#6a1b9a', '#d84315', '#4527a0'],
+                chartArea: { left: 10, top: 40, width: '90%', height: '80%' },
+                legend: { position: 'right', textStyle: { fontName: 'Montserrat', fontSize: 11, bold: true, color: '#333' }, alignment: 'center' },
+                pieSliceTextStyle: { fontName: 'Montserrat', fontSize: 12, bold: true }
+            };
+            const chart = new google.visualization.PieChart(document.getElementById('kpi_google_chart'));
+            chart.draw(data, options);
+        }
+
+        // --- LAPORAN PERGANTIAN SPA ASSEMBLING ---
+        function renderSpaChangeEditor() {
+            const container = document.getElementById('spa-change-container'); container.innerHTML = '';
+            spaChanges.forEach((sc, index) => {
+                const editorDiv = document.createElement('div'); editorDiv.className = 'item-editor';
+                editorDiv.innerHTML = `
+                    <button type="button" class="btn-action btn-del" onclick="removeSpaChangeRow(${index})">X</button>
+                    <div class="form-row">
+                        <div class="form-group"><label>Week</label><input type="text" id="ed-sc-week-${index}" value="${sc.week}" oninput="updateSpaChangeData(${index})"></div>
+                        <div class="form-group"><label>Tanggal</label><input type="text" id="ed-sc-date-${index}" value="${sc.date}" oninput="updateSpaChangeData(${index})"></div>
+                        <div class="form-group"><label>Kp. Line</label><input type="text" id="ed-sc-leader-${index}" value="${sc.leader}" oninput="updateSpaChangeData(${index})"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>SPA 1 Item</label><input type="text" id="ed-sc-s1i-${index}" value="${sc.spa1_item}" oninput="updateSpaChangeData(${index})"></div>
+                        <div class="form-group"><label>SPA 1 Job</label><input type="text" id="ed-sc-s1j-${index}" value="${sc.spa1_job}" oninput="updateSpaChangeData(${index})"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>SPA 2 Item</label><input type="text" id="ed-sc-s2i-${index}" value="${sc.spa2_item}" oninput="updateSpaChangeData(${index})"></div>
+                        <div class="form-group"><label>SPA 2 Job</label><input type="text" id="ed-sc-s2j-${index}" value="${sc.spa2_job}" oninput="updateSpaChangeData(${index})"></div>
+                    </div>
+                    <div class="form-group"><label>Keterangan</label><textarea id="ed-sc-notes-${index}" oninput="updateSpaChangeData(${index})">${sc.notes}</textarea></div>
+                `; container.appendChild(editorDiv);
+            });
+            renderSpaChangeTable();
+        }
+        function updateSpaChangeData(index) {
+            spaChanges[index].week = document.getElementById(`ed-sc-week-${index}`).value;
+            spaChanges[index].date = document.getElementById(`ed-sc-date-${index}`).value;
+            spaChanges[index].leader = document.getElementById(`ed-sc-leader-${index}`).value;
+            spaChanges[index].spa1_item = document.getElementById(`ed-sc-s1i-${index}`).value;
+            spaChanges[index].spa1_job = document.getElementById(`ed-sc-s1j-${index}`).value;
+            spaChanges[index].spa2_item = document.getElementById(`ed-sc-s2i-${index}`).value;
+            spaChanges[index].spa2_job = document.getElementById(`ed-sc-s2j-${index}`).value;
+            spaChanges[index].notes = document.getElementById(`ed-sc-notes-${index}`).value;
+            renderSpaChangeTable();
+        }
+        function renderSpaChangeTable() {
+            const tbody = document.getElementById('out-spa-tbody'); tbody.innerHTML = '';
+            spaChanges.forEach((sc) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${sc.week}</td>
+                    <td>${sc.date}</td>
+                    <td class="text-left" style="padding-left: 10px;">${sc.leader}</td>
+                    <td class="text-left nama-produk-cell" style="padding-left: 8px;">${sc.spa1_item.replace(/\n/g, '<br>')}</td>
+                    <td>${sc.spa1_job.replace(/\n/g, '<br>')}</td>
+                    <td class="text-left nama-produk-cell" style="padding-left: 8px;">${sc.spa2_item.replace(/\n/g, '<br>')}</td>
+                    <td>${sc.spa2_job.replace(/\n/g, '<br>')}</td>
+                    <td class="text-left" style="padding-left: 10px; font-weight: 700; color: #1a237e; font-size: 10px; line-height: 1.4;">${sc.notes.replace(/\n/g, '<br>')}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- MACHINE ISSUES & QUALITY ISSUES ---
+        function renderMachineIssueEditor() {
+            const container = document.getElementById('machine-issue-container'); container.innerHTML = '';
+            machineIssues.forEach((mi, index) => {
+                const editorDiv = document.createElement('div'); editorDiv.className = 'item-editor';
+                editorDiv.innerHTML = `
+                    <button type="button" class="btn-action btn-del" onclick="removeMachineIssueRow(${index})">X</button>
+                    <div class="form-row">
+                        <div class="form-group"><label>Tanggal (mm/dd/yy)</label><input type="text" id="ed-mi-date-${index}" value="${mi.date}" oninput="updateMachineIssueData(${index})"></div>
+                        <div class="form-group"><label>Kp. Line</label><input type="text" id="ed-mi-leader-${index}" value="${mi.leader}" oninput="updateMachineIssueData(${index})"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Item Code</label><input type="text" id="ed-mi-code-${index}" value="${mi.item_code}" oninput="updateMachineIssueData(${index})"></div>
+                        <div class="form-group"><label>% (Planning vs Hasil)</label><input type="text" id="ed-mi-pct-${index}" value="${mi.pct}" oninput="updateMachineIssueData(${index})"></div>
+                    </div>
+                    <div class="form-group"><label>Nama Produk</label><input type="text" id="ed-mi-prod-${index}" value="${mi.product}" oninput="updateMachineIssueData(${index})"></div>
+                    <div class="form-group"><label>Masalah Mesin</label><input type="text" id="ed-mi-issue-${index}" value="${mi.issue}" oninput="updateMachineIssueData(${index})"></div>
+                `; container.appendChild(editorDiv);
+            });
+            renderMachineIssueTable();
+        }
+        function updateMachineIssueData(index) {
+            machineIssues[index].date = document.getElementById(`ed-mi-date-${index}`).value;
+            machineIssues[index].leader = document.getElementById(`ed-mi-leader-${index}`).value;
+            machineIssues[index].item_code = document.getElementById(`ed-mi-code-${index}`).value;
+            machineIssues[index].pct = document.getElementById(`ed-mi-pct-${index}`).value;
+            machineIssues[index].product = document.getElementById(`ed-mi-prod-${index}`).value;
+            machineIssues[index].issue = document.getElementById(`ed-mi-issue-${index}`).value;
+            renderMachineIssueTable();
+        }
+        function renderMachineIssueTable() {
+            const tbody = document.getElementById('out-machine-issue-tbody'); tbody.innerHTML = '';
+            machineIssues.forEach((mi, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${index + 1}</td><td>${mi.date}</td><td class="text-left">${mi.leader}</td><td class="text-left">${mi.item_code}</td><td class="text-left nama-produk-cell">${mi.product}</td><td class="text-red" style="font-weight: 700;">${mi.pct}</td><td class="text-left" style="padding-left: 15px; font-weight: 700;">${mi.issue}</td>`;
+                tbody.appendChild(tr);
+            });
+            renderMachineIssuesChart();
+        }
+
+        function renderMachineIssuesChart() {
+            if (!isGoogleChartsReady) return;
+            const counts = {};
+            machineIssues.forEach(item => {
+                const issueName = item.issue ? item.issue.trim() : 'Lainnya';
+                counts[issueName] = (counts[issueName] || 0) + 1;
+            });
+            const keys = Object.keys(counts);
+            if (keys.length === 0) {
+                document.getElementById('machine_google_chart').innerHTML = '<div class="empty-chart-msg">Data kosong. Tambahkan data Masalah Mesin untuk menampilkan grafik.</div>';
+                return;
+            }
+            const data = new google.visualization.DataTable();
+            data.addColumn('string', 'Issue');
+            data.addColumn('number', 'Frequency');
+            keys.forEach(key => { data.addRow([key, counts[key]]); });
+
+            const options = {
+                title: `Analisis Masalah Mesin (Total: ${machineIssues.length} Kasus)`,
+                titleTextStyle: { fontName: 'Montserrat', fontSize: 14, bold: true, color: '#ad1457' },
+                is3D: true, 
+                backgroundColor: 'transparent',
+                colors: ['#ad1457', '#1a237e', '#2e7d32', '#ef6c00', '#6a1b9a', '#0277bd', '#c2185b'],
+                chartArea: { left: 20, top: 50, width: '90%', height: '80%' },
+                legend: { position: 'right', textStyle: { fontName: 'Montserrat', fontSize: 12, bold: true, color: '#333' }, alignment: 'center' },
+                pieSliceTextStyle: { fontName: 'Montserrat', fontSize: 13, bold: true }
+            };
+            const chart = new google.visualization.PieChart(document.getElementById('machine_google_chart'));
+            chart.draw(data, options);
+        }
+
+        function renderQualityIssueEditor() {
+            const container = document.getElementById('quality-issue-container'); container.innerHTML = '';
+            qualityIssues.forEach((qi, index) => {
+                const editorDiv = document.createElement('div'); editorDiv.className = 'item-editor';
+                editorDiv.innerHTML = `
+                    <button type="button" class="btn-action btn-del" onclick="removeQualityIssueRow(${index})">X</button>
+                    <div class="form-row">
+                        <div class="form-group"><label>Tanggal (mm/dd/yy)</label><input type="text" id="ed-qi-date-${index}" value="${qi.date}" oninput="updateQualityIssueData(${index})"></div>
+                        <div class="form-group"><label>Kp. Line</label><input type="text" id="ed-qi-leader-${index}" value="${qi.leader}" oninput="updateQualityIssueData(${index})"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Item Code</label><input type="text" id="ed-qi-code-${index}" value="${qi.item_code}" oninput="updateQualityIssueData(${index})"></div>
+                        <div class="form-group"><label>% (Planning vs Hasil)</label><input type="text" id="ed-qi-pct-${index}" value="${qi.pct}" oninput="updateQualityIssueData(${index})"></div>
+                    </div>
+                    <div class="form-group"><label>Nama Produk</label><input type="text" id="ed-qi-prod-${index}" value="${qi.product}" oninput="updateQualityIssueData(${index})"></div>
+                    <div class="form-group"><label>Masalah Kualitas</label><input type="text" id="ed-qi-issue-${index}" value="${qi.issue}" oninput="updateQualityIssueData(${index})"></div>
+                `; container.appendChild(editorDiv);
+            });
+            renderQualityIssueTable();
+        }
+        function updateQualityIssueData(index) {
+            qualityIssues[index].date = document.getElementById(`ed-qi-date-${index}`).value;
+            qualityIssues[index].leader = document.getElementById(`ed-qi-leader-${index}`).value;
+            qualityIssues[index].item_code = document.getElementById(`ed-qi-code-${index}`).value;
+            qualityIssues[index].pct = document.getElementById(`ed-qi-pct-${index}`).value;
+            qualityIssues[index].product = document.getElementById(`ed-qi-prod-${index}`).value;
+            qualityIssues[index].issue = document.getElementById(`ed-qi-issue-${index}`).value;
+            renderQualityIssueTable();
+        }
+        function renderQualityIssueTable() {
+            const tbody = document.getElementById('out-quality-issue-tbody'); tbody.innerHTML = '';
+            qualityIssues.forEach((qi, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${index + 1}</td><td>${qi.date}</td><td class="text-left">${qi.leader}</td><td class="text-left">${qi.item_code}</td><td class="text-left nama-produk-cell">${qi.product}</td><td class="text-red" style="font-weight: 700;">${qi.pct}</td><td class="text-left" style="padding-left: 15px; font-weight: 700;">${qi.issue}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Action Buttons
+        function addLeaderRow() { leaders.push({ name: "BARU", plan: 0, act: 0 }); renderLeaderEditor(); } function removeLeaderRow(index) { leaders.splice(index, 1); renderLeaderEditor(); }
+        function addAnalysisRow() { analyses.push({ item_code: "KODE", product_name: "NAMA", opr: 0, fail: 0, f_pct: "0%", avg_p: "0", low_p: "0", focus: "Detail" }); renderAnalysisEditor(); } function removeAnalysisRow(index) { analyses.splice(index, 1); renderAnalysisEditor(); }
+        function addProdLogRow() { prodLogs.push({ cat: "Kategori Baru", perfVal: "0" }); renderProdLogEditor(); } function removeProdLogRow(index) { prodLogs.splice(index, 1); renderProdLogEditor(); }
+        function addSpaChangeRow() { spaChanges.push({ week: "", date: "", leader: "", spa1_item: "", spa1_job: "", spa2_item: "", spa2_job: "", notes: "" }); renderSpaChangeEditor(); } function removeSpaChangeRow(index) { spaChanges.splice(index, 1); renderSpaChangeEditor(); }
+        function addMachineIssueRow() { machineIssues.push({ date: "", leader: "Leader", item_code: "KODE", product: "PRODUK", pct: "0%", issue: "Masalah" }); renderMachineIssueEditor(); } function removeMachineIssueRow(index) { machineIssues.splice(index, 1); renderMachineIssueEditor(); }
+        function addQualityIssueRow() { qualityIssues.push({ date: "", leader: "Leader", item_code: "KODE", product: "PRODUK", pct: "0%", issue: "Kualitas" }); renderQualityIssueEditor(); } function removeQualityIssueRow(index) { qualityIssues.splice(index, 1); renderQualityIssueEditor(); }
+
+        // --- BACKUP & RESTORE ---
+        function backupData() {
+            let kpiData = { a: {}, b: {}, c: {}, leaderOverride: {} };
+            for(let i=1; i<=5; i++) {
+                const planElA = document.getElementById(`in-a-w${i}-plan`);
+                if(planElA) {
+                    kpiData.a[`w${i}Plan`] = planElA.value; 
+                    kpiData.a[`w${i}Act`] = document.getElementById(`in-a-w${i}-act`).value;
+                    kpiData.b[`w${i}Plan`] = document.getElementById(`in-b-w${i}-plan`).value; 
+                    kpiData.b[`w${i}Act`] = document.getElementById(`in-b-w${i}-act`).value;
+                    kpiData.c[`w${i}Std`] = document.getElementById(`in-c-w${i}-std`).value; 
+                    kpiData.c[`w${i}Act`] = document.getElementById(`in-c-w${i}-act`).value;
+                }
+            }
+            kpiData.leaderOverride = { plan: document.getElementById('override-plan').value, act: document.getElementById('override-act').value };
+            
+            const payload = {
+                header: { plant: document.getElementById('in-plant').value, week: document.getElementById('in-week').value, periode: document.getElementById('in-periode').value },
+                kpi: kpiData, leaders, analyses, prodLogs, spaChanges, machineIssues, qualityIssues
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(payload, null, 2));
+            const a = document.createElement('a'); a.href = dataStr; a.download = `asm_backup_${(document.getElementById('in-plant').value||'plant').toLowerCase().replace(/\s+/g,'_')}.json`;
+            document.body.appendChild(a); a.click(); a.remove();
+        }
+
+        function restoreData(event) {
+            const file = event.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (parsed.header) {
+                        document.getElementById('in-plant').value = parsed.header.plant || ''; document.getElementById('out-plant').innerText = parsed.header.plant || '';
+                        document.querySelectorAll('.out-plant-clone').forEach(el => el.innerText = parsed.header.plant || '');
+                    }
+                    if (parsed.kpi) {
+                        if(parsed.kpi.a) {
+                            for(let i=1; i<=5; i++) {
+                                const planElA = document.getElementById(`in-a-w${i}-plan`);
+                                if(planElA) {
+                                    planElA.value = parsed.kpi.a[`w${i}Plan`] || 0; 
+                                    document.getElementById(`in-a-w${i}-act`).value = parsed.kpi.a[`w${i}Act`] || 0;
+                                    document.getElementById(`in-b-w${i}-plan`).value = parsed.kpi.b[`w${i}Plan`] || 0; 
+                                    document.getElementById(`in-b-w${i}-act`).value = parsed.kpi.b[`w${i}Act`] || 0;
+                                    document.getElementById(`in-c-w${i}-std`).value = parsed.kpi.c[`w${i}Std`] || 0; 
+                                    document.getElementById(`in-c-w${i}-act`).value = parsed.kpi.c[`w${i}Act`] || 0;
+                                }
+                            }
+                        }
+                        if(parsed.kpi.leaderOverride) {
+                            document.getElementById('override-plan').value = parsed.kpi.leaderOverride.plan || '';
+                            document.getElementById('override-act').value = parsed.kpi.leaderOverride.act || '';
+                        }
+                        calcMatrixPerformance();
+                    }
+                    if (parsed.leaders) leaders = parsed.leaders; 
+                    if (parsed.analyses) analyses = parsed.analyses;
+                    if (parsed.prodLogs) prodLogs = parsed.prodLogs;
+                    if (parsed.spaChanges) spaChanges = parsed.spaChanges;
+                    if (parsed.machineIssues) machineIssues = parsed.machineIssues; 
+                    if (parsed.qualityIssues) qualityIssues = parsed.qualityIssues;
+                    
+                    renderLeaderEditor(); renderAnalysisEditor(); renderProdLogEditor(); renderSpaChangeEditor(); renderMachineIssueEditor(); renderQualityIssueEditor();
+                    alert("Data berhasil dipulihkan.");
+                } catch (err) { alert("Gagal membaca file JSON."); }
+            }; reader.readAsText(file);
+        }
+
+        function clearSection(sectionId) {
+            if (confirm(`Apakah Anda yakin ingin mengosongkan data?`)) {
+                if (sectionId === 'header') { document.getElementById('in-plant').value = ''; document.getElementById('out-plant').innerText = ''; }
+                else if (sectionId === 1) {
+                    for(let i=1; i<=5; i++) {
+                        const planEl = document.getElementById(`in-a-w${i}-plan`);
+                        if(planEl) {
+                            planEl.value = 0; document.getElementById(`in-a-w${i}-act`).value = 0;
+                            document.getElementById(`in-b-w${i}-plan`).value = 0; document.getElementById(`in-b-w${i}-act`).value = 0;
+                            document.getElementById(`in-c-w${i}-std`).value = 0; document.getElementById(`in-c-w${i}-act`).value = 0;
+                        }
+                    } calcMatrixPerformance();
+                }
+                else if (sectionId === 2) { 
+                    leaders = []; 
+                    document.getElementById('override-plan').value = '';
+                    document.getElementById('override-act').value = '';
+                    renderLeaderEditor(); 
+                } 
+                else if (sectionId === 3) { analyses = []; renderAnalysisEditor(); }
+                else if (sectionId === 4) { prodLogs = []; renderProdLogEditor(); }
+                else if (sectionId === 5) { spaChanges = []; renderSpaChangeEditor(); }
+                else if (sectionId === 6) { machineIssues = []; renderMachineIssueEditor(); } 
+                else if (sectionId === 7) { qualityIssues = []; renderQualityIssueEditor(); }
+            }
+        }
+        function clearAllData() { 
+            if (confirm("Kosongkan semua data?")) { 
+                clearSection(1); leaders=[]; analyses=[]; prodLogs=[]; spaChanges=[]; machineIssues=[]; qualityIssues=[]; 
+                document.getElementById('override-plan').value = '';
+                document.getElementById('override-act').value = '';
+                renderLeaderEditor(); renderAnalysisEditor(); renderProdLogEditor(); renderSpaChangeEditor(); renderMachineIssueEditor(); renderQualityIssueEditor(); 
+            } 
+        }
+
+        // --- SECTION 1 MATRIX CALCULATION & GOOGLE CHARTS COMBO RENDERING ---
+        const calcMatrixPerformance = () => {
+            const weeks = [1, 2, 3, 4, 5];
+            
+            let totAPlan = 0, totAAct = 0;
+            let totBPlan = 0, totBAct = 0;
+            let totCStd = 0, totCAct = 0;
+
+            let perfDataArray = [['Week', 'Performance (%)', {role: 'annotation'}, 'Trend']];
+            let timeDataArray = [['Week', 'Waktu Produksi (%)', {role: 'annotation'}, 'Trend']];
+            let oprDataArray  = [['Week', 'Efisiensi Operator (%)', {role: 'annotation'}, 'Trend']];
+
+            for(let w=1; w<=5; w++) {
+                const toggle = document.getElementById(`toggle-w${w}`);
+                const isVis = toggle ? toggle.checked : false;
+                
+                document.querySelectorAll(`.col-w${w}`).forEach(el => {
+                    el.style.display = isVis ? '' : 'none';
+                });
+
+                if(w === 5) {
+                    const rowA = document.getElementById('row-in-a-w5');
+                    const rowB = document.getElementById('row-in-b-w5');
+                    const rowC = document.getElementById('row-in-c-w5');
+                    if(rowA) rowA.style.display = isVis ? 'flex' : 'none';
+                    if(rowB) rowB.style.display = isVis ? 'flex' : 'none';
+                    if(rowC) rowC.style.display = isVis ? 'flex' : 'none';
+                }
+            }
+
+            weeks.forEach(w => {
+                let aP = parseFloat(document.getElementById(`in-a-w${w}-plan`).value) || 0;
+                let aA = parseFloat(document.getElementById(`in-a-w${w}-act`).value) || 0;
+                let aAch = aP > 0 ? (aA/aP)*100 : 0;
+                let aGap = aA - aP;
+
+                let bP = parseFloat(document.getElementById(`in-b-w${w}-plan`).value) || 0;
+                let bA = parseFloat(document.getElementById(`in-b-w${w}-act`).value) || 0;
+                let bSave = bP - bA;
+                let bAch = bP > 0 ? (bSave/bP)*100 : 0;
+                let tEffW = bA > 0 ? (bP / bA) * 100 : 0; 
+
+                let cS = parseFloat(document.getElementById(`in-c-w${w}-std`).value) || 0;
+                let cA = parseFloat(document.getElementById(`in-c-w${w}-act`).value) || 0;
+                let cAch = cA > 0 ? (cS/cA)*100 : 0;
+                let cGap = cS - cA;
+
+                const toggle = document.getElementById(`toggle-w${w}`);
+                if(toggle && toggle.checked) {
+                    totAPlan += aP; totAAct += aA;
+                    totBPlan += bP; totBAct += bA;
+                    totCStd += cS; totCAct += cA;
+
+                    perfDataArray.push([`W${w}`, Number(aAch.toFixed(1)), `${aAch.toFixed(1)}%`, Number(aAch.toFixed(1))]);
+                    timeDataArray.push([`W${w}`, Number(tEffW.toFixed(1)), `${tEffW.toFixed(1)}%`, Number(tEffW.toFixed(1))]);
+                    oprDataArray.push([`W${w}`, Number(cAch.toFixed(1)), `${cAch.toFixed(1)}%`, Number(cAch.toFixed(1))]);
+                }
+                
+                document.getElementById(`out-a-w${w}-plan`).innerText = formatNumber(aP, 0) + ' pcs';
+                document.getElementById(`out-a-w${w}-act`).innerText = formatNumber(aA, 0) + ' pcs';
+                document.getElementById(`out-a-w${w}-ach`).innerText = aAch.toFixed(2) + '%';
+                document.getElementById(`out-a-w${w}-ach`).className = (aAch >= 100 ? 'text-green text-bold' : 'text-red text-bold') + ` col-w${w}`;
+                document.getElementById(`out-a-w${w}-gap`).innerText = (aGap>0?'+':'') + formatNumber(aGap, 0) + ' pcs';
+                document.getElementById(`out-a-w${w}-gap`).className = (aGap >= 0 ? 'text-green text-bold' : 'text-red text-bold') + ` col-w${w}`;
+
+                document.getElementById(`out-b-w${w}-plan`).innerText = formatNumber(bP, 2) + ' jam';
+                document.getElementById(`out-b-w${w}-act`).innerText = formatNumber(bA, 2) + ' jam';
+                document.getElementById(`out-b-w${w}-save`).innerText = formatNumber(bSave, 2) + ' jam';
+                document.getElementById(`out-b-w${w}-ach`).innerText = bAch.toFixed(2) + '%';
+                document.getElementById(`out-b-w${w}-ach`).className = (bAch >= 0 ? 'text-green text-bold' : 'text-red text-bold') + ` col-w${w}`;
+
+                document.getElementById(`out-c-w${w}-std`).innerText = formatNumber(cS);
+                document.getElementById(`out-c-w${w}-act`).innerText = formatNumber(cA);
+                document.getElementById(`out-c-w${w}-ach`).innerText = cAch.toFixed(2) + '%';
+                document.getElementById(`out-c-w${w}-ach`).className = (cAch >= 100 ? 'text-green text-bold' : 'text-red text-bold') + ` col-w${w}`;
+                document.getElementById(`out-c-w${w}-gap`).innerText = formatNumber(Math.abs(cGap)) + (cGap >= 0 ? ' opr (hemat)' : ' opr (lebih)');
+                document.getElementById(`out-c-w${w}-gap`).className = (cGap >= 0 ? 'text-green text-bold' : 'text-red text-bold') + ` col-w${w}`;
+            });
+
+            let totAAch = totAPlan > 0 ? (totAAct / totAPlan) * 100 : 0;
+            let totAGap = totAAct - totAPlan;
+            document.getElementById('out-a-tot-plan').innerText = formatNumber(totAPlan, 0) + ' pcs';
+            document.getElementById('out-a-tot-act').innerText = formatNumber(totAAct, 0) + ' pcs';
+            document.getElementById('out-a-tot-ach').innerText = totAAch.toFixed(2) + '%';
+            document.getElementById('out-a-tot-ach').className = totAAch >= 100 ? 'col-total text-green text-bold' : 'col-total text-red text-bold';
+            document.getElementById('out-a-tot-gap').innerText = (totAGap > 0 ? '+' : '') + formatNumber(totAGap, 0) + ' pcs';
+            document.getElementById('out-a-tot-gap').className = totAGap >= 0 ? 'col-total text-green text-bold' : 'col-total text-red text-bold';
+
+            let totBSave = totBPlan - totBAct;
+            let totBAch = totBPlan > 0 ? (totBSave / totBPlan) * 100 : 0;
+            document.getElementById('out-b-tot-plan').innerText = formatNumber(totBPlan, 2) + ' jam';
+            document.getElementById('out-b-tot-act').innerText = formatNumber(totBAct, 2) + ' jam';
+            document.getElementById('out-b-tot-save').innerText = formatNumber(totBSave, 2) + ' jam';
+            document.getElementById('out-b-tot-ach').innerText = totBAch.toFixed(2) + '%';
+            document.getElementById('out-b-tot-ach').className = totBAch >= 0 ? 'col-total text-green text-bold' : 'col-total text-red text-bold';
+
+            let totCAch = totCAct > 0 ? (totCStd / totCAct) * 100 : 0;
+            let totCGap = totCStd - totCAct;
+            document.getElementById('out-c-tot-std').innerText = formatNumber(totCStd);
+            document.getElementById('out-c-tot-act').innerText = formatNumber(totCAct);
+            document.getElementById('out-c-tot-ach').innerText = totCAch.toFixed(2) + '%';
+            document.getElementById('out-c-tot-ach').className = totCAch >= 100 ? 'col-total text-green text-bold' : 'col-total text-red text-bold';
+            document.getElementById('out-c-tot-gap').innerText = formatNumber(Math.abs(totCGap)) + (totCGap >= 0 ? ' opr (hemat)' : ' opr (lebih)');
+            document.getElementById('out-c-tot-gap').className = totCGap >= 0 ? 'col-total text-green text-bold' : 'col-total text-red text-bold';
+
+            if (isGoogleChartsReady) {
+                drawWeeklyComboChart('chart_perf_3d', perfDataArray, 'PERFORMANCE (%)', '#0277bd');
+                drawWeeklyComboChart('chart_time_3d', timeDataArray, 'WAKTU PRODUKSI (%)', '#2e7d32');
+                drawWeeklyComboChart('chart_opr_3d', oprDataArray, 'EFISIENSI OPERATOR (%)', '#ef6c00');
+            }
+        };
+
+        function drawWeeklyComboChart(containerId, dataArray, titleText, barColor) {
+            const data = google.visualization.arrayToDataTable(dataArray);
+            const options = {
+                title: titleText,
+                titleTextStyle: { fontName: 'Montserrat', fontSize: 11, bold: true, color: '#444', alignment: 'center' },
+                bar: { groupWidth: '25%' }, 
+                seriesType: 'bars',
+                series: {
+                    0: { color: barColor },
+                    1: { type: 'line', color: '#b71c1c', lineWidth: 2, pointSize: 5 }
+                },
+                legend: { position: 'none' },
+                backgroundColor: 'transparent',
+                chartArea: { left: 25, top: 35, width: '85%', height: '65%' },
+                hAxis: { textStyle: { fontName: 'Montserrat', fontSize: 10, bold: true } },
+                vAxis: { minValue: 0, maxValue: 130, textStyle: { fontName: 'Montserrat', fontSize: 9 } },
+                annotations: { textStyle: { fontName: 'Montserrat', fontSize: 9, bold: true, color: '#333' } }
+            };
+            const chart = new google.visualization.ComboChart(document.getElementById(containerId));
+            chart.draw(data, options);
+        }
+
+        const inputsToBind = [];
+        for(let i=1; i<=5; i++) { 
+            inputsToBind.push(`in-a-w${i}-plan`, `in-a-w${i}-act`, `in-b-w${i}-plan`, `in-b-w${i}-act`, `in-c-w${i}-std`, `in-c-w${i}-act`); 
+        }
+        inputsToBind.forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.addEventListener('input', calcMatrixPerformance);
+        });
+
+        document.getElementById('in-photo').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const bgUrl = `url('${event.target.result}')`;
+                    document.getElementById('out-header-bg').style.backgroundImage = bgUrl;
+                    document.querySelectorAll('.dash-header').forEach(el => el.style.backgroundImage = bgUrl);
+                }; reader.readAsDataURL(file);
+            }
+        });
+
+        // --- FITUR UNDUH KE GAMBAR (.PNG) ---
+        function downloadAsImage(btn) {
+            const originalText = btn.innerText;
+            btn.innerText = "Memproses Gambar HD...";
+            btn.disabled = true;
+            btn.style.opacity = "0.7";
+
+            const captureArea = document.getElementById('printable-dashboard');
+            
+            html2canvas(captureArea, {
+                scale: 2, // Kualitas HD
+                useCORS: true, 
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                const plantName = document.getElementById('in-plant').value || 'PLANT';
+                const weekName = document.getElementById('in-week').value || 'WEEK';
+                const safeFileName = `PERF_ASSY_${plantName}_${weekName}.png`.replace(/[^a-z0-9]/gi, '_').toUpperCase();
+
+                const link = document.createElement('a');
+                link.download = safeFileName;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+
+                btn.innerText = originalText;
+                btn.disabled = false;
+                btn.style.opacity = "1";
+            }).catch(err => {
+                console.error("Gagal membuat gambar:", err);
+                alert("Terjadi kesalahan saat memproses gambar.");
+                btn.innerText = originalText;
+                btn.disabled = false;
+                btn.style.opacity = "1";
+            });
+        }
+
+        // Init
+        toggleSections();
+        renderLeaderEditor(); 
+        renderAnalysisEditor(); 
+        renderProdLogEditor();
+        renderSpaChangeEditor();
+        renderMachineIssueEditor(); 
+        renderQualityIssueEditor();
+        
+        document.getElementById('toggle-w5').checked = false;
+        calcMatrixPerformance();
+    </script>
+</body>
+</html>

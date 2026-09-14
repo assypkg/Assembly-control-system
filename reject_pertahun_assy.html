@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Laporan Reject Assembling 2026</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS (XLSX) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- html2canvas untuk Ekspor Gambar -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s ease, color 0.3s ease; }
+        .dropzone { border: 2px dashed #475569; transition: all 0.3s ease; }
+        .dropzone.dragover { border-color: #10b981; background-color: rgba(16, 185, 129, 0.1); }
+        
+        /* Table Grid Borders */
+        table.bordered-table th, table.bordered-table td {
+            border: 1px solid #334155;
+            padding: 8px 12px;
+        }
+
+        /* Area Capture CSS */
+        .capture-container {
+            width: 100%;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+        }
+
+        /* Modifikasi proporsi ketika fungsi gambar dieksekusi */
+        .rendering-mode {
+            width: 750px !important;
+            max-width: 750px !important;
+            padding: 24px !important;
+            background-color: #0f172a !important;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        /* Fix Layout KPI Grid khusus saat html2canvas Rendering */
+        .rendering-mode #kpi-grid-container {
+            display: grid !important;
+            grid-template-cols: repeat(3, minmax(0, 1fr)) !important; /* Di-render 3 kolom agar lega */
+            gap: 12px !important;
+        }
+
+        .rendering-mode .kpi-card-inner {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: flex-start !important;
+            justify-content: space-between !important;
+            padding: 12px !important;
+            min-height: 90px !important;
+            box-sizing: border-box !important;
+        }
+
+        .rendering-mode .kpi-card-inner .kpi-icon {
+            position: relative !important;
+            top: 0 !important;
+            right: 0 !important;
+            flex-shrink: 0 !important;
+        }
+
+        /* Print Optimization */
+        @media print {
+            .no-print { display: none !important; }
+            body { 
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background-color: #0f172a !important;
+                color: #f8fafc !important;
+            }
+            .print-container { 
+                margin: 0 !important; 
+                padding: 8px !important; 
+                max-width: 100% !important; 
+                width: 100% !important;
+                overflow: visible !important;
+            }
+            .theme-card { 
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                box-shadow: none !important;
+                margin-bottom: 16px !important;
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+                overflow: visible !important;
+            }
+            canvas {
+                max-width: 100% !important;
+                height: auto !important;
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+            }
+        }
+    </style>
+</head>
+<body id="main-body" class="bg-slate-900 text-slate-100 min-h-screen flex flex-col md:flex-row" data-theme="slate">
+
+    <!-- Left Sidebar (Control Panel) -->
+    <aside id="sidebar-panel" class="no-print w-full md:w-72 bg-slate-800 border-r border-slate-700 p-4 flex flex-col justify-between shrink-0 min-h-screen sticky top-0 transition-colors duration-300">
+        <div class="space-y-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-emerald-500/10 p-2 rounded-xl text-emerald-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                </div>
+                <div>
+                    <h2 class="text-sm font-bold text-emerald-400 tracking-wide">CONTROL PANEL</h2>
+                    <p class="text-[10px] text-slate-400">Assembling Dept 2026</p>
+                </div>
+            </div>
+
+            <!-- Theme Background Selector -->
+            <div class="space-y-1.5">
+                <label class="text-[11px] font-semibold text-slate-300 uppercase tracking-wider flex items-center space-x-1">
+                    <span>Pilih Warna Tema Latar</span>
+                </label>
+                <div class="grid grid-cols-3 gap-1.5">
+                    <button onclick="setTheme('slate')" id="btn-theme-slate" class="px-2 py-1.5 text-[11px] font-medium rounded-lg border-2 border-emerald-500 bg-slate-900 text-white transition shadow">Dark Slate</button>
+                    <button onclick="setTheme('navy')" id="btn-theme-navy" class="px-2 py-1.5 text-[11px] font-medium rounded-lg border border-slate-600 bg-blue-950 text-white transition shadow">Deep Navy</button>
+                    <button onclick="setTheme('charcoal')" id="btn-theme-charcoal" class="px-2 py-1.5 text-[11px] font-medium rounded-lg border border-slate-600 bg-zinc-950 text-white transition shadow">Charcoal</button>
+                </div>
+            </div>
+
+            <!-- Header Image Upload Option -->
+            <div class="space-y-1.5 pt-2 border-t border-slate-700">
+                <label class="text-[11px] font-semibold text-slate-300 uppercase tracking-wider flex items-center space-x-1">
+                    <span>Custom Gambar Header</span>
+                </label>
+                <label class="dropzone bg-slate-700/50 hover:bg-slate-700 p-2.5 rounded-lg cursor-pointer flex flex-col items-center justify-center text-center space-y-1">
+                    <span class="text-[11px] font-medium text-slate-200">Klik untuk Ganti Gambar Header</span>
+                    <input type="file" id="header-image-input" class="hidden" accept="image/*">
+                </label>
+                <button onclick="resetHeaderImage()" class="w-full text-center text-[10px] text-slate-400 hover:text-emerald-400 underline">Reset ke Default</button>
+            </div>
+
+            <!-- Upload Box -->
+            <div class="space-y-1.5 pt-2 border-t border-slate-700">
+                <label class="text-[11px] font-semibold text-slate-300 uppercase tracking-wider flex items-center space-x-1">
+                    <span>1. Upload File Excel</span>
+                </label>
+                <label id="dropzone-label" class="dropzone bg-slate-700/50 hover:bg-slate-700 p-3 rounded-lg cursor-pointer flex flex-col items-center justify-center text-center space-y-1">
+                    <svg class="w-6 h-6 text-emerald-400 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                    <span id="upload-text" class="text-[11px] font-medium text-slate-200">Drag & Drop atau Klik File (.xlsx)</span>
+                    <input type="file" id="excel-file-input" class="hidden" accept=".xlsx, .xls, .csv">
+                </label>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="space-y-1.5 pt-2 border-t border-slate-700">
+                <label class="text-[11px] font-semibold text-slate-300 uppercase tracking-wider flex items-center space-x-1">
+                    <span>2. Aksi Dokumen</span>
+                </label>
+                <button onclick="window.print()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2 px-3 rounded-lg text-xs flex items-center justify-center space-x-2 transition shadow-lg">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                    <span>Cetak / Simpan PDF</span>
+                </button>
+                <button onclick="simpanKeGambar()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 px-3 rounded-lg text-xs flex items-center justify-center space-x-2 transition shadow-lg mt-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    <span>Simpan ke Gambar (.png)</span>
+                </button>
+            </div>
+
+            <!-- Manual Input Trend Chart -->
+            <div class="space-y-1.5 pt-2 border-t border-slate-700">
+                <label class="text-[11px] font-semibold text-slate-300 uppercase tracking-wider flex items-center space-x-1">
+                    <span>3. Input Manual Kinerja Bulanan</span>
+                </label>
+                <div class="bg-slate-700/40 p-2 rounded-lg border border-slate-700 space-y-1.5">
+                    <select id="input-bulan" class="w-full bg-slate-800 text-slate-200 border border-slate-600 rounded p-1.5 text-[11px] outline-none focus:border-emerald-500">
+                        <option value="JANUARI">Januari</option>
+                        <option value="FEBRUARI">Februari</option>
+                        <option value="MARET">Maret</option>
+                        <option value="APRIL">April</option>
+                        <option value="MEI">Mei</option>
+                        <option value="JUNI">Juni</option>
+                        <option value="JULI">Juli</option>
+                        <option value="AGUSTUS">Agustus</option>
+                        <option value="SEPTEMBER">September</option>
+                        <option value="OKTOBER">Oktober</option>
+                        <option value="NOVEMBER">November</option>
+                        <option value="DESEMBER">Desember</option>
+                    </select>
+                    <input type="number" id="input-hasil" placeholder="Total Hasil (Order)" class="w-full bg-slate-800 text-slate-200 border border-slate-600 rounded p-1.5 text-[11px] outline-none focus:border-emerald-500">
+                    <input type="number" id="input-ng" placeholder="Total Keseluruhan NG" class="w-full bg-slate-800 text-slate-200 border border-slate-600 rounded p-1.5 text-[11px] outline-none focus:border-emerald-500">
+                    <button onclick="tambahDataManual()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-1.5 px-3 rounded text-[11px] transition shadow">
+                        Tambahkan ke Grafik
+                    </button>
+                </div>
+            </div>
+
+            <!-- 4. Backup & Restore Data -->
+            <div class="space-y-1.5 pt-2 border-t border-slate-700">
+                <label class="text-[11px] font-semibold text-slate-300 uppercase tracking-wider flex items-center space-x-1">
+                    <span>4. Backup & Restore Data</span>
+                </label>
+                <div class="grid grid-cols-2 gap-1.5">
+                    <button onclick="backupDashboardData()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium py-1.5 px-2 rounded text-[11px] transition shadow flex items-center justify-center space-x-1">
+                        <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        <span>Backup Data</span>
+                    </button>
+                    <label class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium py-1.5 px-2 rounded text-[11px] transition shadow text-center cursor-pointer flex items-center justify-center">
+                        <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                        <span>Upload Backup</span>
+                        <input type="file" id="backup-file-input" class="hidden" accept=".json">
+                    </label>
+                </div>
+            </div>
+
+            <!-- Status Box -->
+            <div class="bg-slate-700/40 p-3 rounded-lg border border-slate-700 space-y-1">
+                <p class="text-[10px] font-semibold text-slate-300">Status Sistem:</p>
+                <div class="flex items-center space-x-2">
+                    <span id="status-dot" class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
+                    <span id="status-text" class="text-[11px] text-slate-300">Menunggu File Excel</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-700 text-center text-[10px] text-slate-500">
+            Assembling Dept &bull; 2026
+        </div>
+    </aside>
+
+    <!-- Main Dashboard Preview Area -->
+    <main class="flex-1 p-2 md:p-3 print-container w-full overflow-y-auto">
+        <div id="captureArea" class="capture-container space-y-4">
+            
+            <!-- Header Banner -->
+            <div id="dashboard-header-banner" class="theme-card relative overflow-hidden rounded-xl border border-slate-700 bg-slate-800 p-6 md:p-10 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center transition-all w-full">
+                <div id="header-bg-overlay" class="absolute inset-0 bg-cover bg-center opacity-25 pointer-events-none hidden"></div>
+                
+                <div class="relative z-10 flex items-center space-x-4">
+                    <div class="bg-emerald-500/20 p-3.5 rounded-2xl text-emerald-400">
+                        <svg class="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    </div>
+                    <div class="space-y-1">
+                        <h1 class="text-2xl md:text-3xl font-extrabold text-white tracking-wide">DASHBOARD LAPORAN REJECT ASSEMBLING</h1>
+                        <p class="text-sm text-slate-300">Analisis Kinerja Produksi, Reject Pilihan, & Reject Bongkaran Tahun 2026</p>
+                    </div>
+                </div>
+                <div class="relative z-10 text-right mt-3 md:mt-0 bg-slate-900/80 backdrop-blur px-4 py-2.5 rounded-xl border border-slate-700">
+                    <p class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Periode Laporan:</p>
+                    <p id="label-periode" class="text-sm font-bold text-emerald-400 mt-0.5">Belum Dimuat</p>
+                </div>
+            </div>
+
+            <!-- Welcome Banner -->
+            <div id="welcome-banner" class="theme-card bg-slate-800 border border-emerald-500/40 rounded-xl p-5 text-center shadow-lg space-y-1.5 w-full">
+                <h3 class="text-sm font-semibold text-emerald-300">Silakan Upload File Excel Laporan Anda di Sidebar Kiri</h3>
+                <p class="text-xs text-slate-300">Seluruh KPI sejajar presisi, grafik, tabel ber-border, diagram rekap, dan rangking reject akan terisi otomatis.</p>
+            </div>
+
+            <!-- KPI Summary Cards -->
+            <div id="kpi-grid-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 w-full">
+                
+                <!-- Card 1 -->
+                <div class="theme-card bg-slate-800 border border-slate-700 rounded-xl p-3.5 shadow-lg flex items-start justify-between kpi-card-inner">
+                    <div class="flex flex-col justify-between h-full space-y-1 min-w-0 pr-2">
+                        <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 leading-tight">Total Order</p>
+                        <h3 id="kpi-order" class="text-base font-extrabold text-white tracking-tight leading-none my-1">0</h3>
+                        <p class="text-[9px] text-emerald-400 leading-tight">Akumulasi Order</p>
+                    </div>
+                    <div class="kpi-icon bg-blue-500/20 p-2 rounded-xl text-blue-400 shrink-0 flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="theme-card bg-slate-800 border border-slate-700 rounded-xl p-3.5 shadow-lg flex items-start justify-between kpi-card-inner">
+                    <div class="flex flex-col justify-between h-full space-y-1 min-w-0 pr-2">
+                        <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 leading-tight">Total Reject Pilihan</p>
+                        <h3 id="kpi-pilihan" class="text-base font-extrabold text-white tracking-tight leading-none my-1">0</h3>
+                        <p class="text-[9px] text-sky-400 leading-tight">Reject Pilihan</p>
+                    </div>
+                    <div class="kpi-icon bg-sky-500/20 p-2 rounded-xl text-sky-400 shrink-0 flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 022 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="theme-card bg-slate-800 border border-slate-700 rounded-xl p-3.5 shadow-lg flex items-start justify-between kpi-card-inner">
+                    <div class="flex flex-col justify-between h-full space-y-1 min-w-0 pr-2">
+                        <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 leading-tight">Total Reject Bongkaran</p>
+                        <h3 id="kpi-bongkaran" class="text-base font-extrabold text-white tracking-tight leading-none my-1">0</h3>
+                        <p class="text-[9px] text-amber-400 leading-tight">Reject Proses</p>
+                    </div>
+                    <div class="kpi-icon bg-amber-500/20 p-2 rounded-xl text-amber-400 shrink-0 flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="theme-card bg-slate-800 border border-slate-700 rounded-xl p-3.5 shadow-lg flex items-start justify-between kpi-card-inner">
+                    <div class="flex flex-col justify-between h-full space-y-1 min-w-0 pr-2">
+                        <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 leading-tight">Total Keseluruhan NG</p>
+                        <h3 id="kpi-total-reject" class="text-base font-extrabold text-white tracking-tight leading-none my-1">0</h3>
+                        <p class="text-[9px] text-purple-400 leading-tight">Pilihan + Bongkaran</p>
+                    </div>
+                    <div class="kpi-icon bg-purple-500/20 p-2 rounded-xl text-purple-400 shrink-0 flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="theme-card bg-slate-800 border border-slate-700 rounded-xl p-3.5 shadow-lg flex items-start justify-between kpi-card-inner">
+                    <div class="flex flex-col justify-between h-full space-y-1 min-w-0 pr-2">
+                        <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 leading-tight">% Keseluruhan NG</p>
+                        <h3 id="kpi-pct-total-reject" class="text-base font-extrabold text-white tracking-tight leading-none my-1">0%</h3>
+                        <p class="text-[9px] text-rose-400 leading-tight">Rasio thd Order</p>
+                    </div>
+                    <div class="kpi-icon bg-rose-500/20 p-2 rounded-xl text-rose-400 shrink-0 flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Table 1 -->
+            <div class="theme-card bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-lg space-y-3 w-full">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    <h3 class="text-sm font-semibold text-white">1. Rekapitulasi Jumlah Order & Persentase Reject per Type Produk</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse bordered-table" id="table-type-summary">
+                        <thead>
+                            <tr class="bg-slate-700 text-slate-200 text-[11px] uppercase tracking-wider">
+                                <th class="py-2.5 px-3">Type Produk</th>
+                                <th class="py-2.5 px-3">Jumlah Order</th>
+                                <th class="py-2.5 px-3">Qty Pilihan</th>
+                                <th class="py-2.5 px-3">% Pilihan</th>
+                                <th class="py-2.5 px-3">Qty Bongkaran</th>
+                                <th class="py-2.5 px-3">% Bongkaran</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-700 text-xs text-slate-300">
+                            <tr><td colspan="6" class="py-3 text-center text-slate-500">Belum ada data di-load</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Table 2 -->
+            <div class="theme-card bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-lg space-y-3 w-full">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                    <h3 class="text-sm font-semibold text-white">2. Produk Reject Pilihan Tertinggi per Type</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse bordered-table" id="table-top-pilihan">
+                        <thead>
+                            <tr class="bg-slate-700 text-slate-200 text-[11px] uppercase tracking-wider">
+                                <th class="py-2.5 px-3 w-[18%]">Type</th>
+                                <th class="py-2.5 px-3 w-[42%]">Nama Produk</th>
+                                <th class="py-2.5 px-3 w-[15%]">Jumlah Order</th>
+                                <th class="py-2.5 px-3 w-[15%]">Qty Reject Pilihan</th>
+                                <th class="py-2.5 px-3 w-[10%]">% Terhadap Order</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-700 text-xs text-slate-300">
+                            <tr><td colspan="5" class="py-3 text-center text-slate-500">Belum ada data</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Table 3 -->
+            <div class="theme-card bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-lg space-y-3 w-full">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/></svg>
+                    <h3 class="text-sm font-semibold text-white">3. Produk Reject Bongkaran Tertinggi per Type</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse bordered-table" id="table-top-bongkaran">
+                        <thead>
+                            <tr class="bg-slate-700 text-slate-200 text-[11px] uppercase tracking-wider">
+                                <th class="py-2.5 px-3 w-[18%]">Type</th>
+                                <th class="py-2.5 px-3 w-[42%]">Nama Produk</th>
+                                <th class="py-2.5 px-3 w-[15%]">Jumlah Order</th>
+                                <th class="py-2.5 px-3 w-[15%]">Qty Reject Bongkaran</th>
+                                <th class="py-2.5 px-3 w-[10%]">% Terhadap Order</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-700 text-xs text-slate-300">
+                            <tr><td colspan="5" class="py-3 text-center text-slate-500">Belum ada data</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 w-full">
+                <div class="theme-card bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-lg">
+                    <div class="flex items-center space-x-2 mb-3">
+                        <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>
+                        <h3 class="text-sm font-semibold text-white">Grafik Order per Type Produk</h3>
+                    </div>
+                    <div class="relative h-64">
+                        <canvas id="typeChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="theme-card bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-lg">
+                    <div class="flex items-center space-x-2 mb-3">
+                        <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
+                        <h3 class="text-sm font-semibold text-white">Komparasi % Reject Pilihan vs Bongkaran</h3>
+                    </div>
+                    <div class="relative h-64">
+                        <canvas id="ratioChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trend Chart Section -->
+            <div class="theme-card bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-lg space-y-3 w-full">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    <h3 class="text-sm font-semibold text-white">Grafik Kinerja Bulanan (Total Hasil, Total NG, Persentase)</h3>
+                </div>
+                <div class="relative h-72">
+                    <canvas id="paretoChart"></canvas>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <!-- JavaScript Theme, Backup/Restore, & Dashboard Logic -->
+    <script>
+        let typeChartInstance = null;
+        let ratioChartInstance = null;
+        let paretoChartInstance = null;
+        
+        let globalParetoData = {};
+        const monthOrder = ['JANUARI', 'FEBRUARI', 'MARET', 'APRIL', 'MEI', 'JUNI', 'JULI', 'AGUSTUS', 'SEPTEMBER', 'OKTOBER', 'NOVEMBER', 'DESEMBER'];
+
+        function setTheme(theme) {
+            const body = document.getElementById('main-body');
+            const btnSlate = document.getElementById('btn-theme-slate');
+            const btnNavy = document.getElementById('btn-theme-navy');
+            const btnCharcoal = document.getElementById('btn-theme-charcoal');
+
+            btnSlate.className = "px-2 py-1.5 text-[11px] font-medium rounded-lg border border-slate-600 bg-slate-900 text-white transition shadow";
+            btnNavy.className = "px-2 py-1.5 text-[11px] font-medium rounded-lg border border-slate-600 bg-blue-950 text-white transition shadow";
+            btnCharcoal.className = "px-2 py-1.5 text-[11px] font-medium rounded-lg border border-slate-600 bg-zinc-950 text-white transition shadow";
+
+            if (theme === 'slate') {
+                body.className = "bg-slate-900 text-slate-100 min-h-screen flex flex-col md:flex-row";
+                btnSlate.className = "px-2 py-1.5 text-[11px] font-medium rounded-lg border-2 border-emerald-500 bg-slate-900 text-white transition shadow";
+            } else if (theme === 'navy') {
+                body.className = "bg-blue-950 text-slate-100 min-h-screen flex flex-col md:flex-row";
+                btnNavy.className = "px-2 py-1.5 text-[11px] font-medium rounded-lg border-2 border-emerald-500 bg-blue-950 text-white transition shadow";
+            } else if (theme === 'charcoal') {
+                body.className = "bg-zinc-950 text-slate-100 min-h-screen flex flex-col md:flex-row";
+                btnCharcoal.className = "px-2 py-1.5 text-[11px] font-medium rounded-lg border-2 border-emerald-500 bg-zinc-950 text-white transition shadow";
+            }
+        }
+
+        const headerImageInput = document.getElementById('header-image-input');
+        const headerBgOverlay = document.getElementById('header-bg-overlay');
+
+        headerImageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    headerBgOverlay.style.backgroundImage = `url('${evt.target.result}')`;
+                    headerBgOverlay.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function resetHeaderImage() {
+            headerBgOverlay.style.backgroundImage = 'none';
+            headerBgOverlay.classList.add('hidden');
+            headerImageInput.value = '';
+        }
+
+        const fileInput = document.getElementById('excel-file-input');
+        const dropzoneLabel = document.getElementById('dropzone-label');
+        const uploadText = document.getElementById('upload-text');
+        const welcomeBanner = document.getElementById('welcome-banner');
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzoneLabel.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropzoneLabel.classList.add('dragover');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzoneLabel.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropzoneLabel.classList.remove('dragover');
+            }, false);
+        });
+
+        dropzoneLabel.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            if (dt.files.length > 0) handleFile(dt.files[0]);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) handleFile(e.target.files[0]);
+        });
+
+        function handleFile(file) {
+            uploadText.innerText = file.name;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                processWorkbook(workbook);
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function processWorkbook(workbook) {
+            let sheetName = workbook.SheetNames[0];
+            const foundSheet = workbook.SheetNames.find(s => s.toUpperCase().includes('JANUARI') || s.toUpperCase().includes('LAPORAN'));
+            if (foundSheet) sheetName = foundSheet;
+
+            document.getElementById('label-periode').innerText = sheetName.toUpperCase();
+            
+            const worksheet = workbook.Sheets[sheetName];
+            const jsonRows = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+
+            let productsMap = {};
+            let typeSummary = {};
+
+            for (let i = 7; i < jsonRows.length; i++) {
+                const row = jsonRows[i];
+                if (!row || (row[1] == null && row[2] == null)) continue;
+                
+                let namaProduk = String(row[1] || '').trim();
+                let prodType = String(row[2] || '').trim();
+                if (!prodType || prodType.toUpperCase() === 'TYPE' || prodType === 'nan') continue;
+
+                let orderAll = parseFloat(row[6]) || 0;
+                
+                let getVal = (col) => parseFloat(row[col]) || 0;
+                let rejBase = getVal(7);
+                let rejRing = getVal(9);
+                let rejInnerBase = getVal(11);
+                let rejMechanism = getVal(13);
+                let rejMetal = getVal(15);
+                let rejCover = getVal(17);
+                let rejInnerCover = getVal(19);
+
+                let totalPilihan = rejBase + rejRing + rejInnerBase + rejMechanism + rejMetal + rejCover + rejInnerCover;
+                let rejBongkaran = getVal(21);
+
+                if (!typeSummary[prodType]) {
+                    typeSummary[prodType] = { order: 0, pilihan: 0, bongkaran: 0 };
+                }
+                typeSummary[prodType].order += orderAll;
+                typeSummary[prodType].pilihan += totalPilihan;
+                typeSummary[prodType].bongkaran += rejBongkaran;
+
+                productsMap[namaProduk + '_' + prodType] = {
+                    name: namaProduk,
+                    type: prodType,
+                    order: orderAll,
+                    pilihan: totalPilihan,
+                    bongkaran: rejBongkaran
+                };
+            }
+
+            // Process Monthly Pareto Data
+            workbook.SheetNames.forEach(sName => {
+                let upperS = sName.toUpperCase();
+                let matchedM = monthOrder.find(m => upperS.includes(m));
+                if (matchedM) {
+                    let mSheet = workbook.Sheets[sName];
+                    let mRows = XLSX.utils.sheet_to_json(mSheet, {header: 1});
+                    let mOrder = 0;
+                    let mNg = 0;
+                    for (let r = 7; r < mRows.length; r++) {
+                        let row = mRows[r];
+                        if (!row || (row[1] == null && row[2] == null)) continue;
+                        let ord = parseFloat(row[6]) || 0;
+                        let getV = (c) => parseFloat(row[c]) || 0;
+                        let pil = getV(7)+getV(9)+getV(11)+getV(13)+getV(15)+getV(17)+getV(19);
+                        let bon = getV(21);
+                        mOrder += ord;
+                        mNg += (pil + bon);
+                    }
+                    if (mOrder > 0 || mNg > 0) {
+                        let pct = mOrder > 0 ? (mNg / mOrder) * 100 : 0;
+                        globalParetoData[matchedM] = { hasil: mOrder, ng: mNg, pct: pct };
+                    }
+                }
+            });
+
+            if (Object.keys(globalParetoData).length === 0) {
+                let totalH = Object.values(typeSummary).reduce((a,b)=>a+b.order,0);
+                let totalN = Object.values(typeSummary).reduce((a,b)=>a+b.pilihan+b.bongkaran,0);
+                let fallbackMonth = monthOrder.find(m => sheetName.toUpperCase().includes(m)) || sheetName.toUpperCase();
+                globalParetoData[fallbackMonth] = { hasil: totalH, ng: totalN, pct: totalH>0?(totalN/totalH)*100:0 };
+            }
+
+            updateDashboardUI(typeSummary, productsMap);
+        }
+
+        function updateDashboardUI(typeSummary, productsMap) {
+            welcomeBanner.style.display = 'none';
+            document.getElementById('status-dot').className = 'w-2 h-2 bg-emerald-500 rounded-full';
+            document.getElementById('status-text').innerText = 'Data Berhasil Dimuat';
+
+            let totalOrderAll = 0;
+            let totalPilihanAll = 0;
+            let totalBongkaranAll = 0;
+
+            Object.values(typeSummary).forEach(t => {
+                totalOrderAll += t.order;
+                totalPilihanAll += t.pilihan;
+                totalBongkaranAll += t.bongkaran;
+            });
+
+            document.getElementById('kpi-order').innerText = totalOrderAll.toLocaleString('id-ID');
+            document.getElementById('kpi-pilihan').innerText = totalPilihanAll.toLocaleString('id-ID');
+            document.getElementById('kpi-bongkaran').innerText = totalBongkaranAll.toLocaleString('id-ID');
+            
+            let totalRejectAll = totalPilihanAll + totalBongkaranAll;
+            document.getElementById('kpi-total-reject').innerText = totalRejectAll.toLocaleString('id-ID');
+            
+            let totalPctReject = totalOrderAll > 0 ? (totalRejectAll / totalOrderAll) * 100 : 0;
+            document.getElementById('kpi-pct-total-reject').innerText = totalPctReject.toFixed(2) + '%';
+
+            let t1Body = document.querySelector('#table-type-summary tbody');
+            t1Body.innerHTML = '';
+            let typeLabels = [];
+            let orderValues = [];
+            let pilihanPctValues = [];
+            let bongkaranPctValues = [];
+
+            Object.entries(typeSummary).forEach(([type, data]) => {
+                let pctPilihan = data.order > 0 ? (data.pilihan / data.order) * 100 : 0;
+                let pctBongkaran = data.order > 0 ? (data.bongkaran / data.order) * 100 : 0;
+
+                typeLabels.push(type);
+                orderValues.push(data.order);
+                pilihanPctValues.push(pctPilihan.toFixed(2));
+                bongkaranPctValues.push(pctBongkaran.toFixed(2));
+
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 font-medium text-white">${type}</td>
+                    <td class="py-2.5 px-3">${data.order.toLocaleString('id-ID')}</td>
+                    <td class="py-2.5 px-3 text-blue-400 font-medium">${data.pilihan.toLocaleString('id-ID')}</td>
+                    <td class="py-2.5 px-3 font-bold">${pctPilihan.toFixed(2)}%</td>
+                    <td class="py-2.5 px-3 text-amber-400 font-medium">${data.bongkaran.toLocaleString('id-ID')}</td>
+                    <td class="py-2.5 px-3 font-bold">${pctBongkaran.toFixed(2)}%</td>
+                `;
+                t1Body.appendChild(tr);
+            });
+
+            let totalPctPilihan = totalOrderAll > 0 ? (totalPilihanAll / totalOrderAll) * 100 : 0;
+            let totalPctBongkaran = totalOrderAll > 0 ? (totalBongkaranAll / totalOrderAll) * 100 : 0;
+            let trTotal = document.createElement('tr');
+            trTotal.className = 'border-t-2 border-slate-500 font-bold text-white bg-slate-700/40';
+            trTotal.innerHTML = `
+                <td class="py-2.5 px-3">TOTAL</td>
+                <td class="py-2.5 px-3">${totalOrderAll.toLocaleString('id-ID')}</td>
+                <td class="py-2.5 px-3 text-blue-400">${totalPilihanAll.toLocaleString('id-ID')}</td>
+                <td class="py-2.5 px-3">${totalPctPilihan.toFixed(2)}%</td>
+                <td class="py-2.5 px-3 text-amber-400">${totalBongkaranAll.toLocaleString('id-ID')}</td>
+                <td class="py-2.5 px-3">${totalPctBongkaran.toFixed(2)}%</td>
+            `;
+            t1Body.appendChild(trTotal);
+
+            let types = Object.keys(typeSummary);
+            let topPilihanList = [];
+            let topBongkaranList = [];
+
+            types.forEach(t => {
+                let items = Object.values(productsMap).filter(p => p.type === t);
+                if (items.length > 0) {
+                    let getPctP = (item) => item.order > 0 ? (item.pilihan / item.order) : 0;
+                    let getPctB = (item) => item.order > 0 ? (item.bongkaran / item.order) : 0;
+                    
+                    let maxP = items.reduce((max, item) => getPctP(item) > getPctP(max) ? item : max, items[0]);
+                    let maxB = items.reduce((max, item) => getPctB(item) > getPctB(max) ? item : max, items[0]);
+                    
+                    if (maxP.pilihan > 0) topPilihanList.push(maxP);
+                    if (maxB.bongkaran > 0) topBongkaranList.push(maxB);
+                }
+            });
+
+            let t2Body = document.querySelector('#table-top-pilihan tbody');
+            t2Body.innerHTML = '';
+            topPilihanList.forEach(item => {
+                let pct = item.order > 0 ? (item.pilihan / item.order) * 100 : 0;
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 w-[18%]"><span class="bg-slate-700 px-2 py-0.5 rounded text-[11px] text-slate-300 font-medium">${item.type}</span></td>
+                    <td class="py-2.5 px-3 w-[42%] text-white font-medium">${item.name}</td>
+                    <td class="py-2.5 px-3 w-[15%]">${item.order.toLocaleString('id-ID')}</td>
+                    <td class="py-2.5 px-3 w-[15%] text-blue-400 font-bold">${item.pilihan.toLocaleString('id-ID')}</td>
+                    <td class="py-2.5 px-3 w-[10%] font-semibold text-sky-400">${pct.toFixed(2)}%</td>
+                `;
+                t2Body.appendChild(tr);
+            });
+
+            let t3Body = document.querySelector('#table-top-bongkaran tbody');
+            t3Body.innerHTML = '';
+            topBongkaranList.forEach(item => {
+                let pct = item.order > 0 ? (item.bongkaran / item.order) * 100 : 0;
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 w-[18%]"><span class="bg-slate-700 px-2 py-0.5 rounded text-[11px] text-slate-300 font-medium">${item.type}</span></td>
+                    <td class="py-2.5 px-3 w-[42%] text-white font-medium">${item.name}</td>
+                    <td class="py-2.5 px-3 w-[15%]">${item.order.toLocaleString('id-ID')}</td>
+                    <td class="py-2.5 px-3 w-[15%] text-amber-400 font-bold">${item.bongkaran.toLocaleString('id-ID')}</td>
+                    <td class="py-2.5 px-3 w-[10%] font-semibold text-amber-400">${pct.toFixed(2)}%</td>
+                `;
+                t3Body.appendChild(tr);
+            });
+
+            renderCharts(typeLabels, orderValues, pilihanPctValues, bongkaranPctValues);
+            renderParetoChart();
+        }
+
+        function renderCharts(labels, orders, pilihanPct, bongkaranPct) {
+            const ctx1 = document.getElementById('typeChart').getContext('2d');
+            if (typeChartInstance) typeChartInstance.destroy();
+            typeChartInstance = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Jumlah Order',
+                        data: orders,
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: { duration: 0 },
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } },
+                        y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8' } }
+                    }
+                }
+            });
+
+            const ctx2 = document.getElementById('ratioChart').getContext('2d');
+            if (ratioChartInstance) ratioChartInstance.destroy();
+            ratioChartInstance = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: '% Reject Pilihan',
+                            data: pilihanPct,
+                            backgroundColor: '#38bdf8',
+                            borderRadius: 4
+                        },
+                        {
+                            label: '% Reject Bongkaran',
+                            data: bongkaranPct,
+                            backgroundColor: '#fbbf24',
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: { duration: 0 },
+                    plugins: { legend: { labels: { color: '#94a3b8' } } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } },
+                        y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8' } }
+                    }
+                }
+            });
+        }
+
+        function renderParetoChart() {
+            let sortedKeys = Object.keys(globalParetoData).sort((a, b) => {
+                let idxA = monthOrder.indexOf(a);
+                let idxB = monthOrder.indexOf(b);
+                if(idxA === -1) idxA = 99;
+                if(idxB === -1) idxB = 99;
+                return idxA - idxB;
+            });
+
+            const pLabels = sortedKeys;
+            const pHasil = sortedKeys.map(k => globalParetoData[k].hasil);
+            const pNg = sortedKeys.map(k => globalParetoData[k].ng);
+            const pPct = sortedKeys.map(k => globalParetoData[k].pct);
+
+            const ctx3 = document.getElementById('paretoChart').getContext('2d');
+            if (paretoChartInstance) paretoChartInstance.destroy();
+            paretoChartInstance = new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: pLabels,
+                    datasets: [
+                        {
+                            label: 'Total Hasil (Order)',
+                            data: pHasil,
+                            backgroundColor: '#3b82f6',
+                            borderRadius: 4,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Total NG (Reject)',
+                            data: pNg,
+                            backgroundColor: '#ef4444',
+                            borderRadius: 4,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Persentase (%) NG',
+                            data: pPct,
+                            type: 'line',
+                            borderColor: '#10b981',
+                            backgroundColor: '#10b981',
+                            borderWidth: 2,
+                            yAxisID: 'y1',
+                            tension: 0.2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: { duration: 0 },
+                    plugins: { legend: { labels: { color: '#94a3b8' } } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8', font: {size: 10} } },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: { display: true, text: 'Jumlah Qty', color: '#94a3b8', font: {size: 10} },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: { display: true, text: 'Persentase (%)', color: '#10b981', font: {size: 10} },
+                            grid: { drawOnChartArea: false },
+                            ticks: { color: '#10b981' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function tambahDataManual() {
+            let bulan = document.getElementById('input-bulan').value;
+            let hasil = parseFloat(document.getElementById('input-hasil').value);
+            let ng = parseFloat(document.getElementById('input-ng').value);
+
+            if (isNaN(hasil) || isNaN(ng)) {
+                alert("Harap masukkan angka yang valid untuk Hasil dan NG.");
+                return;
+            }
+
+            let pct = hasil > 0 ? (ng / hasil) * 100 : 0;
+            globalParetoData[bulan] = { hasil: hasil, ng: ng, pct: pct };
+            
+            renderParetoChart();
+            
+            document.getElementById('input-hasil').value = '';
+            document.getElementById('input-ng').value = '';
+            
+            document.getElementById('status-dot').className = 'w-2 h-2 bg-blue-500 rounded-full animate-pulse';
+            document.getElementById('status-text').innerText = 'Grafik Diperbarui Manual';
+        }
+
+        function backupDashboardData() {
+            const backupPayload = {
+                version: "1.0",
+                date: new Date().toISOString(),
+                globalParetoData: globalParetoData
+            };
+            
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupPayload, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `dashboard_reject_backup_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+
+            document.getElementById('status-dot').className = 'w-2 h-2 bg-emerald-500 rounded-full';
+            document.getElementById('status-text').innerText = 'Backup Data Berhasil Diunduh';
+        }
+
+        const backupFileInput = document.getElementById('backup-file-input');
+        if (backupFileInput) {
+            backupFileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(evt) {
+                        try {
+                            const parsed = JSON.parse(evt.target.result);
+                            if (parsed && parsed.globalParetoData) {
+                                globalParetoData = parsed.globalParetoData;
+                                renderParetoChart();
+                                
+                                document.getElementById('status-dot').className = 'w-2 h-2 bg-emerald-500 rounded-full';
+                                document.getElementById('status-text').innerText = 'Data Backup Berhasil Dipulihkan';
+                            } else {
+                                alert("Format file backup tidak valid.");
+                            }
+                        } catch (err) {
+                            alert("Gagal membaca file JSON. Pastikan file backup benar.");
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            });
+        }
+
+        // Fungsi Simpan ke Gambar dengan html2canvas
+        function simpanKeGambar() {
+            const captureTarget = document.getElementById('captureArea');
+            const statusText = document.getElementById('status-text');
+            const statusDot = document.getElementById('status-dot');
+            
+            if (!captureTarget) {
+                alert("Area capture tidak ditemukan.");
+                return;
+            }
+
+            statusDot.className = 'w-2 h-2 bg-indigo-500 rounded-full animate-pulse';
+            statusText.innerText = 'Merender Gambar HD...';
+
+            // Kunci lebar elemen agar rasio mobile stabil
+            captureTarget.classList.add('rendering-mode');
+
+            const options = {
+                scale: 3,
+                useCORS: true,
+                backgroundColor: '#0f172a',
+                logging: false
+            };
+
+            // Jeda 300ms untuk kalkulasi ulang layout DOM sebelum kanvas dirender
+            setTimeout(() => {
+                html2canvas(captureTarget, options).then(canvas => {
+                    captureTarget.classList.remove('rendering-mode');
+
+                    const now = new Date();
+                    const dateStr = now.getFullYear() + 
+                        String(now.getMonth() + 1).padStart(2, '0') + 
+                        String(now.getDate()).padStart(2, '0');
+                    const timeStr = String(now.getHours()).padStart(2, '0') + 
+                        String(now.getMinutes()).padStart(2, '0') + 
+                        String(now.getSeconds()).padStart(2, '0');
+                    const fileName = `Dashboard_Reject_Assy_${dateStr}_${timeStr}.png`;
+
+                    const dataURL = canvas.toDataURL('image/png');
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = dataURL;
+                    downloadLink.download = fileName;
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+
+                    statusDot.className = 'w-2 h-2 bg-emerald-500 rounded-full';
+                    statusText.innerText = 'Gambar HD Berhasil Diunduh';
+
+                }).catch(error => {
+                    captureTarget.classList.remove('rendering-mode');
+                    statusDot.className = 'w-2 h-2 bg-red-500 rounded-full';
+                    statusText.innerText = 'Gagal Merender Gambar';
+                    console.error("Kesalahan rendering gambar:", error);
+                    alert("Terjadi kegagalan saat mengekstrak gambar.");
+                });
+            }, 300);
+        }
+    </script>
+</body>
+</html>
