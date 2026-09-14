@@ -1,140 +1,24 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Master Portal Assembly - Cloud System</title>
-    <style>
-        :root {
-            --navy-blue: #0A192F;
-            --emerald-green: #10B981;
-            --white: #FFFFFF;
-            --bg-light: #F3F4F6;
-        }
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-light);
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-        /* Sidebar Utama */
-        .sidebar {
-            width: 260px;
-            background-color: var(--navy-blue);
-            color: var(--white);
-            display: flex;
-            flex-direction: column;
-            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
-            z-index: 50;
-        }
-        .sidebar-header {
-            padding: 24px 20px;
-            font-size: 1.1rem;
-            font-weight: 900;
-            text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            letter-spacing: 1px;
-        }
-        .nav-menu {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            flex: 1;
-        }
-        .nav-item {
-            padding: 18px 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-left: 4px solid transparent;
-            font-size: 0.9rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .nav-item:hover {
-            background-color: rgba(255,255,255,0.05);
-        }
-        .nav-item.active {
-            background-color: rgba(16, 185, 129, 0.1);
-            border-left: 4px solid var(--emerald-green);
-            color: var(--emerald-green);
-        }
-        /* Area Konten */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--white);
-        }
-        .top-header {
-            background-color: var(--white);
-            padding: 15px 30px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 10;
-        }
-        .top-header h2 {
-            margin: 0;
-            font-size: 1.2rem;
-            color: var(--navy-blue);
-        }
-        .cloud-status {
-            color: var(--emerald-green);
-            font-weight: 700;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .cloud-dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--emerald-green);
-            border-radius: 50%;
-            animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-            70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-        /* Wrapper Aplikasi Induk */
-        .app-frame-container {
-            flex: 1;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background-color: var(--bg-light);
-        }
-    </style>
-</head>
-<body>
-
     <!-- Sidebar Master -->
     <div class="sidebar">
         <div class="sidebar-header">ASSEMBLY<br><span style="color: var(--emerald-green);">CLOUD PORTAL</span></div>
         <ul class="nav-menu">
-            <!-- Pastikan nama file di atribut onclick sesuai dengan nama file HTML Anda -->
+            <!-- 1. Performance -->
             <li class="nav-item active" onclick="loadApp('performance.html', 'Performance Assembly', this)">
                 ⚙️ 1. Performance
             </li>
-            <li class="nav-item" onclick="loadApp('Reject_pertahun_assembly.html', 'Reject Per-Tahun & Bulanan', this)">
+            
+            <!-- 2. Reject Assembly (Perhatikan nama file sesuai input pertama Anda) -->
+            <li class="nav-item" onclick="loadApp('reject_pertahun_assembly.html', 'Reject Per-Tahun & Bulanan', this)">
                 📊 2. Reject Assembly
             </li>
-            <li class="nav-item" onclick="loadApp('Dashboard_lhpr.html', 'Dashboard LHPR Reject QC', this)">
+            
+            <!-- 3. Dashboard LHPR -->
+            <li class="nav-item" onclick="loadApp('dashboard_LHPR.html', 'Dashboard LHPR Reject QC', this)">
                 📈 3. Dashboard LHPR
             </li>
-            <li class="nav-item" onclick="loadApp('Generate_lhpr.html', 'Master Generator LHPR (Cloud)', this)">
+            
+            <!-- 4. Generate LHPR -->
+            <li class="nav-item" onclick="loadApp('generate_LHPR.html', 'Master Generator LHPR (Cloud)', this)">
                 ☁️ 4. Generate LHPR
             </li>
         </ul>
@@ -142,34 +26,3 @@
             Ver. 2.0 - Hybrid Cloud
         </div>
     </div>
-
-    <!-- Area Layar Kanan -->
-    <div class="main-content">
-        <div class="top-header">
-            <h2 id="current-app-title">Performance Assembly</h2>
-            <div class="cloud-status">
-                <div class="cloud-dot"></div> Hybrid Cloud Connected
-            </div>
-        </div>
-
-        <div class="app-frame-container">
-            <!-- Iframe ini akan memuat file HTML Anda secara mulus -->
-            <iframe id="app-frame" src="performance.html" title="Application Area"></iframe>
-        </div>
-    </div>
-
-    <script>
-        function loadApp(url, title, element) {
-            // 1. Ubah URL di iframe
-            document.getElementById('app-frame').src = url;
-            
-            // 2. Ubah Judul Header
-            document.getElementById('current-app-title').innerText = title;
-            
-            // 3. Update Status Menu Aktif
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            element.classList.add('active');
-        }
-    </script>
-</body>
-</html>
