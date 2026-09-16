@@ -231,12 +231,12 @@
 
                     <div class="bg-white p-2 rounded-lg border border-emerald-200 space-y-1">
                         <span class="text-[10px] text-slate-600 font-semibold block">Tampilkan/Sembunyikan Kolom Minggu:</span>
-                        <div class="grid grid-cols-5 gap-1 text-[10px] text-center">
-                            <div class="bg-slate-50 p-1 rounded border border-slate-200"><span class="block text-slate-600 font-semibold">W1</span><div class="flex justify-center space-x-0.5 mt-1"><button onclick="setWeekVisibility(1, 'w1', false)" class="w-3.5 h-3.5 bg-rose-100 text-rose-700 rounded font-bold">-</button><button onclick="setWeekVisibility(1, 'w1', true)" class="w-3.5 h-3.5 bg-emerald-100 text-emerald-700 rounded font-bold">+</button></div></div>
-                            <div class="bg-slate-50 p-1 rounded border border-slate-200"><span class="block text-slate-600 font-semibold">W2</span><div class="flex justify-center space-x-0.5 mt-1"><button onclick="setWeekVisibility(1, 'w2', false)" class="w-3.5 h-3.5 bg-rose-100 text-rose-700 rounded font-bold">-</button><button onclick="setWeekVisibility(1, 'w2', true)" class="w-3.5 h-3.5 bg-emerald-100 text-emerald-700 rounded font-bold">+</button></div></div>
-                            <div class="bg-slate-50 p-1 rounded border border-slate-200"><span class="block text-slate-600 font-semibold">W3</span><div class="flex justify-center space-x-0.5 mt-1"><button onclick="setWeekVisibility(1, 'w3', false)" class="w-3.5 h-3.5 bg-rose-100 text-rose-700 rounded font-bold">-</button><button onclick="setWeekVisibility(1, 'w3', true)" class="w-3.5 h-3.5 bg-emerald-100 text-emerald-700 rounded font-bold">+</button></div></div>
-                            <div class="bg-slate-50 p-1 rounded border border-slate-200"><span class="block text-slate-600 font-semibold">W4</span><div class="flex justify-center space-x-0.5 mt-1"><button onclick="setWeekVisibility(1, 'w4', false)" class="w-3.5 h-3.5 bg-rose-100 text-rose-700 rounded font-bold">-</button><button onclick="setWeekVisibility(1, 'w4', true)" class="w-3.5 h-3.5 bg-emerald-100 text-emerald-700 rounded font-bold">+</button></div></div>
-                            <div class="bg-slate-50 p-1 rounded border border-slate-200"><span class="block text-slate-600 font-semibold">W5</span><div class="flex justify-center space-x-0.5 mt-1"><button onclick="setWeekVisibility(1, 'w5', false)" class="w-3.5 h-3.5 bg-rose-100 text-rose-700 rounded font-bold">-</button><button onclick="setWeekVisibility(1, 'w5', true)" class="w-3.5 h-3.5 bg-emerald-100 text-emerald-700 rounded font-bold">+</button></div></div>
+                        <div class="space-y-1 text-[11px]">
+                            <label class="flex items-center justify-between bg-slate-50 p-1.5 rounded border border-slate-200 cursor-pointer hover:bg-slate-100"><span class="font-semibold text-slate-700">Week 1</span><input type="checkbox" id="checkWeek1_w1" checked onchange="setWeekVisibility(1, 'w1', this.checked)" class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 cursor-pointer"></label>
+                            <label class="flex items-center justify-between bg-slate-50 p-1.5 rounded border border-slate-200 cursor-pointer hover:bg-slate-100"><span class="font-semibold text-slate-700">Week 2</span><input type="checkbox" id="checkWeek1_w2" checked onchange="setWeekVisibility(1, 'w2', this.checked)" class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 cursor-pointer"></label>
+                            <label class="flex items-center justify-between bg-slate-50 p-1.5 rounded border border-slate-200 cursor-pointer hover:bg-slate-100"><span class="font-semibold text-slate-700">Week 3</span><input type="checkbox" id="checkWeek1_w3" checked onchange="setWeekVisibility(1, 'w3', this.checked)" class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 cursor-pointer"></label>
+                            <label class="flex items-center justify-between bg-slate-50 p-1.5 rounded border border-slate-200 cursor-pointer hover:bg-slate-100"><span class="font-semibold text-slate-700">Week 4</span><input type="checkbox" id="checkWeek1_w4" checked onchange="setWeekVisibility(1, 'w4', this.checked)" class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 cursor-pointer"></label>
+                            <label class="flex items-center justify-between bg-slate-50 p-1.5 rounded border border-slate-200 cursor-pointer hover:bg-slate-100"><span class="font-semibold text-slate-700">Week 5</span><input type="checkbox" id="checkWeek1_w5" checked onchange="setWeekVisibility(1, 'w5', this.checked)" class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 cursor-pointer"></label>
                         </div>
                     </div>
 
@@ -280,7 +280,7 @@
                     </div>
                 </div>
 
-                <!-- 2. Input & Pratinjau Tabel 2 (Sementara QC Final) -->
+                <!-- 2. Input & Pratinjau Tabel 2 (Rekap Produk QC Final) -->
                 <div class="space-y-3 p-3 bg-rose-50/50 rounded-xl border border-rose-300 shadow-sm">
                     <div class="flex items-center justify-between border-b border-rose-200 pb-1.5">
                         <label class="block text-xs font-bold text-rose-900 uppercase tracking-wide">2. Rekap Produk QC Final</label>
@@ -289,12 +289,12 @@
 
                     <div class="bg-white p-2 rounded-lg border border-rose-200 space-y-1">
                         <span class="text-[10px] text-slate-600 font-semibold block">Tampilkan/Sembunyikan Tabel Minggu:</span>
-                        <div class="grid grid-cols-5 gap-1 text-[10px] text-center">
-                            <div class="bg-slate-50 p-1 rounded border border-slate-200"><span class="block text-slate-600 font-semibold">2a</span><div class="flex justify-center space-x-0.5 mt-1"><button onclick="setTableWeekVisibility(2, 'w1', false)" class="w-3.5 h-3.5 bg-rose-100 text-rose-700 rounded font-bold">-</button><button onclick="setTableWeekVisibility(2, 'w1', true)" class="w-3.5 h-3.5 bg-emerald-100 text-emerald-700 rounded font-bold">+</button></div></div>
-                            <div class="bg-slate-50 p-1 rounded border border-slate-200"><span class="block text-slate-600 font-semibold">2b</span><div class="flex justify-center space-x-0.5 mt-1"><button onclick="setTableWeekVisibility(2, 'w2', false)" class="w-3.5 h-3.5 bg-rose-100 text-rose-700 rounded font-bold">-</button><button onclick="setTableWeekVisibility(2, 'w2', true)" class="w-3.5 h-3.5 bg-emerald-100 text-emerald-700 rounded font-bold">+</button></div></div>
-                            <div class="bg-slate-50 p-1 rounded border border-slate-200"><span class="block text-slate-600 font-semibold">2c</span><div class="flex justify-center space-x-0.5 mt-1"><button onclick="setTableWeekVisibility(2, 'w3', false)" class="w-3.5 h-3.5 bg-rose-100 text-rose-700 rounded font-bold">-</button><button onclick="setTableWeekVisibility(2, 'w3', true)" class="w-3.5 h-3.5 bg-emerald-100 text-emerald-700 rounded font-bold">+</button></div></div>
-                            <div class="bg-slate-50 p-1 rounded border border-slate-200"><span class="block text-slate-600 font-semibold">2d</span><div class="flex justify-center space-x-0.5 mt-1"><button onclick="setTableWeekVisibility(2, 'w4', false)" class="w-3.5 h-3.5 bg-rose-100 text-rose-700 rounded font-bold">-</button><button onclick="setTableWeekVisibility(2, 'w4', true)" class="w-3.5 h-3.5 bg-emerald-100 text-emerald-700 rounded font-bold">+</button></div></div>
-                            <div class="bg-slate-50 p-1 rounded border border-slate-200"><span class="block text-slate-600 font-semibold">2e</span><div class="flex justify-center space-x-0.5 mt-1"><button onclick="setTableWeekVisibility(2, 'w5', false)" class="w-3.5 h-3.5 bg-rose-100 text-rose-700 rounded font-bold">-</button><button onclick="setTableWeekVisibility(2, 'w5', true)" class="w-3.5 h-3.5 bg-emerald-100 text-emerald-700 rounded font-bold">+</button></div></div>
+                        <div class="space-y-1 text-[11px]">
+                            <label class="flex items-center justify-between bg-slate-50 p-1.5 rounded border border-slate-200 cursor-pointer hover:bg-slate-100"><span class="font-semibold text-slate-700">Week 1 (2a)</span><input type="checkbox" id="checkTableWeek2_w1" checked onchange="setTableWeekVisibility(2, 'w1', this.checked)" class="w-4 h-4 text-rose-600 rounded border-slate-300 focus:ring-rose-500 cursor-pointer"></label>
+                            <label class="flex items-center justify-between bg-slate-50 p-1.5 rounded border border-slate-200 cursor-pointer hover:bg-slate-100"><span class="font-semibold text-slate-700">Week 2 (2b)</span><input type="checkbox" id="checkTableWeek2_w2" checked onchange="setTableWeekVisibility(2, 'w2', this.checked)" class="w-4 h-4 text-rose-600 rounded border-slate-300 focus:ring-rose-500 cursor-pointer"></label>
+                            <label class="flex items-center justify-between bg-slate-50 p-1.5 rounded border border-slate-200 cursor-pointer hover:bg-slate-100"><span class="font-semibold text-slate-700">Week 3 (2c)</span><input type="checkbox" id="checkTableWeek2_w3" checked onchange="setTableWeekVisibility(2, 'w3', this.checked)" class="w-4 h-4 text-rose-600 rounded border-slate-300 focus:ring-rose-500 cursor-pointer"></label>
+                            <label class="flex items-center justify-between bg-slate-50 p-1.5 rounded border border-slate-200 cursor-pointer hover:bg-slate-100"><span class="font-semibold text-slate-700">Week 4 (2d)</span><input type="checkbox" id="checkTableWeek2_w4" checked onchange="setTableWeekVisibility(2, 'w4', this.checked)" class="w-4 h-4 text-rose-600 rounded border-slate-300 focus:ring-rose-500 cursor-pointer"></label>
+                            <label class="flex items-center justify-between bg-slate-50 p-1.5 rounded border border-slate-200 cursor-pointer hover:bg-slate-100"><span class="font-semibold text-slate-700">Week 5 (2e)</span><input type="checkbox" id="checkTableWeek2_w5" checked onchange="setTableWeekVisibility(2, 'w5', this.checked)" class="w-4 h-4 text-rose-600 rounded border-slate-300 focus:ring-rose-500 cursor-pointer"></label>
                         </div>
                     </div>
 
@@ -309,7 +309,7 @@
                                 <option value="w5">Target: Week 5 (Opt)</option>
                             </select>
                         </div>
-                        <textarea id="inputPasteExcel2" rows="2" placeholder="Paste data Excel (Kode, Nama, Detail, Reject, Prod)..." onkeydown="checkEnterPaste(event, 2)" class="w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-slate-800 focus:outline-none focus:border-rose-500 text-xs font-mono"></textarea>
+                        <textarea id="inputPasteExcel2" rows="2" placeholder="Paste Excel (Tgl, JO, Kode, Nama, Ka.Line, Detail, Masalah, Jumlah)..." onkeydown="checkEnterPaste(event, 2)" class="w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-slate-800 focus:outline-none focus:border-rose-500 text-xs font-mono"></textarea>
                         <button onclick="prosesPasteExcel2()" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-medium py-1 rounded transition-colors text-xs flex items-center justify-center space-x-1">
                             <i data-lucide="file-spreadsheet" class="w-3 h-3"></i>
                             <span>Proses Excel Tabel 2</span>
@@ -317,7 +317,7 @@
                     </div>
 
                     <div class="space-y-2 bg-white p-2.5 rounded-lg border border-rose-200">
-                        <span class="text-[10px] text-slate-600 block font-medium">Input Manual Sementara Final</span>
+                        <span class="text-[10px] text-slate-600 block font-medium">Input Manual QC Final</span>
                         <div class="grid grid-cols-2 gap-1.5">
                             <select id="inputWeekTable2" class="bg-slate-50 border border-slate-300 rounded p-1 text-slate-800 text-xs font-semibold">
                                 <option value="w1">Week 1</option>
@@ -326,13 +326,18 @@
                                 <option value="w4">Week 4</option>
                                 <option value="w5">Week 5</option>
                             </select>
+                            <input type="text" id="inputTglLaporan" placeholder="Tgl Laporan (YYYY-MM-DD)" class="bg-slate-50 border border-slate-300 rounded p-1 text-slate-800 text-xs">
+                        </div>
+                        <div class="grid grid-cols-2 gap-1.5">
+                            <input type="text" id="inputJo" placeholder="JO#" class="bg-slate-50 border border-slate-300 rounded p-1 text-slate-800 text-xs">
                             <input type="text" id="inputKodeItem" placeholder="Kode Item" class="bg-slate-50 border border-slate-300 rounded p-1 text-slate-800 text-xs">
                         </div>
                         <input type="text" id="inputItemName" placeholder="Item Name" class="w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-slate-800 focus:outline-none focus:border-rose-500 text-xs">
+                        <input type="text" id="inputKaLine" placeholder="Ka. Line" class="w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-slate-800 focus:outline-none focus:border-rose-500 text-xs">
                         <input type="text" id="inputDetailReject" placeholder="Detail Reject" class="w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-slate-800 focus:outline-none focus:border-rose-500 text-xs">
                         <div class="grid grid-cols-2 gap-1.5">
-                            <div><span class="text-[9px] text-slate-500">Qty Reject</span><input type="number" id="inputQtyReject" value="0" class="w-full bg-slate-50 border border-slate-300 rounded p-1 text-center text-slate-800 text-xs font-bold"></div>
-                            <div><span class="text-[9px] text-slate-500">Qty Produksi</span><input type="number" id="inputQtyProduksi" value="0" class="w-full bg-slate-50 border border-slate-300 rounded p-1 text-center text-slate-800 text-xs font-bold"></div>
+                            <input type="text" id="inputMasalahDetail" placeholder="Masalah (Sub-Judul)" class="bg-slate-50 border border-slate-300 rounded p-1 text-slate-800 text-xs">
+                            <div><input type="number" id="inputJumlah" placeholder="Jumlah" value="0" class="w-full bg-slate-50 border border-slate-300 rounded p-1 text-center text-slate-800 text-xs font-bold"></div>
                         </div>
                         <button onclick="tambahDataManualTable2()" class="w-full bg-rose-700 hover:bg-rose-600 text-white font-medium py-1 rounded transition-colors text-xs flex items-center justify-center space-x-1">
                             <i data-lucide="plus-circle" class="w-3 h-3"></i>
@@ -355,12 +360,12 @@
 
                     <div class="bg-white p-2 rounded-lg border border-blue-200 space-y-1">
                         <span class="text-[10px] text-slate-600 font-semibold block">Tampilkan/Sembunyikan Kolom Minggu:</span>
-                        <div class="grid grid-cols-5 gap-1 text-[10px] text-center">
-                            <div class="bg-slate-50 p-1 rounded border border-blue-100"><span class="block text-slate-600 font-semibold">W1</span><div class="flex justify-center space-x-0.5 mt-1"><button onclick="setWeekVisibility(3, 'w1', false)" class="w-3.5 h-3.5 bg-rose-100 text-rose-700 rounded font-bold">-</button><button onclick="setWeekVisibility(3, 'w1', true)" class="w-3.5 h-3.5 bg-blue-100 text-blue-700 rounded font-bold">+</button></div></div>
-                            <div class="bg-slate-50 p-1 rounded border border-blue-100"><span class="block text-slate-600 font-semibold">W2</span><div class="flex justify-center space-x-0.5 mt-1"><button onclick="setWeekVisibility(3, 'w2', false)" class="w-3.5 h-3.5 bg-rose-100 text-rose-700 rounded font-bold">-</button><button onclick="setWeekVisibility(3, 'w2', true)" class="w-3.5 h-3.5 bg-blue-100 text-blue-700 rounded font-bold">+</button></div></div>
-                            <div class="bg-slate-50 p-1 rounded border border-blue-100"><span class="block text-slate-600 font-semibold">W3</span><div class="flex justify-center space-x-0.5 mt-1"><button onclick="setWeekVisibility(3, 'w3', false)" class="w-3.5 h-3.5 bg-rose-100 text-rose-700 rounded font-bold">-</button><button onclick="setWeekVisibility(3, 'w3', true)" class="w-3.5 h-3.5 bg-blue-100 text-blue-700 rounded font-bold">+</button></div></div>
-                            <div class="bg-slate-50 p-1 rounded border border-blue-100"><span class="block text-slate-600 font-semibold">W4</span><div class="flex justify-center space-x-0.5 mt-1"><button onclick="setWeekVisibility(3, 'w4', false)" class="w-3.5 h-3.5 bg-rose-100 text-rose-700 rounded font-bold">-</button><button onclick="setWeekVisibility(3, 'w4', true)" class="w-3.5 h-3.5 bg-blue-100 text-blue-700 rounded font-bold">+</button></div></div>
-                            <div class="bg-slate-50 p-1 rounded border border-blue-100"><span class="block text-slate-600 font-semibold">W5</span><div class="flex justify-center space-x-0.5 mt-1"><button onclick="setWeekVisibility(3, 'w5', false)" class="w-3.5 h-3.5 bg-rose-100 text-rose-700 rounded font-bold">-</button><button onclick="setWeekVisibility(3, 'w5', true)" class="w-3.5 h-3.5 bg-blue-100 text-blue-700 rounded font-bold">+</button></div></div>
+                        <div class="space-y-1 text-[11px]">
+                            <label class="flex items-center justify-between bg-slate-50 p-1.5 rounded border border-slate-200 cursor-pointer hover:bg-slate-100"><span class="font-semibold text-slate-700">Week 1</span><input type="checkbox" id="checkWeek3_w1" checked onchange="setWeekVisibility(3, 'w1', this.checked)" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer"></label>
+                            <label class="flex items-center justify-between bg-slate-50 p-1.5 rounded border border-slate-200 cursor-pointer hover:bg-slate-100"><span class="font-semibold text-slate-700">Week 2</span><input type="checkbox" id="checkWeek3_w2" checked onchange="setWeekVisibility(3, 'w2', this.checked)" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer"></label>
+                            <label class="flex items-center justify-between bg-slate-50 p-1.5 rounded border border-slate-200 cursor-pointer hover:bg-slate-100"><span class="font-semibold text-slate-700">Week 3</span><input type="checkbox" id="checkWeek3_w3" checked onchange="setWeekVisibility(3, 'w3', this.checked)" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer"></label>
+                            <label class="flex items-center justify-between bg-slate-50 p-1.5 rounded border border-slate-200 cursor-pointer hover:bg-slate-100"><span class="font-semibold text-slate-700">Week 4</span><input type="checkbox" id="checkWeek3_w4" checked onchange="setWeekVisibility(3, 'w4', this.checked)" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer"></label>
+                            <label class="flex items-center justify-between bg-slate-50 p-1.5 rounded border border-slate-200 cursor-pointer hover:bg-slate-100"><span class="font-semibold text-slate-700">Week 5</span><input type="checkbox" id="checkWeek3_w5" checked onchange="setWeekVisibility(3, 'w5', this.checked)" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer"></label>
                         </div>
                     </div>
 
@@ -404,7 +409,7 @@
                     </div>
                 </div>
 
-                <!-- 4. Input & Pratinjau Tabel 4 (Sementara QC Line) -->
+                <!-- 4. Input & Pratinjau Tabel 4 (Rekap Produk QC Line) -->
                 <div class="space-y-3 p-3 bg-amber-50/50 rounded-xl border border-amber-300 shadow-sm">
                     <div class="flex items-center justify-between border-b border-amber-200 pb-1.5">
                         <label class="block text-xs font-bold text-amber-900 uppercase tracking-wide">4. Rekap Produk QC Line</label>
@@ -413,12 +418,12 @@
 
                     <div class="bg-white p-2 rounded-lg border border-amber-200 space-y-1">
                         <span class="text-[10px] text-slate-600 font-semibold block">Tampilkan/Sembunyikan Tabel Minggu:</span>
-                        <div class="grid grid-cols-5 gap-1 text-[10px] text-center">
-                            <div class="bg-slate-50 p-1 rounded border border-slate-200"><span class="block text-slate-600 font-semibold">4a</span><div class="flex justify-center space-x-0.5 mt-1"><button onclick="setTableWeekVisibility(4, 'w1', false)" class="w-3.5 h-3.5 bg-rose-100 text-rose-700 rounded font-bold">-</button><button onclick="setTableWeekVisibility(4, 'w1', true)" class="w-3.5 h-3.5 bg-emerald-100 text-emerald-700 rounded font-bold">+</button></div></div>
-                            <div class="bg-slate-50 p-1 rounded border border-slate-200"><span class="block text-slate-600 font-semibold">4b</span><div class="flex justify-center space-x-0.5 mt-1"><button onclick="setTableWeekVisibility(4, 'w2', false)" class="w-3.5 h-3.5 bg-rose-100 text-rose-700 rounded font-bold">-</button><button onclick="setTableWeekVisibility(4, 'w2', true)" class="w-3.5 h-3.5 bg-emerald-100 text-emerald-700 rounded font-bold">+</button></div></div>
-                            <div class="bg-slate-50 p-1 rounded border border-slate-200"><span class="block text-slate-600 font-semibold">4c</span><div class="flex justify-center space-x-0.5 mt-1"><button onclick="setTableWeekVisibility(4, 'w3', false)" class="w-3.5 h-3.5 bg-rose-100 text-rose-700 rounded font-bold">-</button><button onclick="setTableWeekVisibility(4, 'w3', true)" class="w-3.5 h-3.5 bg-emerald-100 text-emerald-700 rounded font-bold">+</button></div></div>
-                            <div class="bg-slate-50 p-1 rounded border border-slate-200"><span class="block text-slate-600 font-semibold">4d</span><div class="flex justify-center space-x-0.5 mt-1"><button onclick="setTableWeekVisibility(4, 'w4', false)" class="w-3.5 h-3.5 bg-rose-100 text-rose-700 rounded font-bold">-</button><button onclick="setTableWeekVisibility(4, 'w4', true)" class="w-3.5 h-3.5 bg-emerald-100 text-emerald-700 rounded font-bold">+</button></div></div>
-                            <div class="bg-slate-50 p-1 rounded border border-slate-200"><span class="block text-slate-600 font-semibold">4e</span><div class="flex justify-center space-x-0.5 mt-1"><button onclick="setTableWeekVisibility(4, 'w5', false)" class="w-3.5 h-3.5 bg-rose-100 text-rose-700 rounded font-bold">-</button><button onclick="setTableWeekVisibility(4, 'w5', true)" class="w-3.5 h-3.5 bg-emerald-100 text-emerald-700 rounded font-bold">+</button></div></div>
+                        <div class="space-y-1 text-[11px]">
+                            <label class="flex items-center justify-between bg-slate-50 p-1.5 rounded border border-slate-200 cursor-pointer hover:bg-slate-100"><span class="font-semibold text-slate-700">Week 1 (4a)</span><input type="checkbox" id="checkTableWeek4_w1" checked onchange="setTableWeekVisibility(4, 'w1', this.checked)" class="w-4 h-4 text-amber-600 rounded border-slate-300 focus:ring-amber-500 cursor-pointer"></label>
+                            <label class="flex items-center justify-between bg-slate-50 p-1.5 rounded border border-slate-200 cursor-pointer hover:bg-slate-100"><span class="font-semibold text-slate-700">Week 2 (4b)</span><input type="checkbox" id="checkTableWeek4_w2" checked onchange="setTableWeekVisibility(4, 'w2', this.checked)" class="w-4 h-4 text-amber-600 rounded border-slate-300 focus:ring-amber-500 cursor-pointer"></label>
+                            <label class="flex items-center justify-between bg-slate-50 p-1.5 rounded border border-slate-200 cursor-pointer hover:bg-slate-100"><span class="font-semibold text-slate-700">Week 3 (4c)</span><input type="checkbox" id="checkTableWeek4_w3" checked onchange="setTableWeekVisibility(4, 'w3', this.checked)" class="w-4 h-4 text-amber-600 rounded border-slate-300 focus:ring-amber-500 cursor-pointer"></label>
+                            <label class="flex items-center justify-between bg-slate-50 p-1.5 rounded border border-slate-200 cursor-pointer hover:bg-slate-100"><span class="font-semibold text-slate-700">Week 4 (4d)</span><input type="checkbox" id="checkTableWeek4_w4" checked onchange="setTableWeekVisibility(4, 'w4', this.checked)" class="w-4 h-4 text-amber-600 rounded border-slate-300 focus:ring-amber-500 cursor-pointer"></label>
+                            <label class="flex items-center justify-between bg-slate-50 p-1.5 rounded border border-slate-200 cursor-pointer hover:bg-slate-100"><span class="font-semibold text-slate-700">Week 5 (4e)</span><input type="checkbox" id="checkTableWeek4_w5" checked onchange="setTableWeekVisibility(4, 'w5', this.checked)" class="w-4 h-4 text-amber-600 rounded border-slate-300 focus:ring-amber-500 cursor-pointer"></label>
                         </div>
                     </div>
 
@@ -433,7 +438,7 @@
                                 <option value="w5">Target: Week 5 (Opt)</option>
                             </select>
                         </div>
-                        <textarea id="inputPasteExcel4" rows="2" placeholder="Paste data Excel..." onkeydown="checkEnterPaste(event, 4)" class="w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-slate-800 focus:outline-none focus:border-amber-500 text-xs font-mono"></textarea>
+                        <textarea id="inputPasteExcel4" rows="2" placeholder="Paste Excel (Tgl, JO, Kode, Nama, Ka.Line, Detail, Masalah, Jumlah)..." onkeydown="checkEnterPaste(event, 4)" class="w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-slate-800 focus:outline-none focus:border-amber-500 text-xs font-mono"></textarea>
                         <button onclick="prosesPasteExcel4()" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-medium py-1 rounded transition-colors text-xs flex items-center justify-center space-x-1">
                             <i data-lucide="file-spreadsheet" class="w-3 h-3"></i>
                             <span>Proses Excel Tabel 4</span>
@@ -441,7 +446,7 @@
                     </div>
 
                     <div class="space-y-2 bg-white p-2.5 rounded-lg border border-amber-200">
-                        <span class="text-[10px] text-slate-600 block font-medium">Input Manual Sementara Line</span>
+                        <span class="text-[10px] text-slate-600 block font-medium">Input Manual QC Line</span>
                         <div class="grid grid-cols-2 gap-1.5">
                             <select id="inputWeekTable4" class="bg-slate-50 border border-slate-300 rounded p-1 text-slate-800 text-xs font-semibold">
                                 <option value="w1">Week 1</option>
@@ -450,13 +455,18 @@
                                 <option value="w4">Week 4</option>
                                 <option value="w5">Week 5</option>
                             </select>
+                            <input type="text" id="inputTglLaporanLine" placeholder="Tgl Laporan (YYYY-MM-DD)" class="bg-slate-50 border border-slate-300 rounded p-1 text-slate-800 text-xs">
+                        </div>
+                        <div class="grid grid-cols-2 gap-1.5">
+                            <input type="text" id="inputJoLine" placeholder="JO#" class="bg-slate-50 border border-slate-300 rounded p-1 text-slate-800 text-xs">
                             <input type="text" id="inputKodeItemLine" placeholder="Kode Item" class="bg-slate-50 border border-slate-300 rounded p-1 text-slate-800 text-xs">
                         </div>
                         <input type="text" id="inputItemNameLine" placeholder="Item Name" class="w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-slate-800 focus:outline-none focus:border-amber-500 text-xs">
+                        <input type="text" id="inputKaLineLine" placeholder="Ka. Line" class="w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-slate-800 focus:outline-none focus:border-amber-500 text-xs">
                         <input type="text" id="inputDetailRejectLine" placeholder="Detail Reject" class="w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-slate-800 focus:outline-none focus:border-amber-500 text-xs">
                         <div class="grid grid-cols-2 gap-1.5">
-                            <div><span class="text-[9px] text-slate-500">Qty Reject</span><input type="number" id="inputQtyRejectLine" value="0" class="w-full bg-slate-50 border border-slate-300 rounded p-1 text-center text-slate-800 text-xs font-bold"></div>
-                            <div><span class="text-[9px] text-slate-500">Qty Produksi</span><input type="number" id="inputQtyProduksiLine" value="0" class="w-full bg-slate-50 border border-slate-300 rounded p-1 text-center text-slate-800 text-xs font-bold"></div>
+                            <input type="text" id="inputMasalahDetailLine" placeholder="Masalah (Sub-Judul)" class="bg-slate-50 border border-slate-300 rounded p-1 text-slate-800 text-xs">
+                            <div><input type="number" id="inputJumlahLine" placeholder="Jumlah" value="0" class="w-full bg-slate-50 border border-slate-300 rounded p-1 text-center text-slate-800 text-xs font-bold"></div>
                         </div>
                         <button onclick="tambahDataManualTable4()" class="w-full bg-amber-700 hover:bg-amber-600 text-white font-medium py-1 rounded transition-colors text-xs flex items-center justify-center space-x-1">
                             <i data-lucide="plus-circle" class="w-3 h-3"></i>
@@ -623,6 +633,17 @@
         let visiblePoints = { 1: true, 2: true, 3: true, 4: true };
 
         window.addEventListener('DOMContentLoaded', () => {
+            // Sinkronisasi status checkbox awal
+            ['w1','w2','w3','w4','w5'].forEach(w => {
+                const el1 = document.getElementById(`checkWeek1_${w}`);
+                if (el1) el1.checked = visibleWeeks1[w];
+                const el3 = document.getElementById(`checkWeek3_${w}`);
+                if (el3) el3.checked = visibleWeeks3[w];
+                const elT2 = document.getElementById(`checkTableWeek2_${w}`);
+                if (elT2) elT2.checked = visibleTableWeeks2[w];
+                const elT4 = document.getElementById(`checkTableWeek4_${w}`);
+                if (elT4) elT4.checked = visibleTableWeeks4[w];
+            });
             renderSemuaData();
         });
 
@@ -832,8 +853,8 @@
                 return;
             }
 
-            const dataArray = [['Item', 'Reject']];
-            weekData.forEach(item => { dataArray.push([item.nama || item.kode, item.reject]); });
+            const dataArray = [['Item', 'Jumlah']];
+            weekData.forEach(item => { dataArray.push([item.nama || item.kode, item.jumlah]); });
             const data = google.visualization.arrayToDataTable(dataArray);
             const options = {
                 title: chartTitle,
@@ -989,20 +1010,26 @@
 
         function tambahDataManualTable2() {
             const week = document.getElementById('inputWeekTable2').value;
+            const tgl = document.getElementById('inputTglLaporan').value.trim();
+            const jo = document.getElementById('inputJo').value.trim();
             const kode = document.getElementById('inputKodeItem').value.trim();
             const nama = document.getElementById('inputItemName').value.trim();
+            const kaLine = document.getElementById('inputKaLine').value.trim();
             const detail = document.getElementById('inputDetailReject').value.trim();
-            const reject = parseInt(document.getElementById('inputQtyReject').value) || 0;
-            const produksi = parseInt(document.getElementById('inputQtyProduksi').value) || 0;
+            const masalah = document.getElementById('inputMasalahDetail').value.trim() || 'LAINNYA';
+            const jumlah = parseInt(document.getElementById('inputJumlah').value) || 0;
 
             if (!kode || !nama) return alert('Kode Item dan Item Name mohon diisi.');
 
-            dataTabel2.push({ kode, nama, detail, reject, produksi, week });
+            dataTabel2.push({ tgl, jo, kode, nama, kaLine, detail, masalah, jumlah, week });
+            document.getElementById('inputTglLaporan').value = '';
+            document.getElementById('inputJo').value = '';
             document.getElementById('inputKodeItem').value = '';
             document.getElementById('inputItemName').value = '';
+            document.getElementById('inputKaLine').value = '';
             document.getElementById('inputDetailReject').value = '';
-            document.getElementById('inputQtyReject').value = '0';
-            document.getElementById('inputQtyProduksi').value = '0';
+            document.getElementById('inputMasalahDetail').value = '';
+            document.getElementById('inputJumlah').value = '0';
             renderSemuaData();
         }
 
@@ -1038,20 +1065,26 @@
 
         function tambahDataManualTable4() {
             const week = document.getElementById('inputWeekTable4').value;
+            const tgl = document.getElementById('inputTglLaporanLine').value.trim();
+            const jo = document.getElementById('inputJoLine').value.trim();
             const kode = document.getElementById('inputKodeItemLine').value.trim();
             const nama = document.getElementById('inputItemNameLine').value.trim();
+            const kaLine = document.getElementById('inputKaLineLine').value.trim();
             const detail = document.getElementById('inputDetailRejectLine').value.trim();
-            const reject = parseInt(document.getElementById('inputQtyRejectLine').value) || 0;
-            const produksi = parseInt(document.getElementById('inputQtyProduksiLine').value) || 0;
+            const masalah = document.getElementById('inputMasalahDetailLine').value.trim() || 'LAINNYA';
+            const jumlah = parseInt(document.getElementById('inputJumlahLine').value) || 0;
 
             if (!kode || !nama) return alert('Kode Item dan Item Name QC Line mohon diisi.');
 
-            dataTabel4.push({ kode, nama, detail, reject, produksi, week });
+            dataTabel4.push({ tgl, jo, kode, nama, kaLine, detail, masalah, jumlah, week });
+            document.getElementById('inputTglLaporanLine').value = '';
+            document.getElementById('inputJoLine').value = '';
             document.getElementById('inputKodeItemLine').value = '';
             document.getElementById('inputItemNameLine').value = '';
+            document.getElementById('inputKaLineLine').value = '';
             document.getElementById('inputDetailRejectLine').value = '';
-            document.getElementById('inputQtyRejectLine').value = '0';
-            document.getElementById('inputQtyProduksiLine').value = '0';
+            document.getElementById('inputMasalahDetailLine').value = '';
+            document.getElementById('inputJumlahLine').value = '0';
             renderSemuaData();
         }
 
@@ -1097,14 +1130,18 @@
             rows.forEach(row => {
                 if (!row.trim()) return;
                 const cols = row.split('\t');
-                if (cols.length >= 5) {
-                    const kode = cols[0].trim();
-                    const nama = cols[1].trim();
-                    const detail = cols[2].trim();
-                    const reject = parseInt((cols[3] || '0').replace(/\./g, '').replace(/,/g, '')) || 0;
-                    const produksi = parseInt((cols[4] || '0').replace(/\./g, '').replace(/,/g, '')) || 0;
+                if (cols.length >= 8) {
+                    if (cols[0].toUpperCase().includes('TGL') || cols[2].toUpperCase().includes('KODE')) return;
+                    const tgl = cols[0].trim();
+                    const jo = cols[1].trim();
+                    const kode = cols[2].trim();
+                    const nama = cols[3].trim();
+                    const kaLine = cols[4].trim();
+                    const detail = cols[5].trim();
+                    const masalah = cols[6].trim() || 'LAINNYA';
+                    const jumlah = parseInt((cols[7] || '0').replace(/\./g, '').replace(/,/g, '')) || 0;
                     if (kode && nama) {
-                        dataTabel2.push({ kode, nama, detail, reject, produksi, week: targetWeek });
+                        dataTabel2.push({ tgl, jo, kode, nama, kaLine, detail, masalah, jumlah, week: targetWeek });
                         count++;
                     }
                 }
@@ -1112,7 +1149,7 @@
             if (count > 0) {
                 document.getElementById('inputPasteExcel2').value = '';
                 renderSemuaData();
-            } else alert('Format data Excel memerlukan 5 kolom.');
+            } else alert('Format data Excel memerlukan 8 kolom (Tgl, JO, Kode, Nama, Ka.Line, Detail, Masalah, Jumlah).');
         }
 
         function prosesPasteExcel3() {
@@ -1154,14 +1191,18 @@
             rows.forEach(row => {
                 if (!row.trim()) return;
                 const cols = row.split('\t');
-                if (cols.length >= 5) {
-                    const kode = cols[0].trim();
-                    const nama = cols[1].trim();
-                    const detail = cols[2].trim();
-                    const reject = parseInt((cols[3] || '0').replace(/\./g, '').replace(/,/g, '')) || 0;
-                    const produksi = parseInt((cols[4] || '0').replace(/\./g, '').replace(/,/g, '')) || 0;
+                if (cols.length >= 8) {
+                    if (cols[0].toUpperCase().includes('TGL') || cols[2].toUpperCase().includes('KODE')) return;
+                    const tgl = cols[0].trim();
+                    const jo = cols[1].trim();
+                    const kode = cols[2].trim();
+                    const nama = cols[3].trim();
+                    const kaLine = cols[4].trim();
+                    const detail = cols[5].trim();
+                    const masalah = cols[6].trim() || 'LAINNYA';
+                    const jumlah = parseInt((cols[7] || '0').replace(/\./g, '').replace(/,/g, '')) || 0;
                     if (kode && nama) {
-                        dataTabel4.push({ kode, nama, detail, reject, produksi, week: targetWeek });
+                        dataTabel4.push({ tgl, jo, kode, nama, kaLine, detail, masalah, jumlah, week: targetWeek });
                         count++;
                     }
                 }
@@ -1169,7 +1210,7 @@
             if (count > 0) {
                 document.getElementById('inputPasteExcel4').value = '';
                 renderSemuaData();
-            } else alert('Format data Excel memerlukan 5 kolom.');
+            } else alert('Format data Excel memerlukan 8 kolom (Tgl, JO, Kode, Nama, Ka.Line, Detail, Masalah, Jumlah).');
         }
 
         function renderTabel1() {
@@ -1236,17 +1277,45 @@
                 if (!visibleTableWeeks2[w]) return;
                 const weekData = dataTabel2.filter(item => item.week === w);
                 
-                let rowsHtml = ''; let totalReject = 0; let totalProduksi = 0;
+                let rowsHtml = ''; let totalJumlah = 0;
                 if (weekData.length === 0) {
-                    rowsHtml = `<tr><td colspan="7" class="py-3 px-4 text-center text-slate-400 italic text-xs">Belum ada data untuk ${w.toUpperCase()}.</td></tr>`;
+                    rowsHtml = `<tr><td colspan="8" class="py-3 px-4 text-center text-slate-400 italic text-xs">Belum ada data untuk ${w.toUpperCase()}.</td></tr>`;
                 } else {
-                    weekData.forEach((item, idx) => {
-                        let percentage = item.produksi > 0 ? ((item.reject / item.produksi) * 100).toFixed(2).replace('.', ',') + '%' : '0%';
-                        totalReject += (item.reject || 0); totalProduksi += (item.produksi || 0);
-                        rowsHtml += `<tr class="hover:bg-slate-50"><td class="py-3 px-4 text-center text-slate-500 border border-slate-300 font-bold">${idx + 1}</td><td class="py-3 px-4 text-xs border border-slate-300 font-code-item font-semibold">${item.kode}</td><td class="py-3 px-4 font-medium text-slate-700 border border-slate-300">${item.nama}</td><td class="py-3 px-4 text-xs text-slate-600 border border-slate-300">${item.detail || '-'}</td><td class="py-3 px-4 text-center border border-slate-300 font-bold">${item.reject.toLocaleString('id-ID')}</td><td class="py-3 px-4 text-center border border-slate-300 font-bold">${item.produksi.toLocaleString('id-ID')}</td><td class="py-3 px-4 text-center font-bold text-rose-600 border border-slate-300">${percentage}</td></tr>`;
+                    let grouped = {};
+                    weekData.forEach(item => {
+                        let m = (item.masalah || 'LAINNYA').toUpperCase();
+                        if (!grouped[m]) grouped[m] = [];
+                        grouped[m].push(item);
                     });
-                    let totalPercentage = totalProduksi > 0 ? ((totalReject / totalProduksi) * 100).toFixed(2).replace('.', ',') + '%' : '0%';
-                    rowsHtml += `<tr class="bg-emerald-50/80 font-bold text-slate-800"><td colspan="3" class="py-3 px-4 text-right border border-slate-300 uppercase tracking-wide">TOTAL</td><td class="border border-slate-300"></td><td class="py-3 px-4 text-center border border-slate-300 font-bold">${totalReject.toLocaleString('id-ID')}</td><td class="py-3 px-4 text-center border border-slate-300 font-bold">${totalProduksi.toLocaleString('id-ID')}</td><td class="py-3 px-4 text-center font-bold text-emerald-700 border border-slate-300">${totalPercentage}</td></tr>`;
+
+                    let globalIdx = 1;
+                    for (let masalah in grouped) {
+                        rowsHtml += `
+                            <tr class="bg-slate-800 text-white font-bold">
+                                <td colspan="8" class="py-2.5 px-4 text-xs uppercase tracking-wider">${masalah}</td>
+                            </tr>`;
+                        
+                        grouped[masalah].forEach(item => {
+                            totalJumlah += (item.jumlah || 0);
+                            rowsHtml += `
+                                <tr class="hover:bg-slate-50">
+                                    <td class="py-3 px-3 text-center text-slate-500 border border-slate-300 font-bold">${globalIdx++}</td>
+                                    <td class="py-3 px-3 text-xs border border-slate-300 text-center">${item.tgl || '-'}</td>
+                                    <td class="py-3 px-3 text-xs border border-slate-300 font-semibold text-center">${item.jo || '-'}</td>
+                                    <td class="py-3 px-3 text-xs border border-slate-300 font-code-item font-semibold">${item.kode}</td>
+                                    <td class="py-3 px-3 font-medium text-slate-700 border border-slate-300">${item.nama}</td>
+                                    <td class="py-3 px-3 text-xs text-slate-600 border border-slate-300">${item.kaLine || '-'}</td>
+                                    <td class="py-3 px-3 text-xs text-slate-600 border border-slate-300">${item.detail || '-'}</td>
+                                    <td class="py-3 px-3 text-center border border-slate-300 font-bold text-rose-600">${item.jumlah.toLocaleString('id-ID')}</td>
+                                </tr>`;
+                        });
+                    }
+
+                    rowsHtml += `
+                        <tr class="bg-emerald-50/90 font-bold text-slate-800">
+                            <td colspan="7" class="py-3 px-4 text-right border border-slate-300 uppercase tracking-wide">TOTAL KESELURUHAN</td>
+                            <td class="py-3 px-4 text-center border border-slate-300 font-bold text-rose-700">${totalJumlah.toLocaleString('id-ID')}</td>
+                        </tr>`;
                 }
 
                 const chartDivId = `pieChart2_${w}`;
@@ -1255,14 +1324,37 @@
                         <div class="bg-rose-600 text-white font-semibold px-4 py-3 rounded-lg flex items-center">
                             <i data-lucide="alert-triangle" class="w-5 h-5 mr-3 flex-shrink-0"></i><span class="uppercase tracking-wider font-bold">2. REKAP REJECT QC FINAL - HASIL PRODUKSI (${w.toUpperCase()})</span>
                         </div>
-                        <div class="overflow-x-auto pt-1"><table class="w-full text-left border-collapse border border-slate-300"><thead><tr class="bg-rose-600 text-white text-xs uppercase font-semibold"><th class="py-3 px-4 w-16 text-center border border-slate-300">No</th><th class="py-3 px-4 border border-slate-300">KODE ITEM</th><th class="py-3 px-4 border border-slate-300">ITEM NAME</th><th class="py-3 px-4 border border-slate-300">DETAIL REJECT</th><th class="py-3 px-4 text-center border border-slate-300">QTY REJECT</th><th class="py-3 px-4 text-center border border-slate-300">QTY HASIL PRODUKSI</th><th class="py-3 px-4 text-center font-bold border border-slate-300">%</th></tr></thead><tbody class="text-sm">${rowsHtml}</tbody></table></div>
+                        <div class="overflow-x-auto pt-1">
+                            <table class="w-full text-left border-collapse border border-slate-300">
+                                <thead>
+                                    <tr class="bg-rose-600 text-white text-xs uppercase font-semibold">
+                                        <th class="py-3 px-3 w-12 text-center border border-slate-300">No</th>
+                                        <th class="py-3 px-3 text-center border border-slate-300">Tgl Laporan</th>
+                                        <th class="py-3 px-3 text-center border border-slate-300">JO#</th>
+                                        <th class="py-3 px-3 border border-slate-300">Kode Item</th>
+                                        <th class="py-3 px-3 border border-slate-300">Item Name</th>
+                                        <th class="py-3 px-3 border border-slate-300">Ka. Line</th>
+                                        <th class="py-3 px-3 border border-slate-300">Detail Reject</th>
+                                        <th class="py-3 px-3 text-center border border-slate-300">Jumlah</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-sm">${rowsHtml}</tbody>
+                            </table>
+                        </div>
                         <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-center shadow-inner" style="height: 350px;" id="${chartDivId}"></div>
                     </div>`;
                 setTimeout(() => { drawWeekPieChart(w, weekData, chartDivId, `Grafik Reject ${w.toUpperCase()}`); }, 50);
             });
 
             dataTabel2.forEach((item, index) => {
-                sidebarDiv.innerHTML += `<div class="bg-white p-2 rounded border border-rose-100 text-xs space-y-1 shadow-sm"><div class="flex items-center justify-between font-semibold border-b border-rose-50 pb-1"><span class="text-[10px] bg-rose-100 text-rose-800 px-1.5 py-0.5 rounded font-bold uppercase">${item.week}</span><span class="truncate max-w-[150px] font-code-item text-slate-700">${item.kode}</span><button onclick="dataTabel2.splice(${index}, 1); renderSemuaData();" class="text-rose-500 hover:text-rose-700 font-bold px-1.5 py-0.5 rounded bg-rose-50">×</button></div></div>`;
+                sidebarDiv.innerHTML += `
+                    <div class="bg-white p-2 rounded border border-rose-100 text-xs space-y-1 shadow-sm">
+                        <div class="flex items-center justify-between font-semibold border-b border-rose-50 pb-1">
+                            <span class="text-[10px] bg-rose-100 text-rose-800 px-1.5 py-0.5 rounded font-bold uppercase">${item.week}</span>
+                            <span class="truncate max-w-[150px] font-code-item text-slate-700">${item.kode}</span>
+                            <button onclick="dataTabel2.splice(${index}, 1); renderSemuaData();" class="text-rose-500 hover:text-rose-700 font-bold px-1.5 py-0.5 rounded bg-rose-50">×</button>
+                        </div>
+                    </div>`;
             });
             if (dataTabel2.length === 0) sidebarDiv.innerHTML = '<span class="text-[10px] text-slate-400 italic">Belum ada data.</span>';
         }
@@ -1331,17 +1423,45 @@
                 if (!visibleTableWeeks4[w]) return;
                 const weekData = dataTabel4.filter(item => item.week === w);
                 
-                let rowsHtml = ''; let totalReject = 0; let totalProduksi = 0;
+                let rowsHtml = ''; let totalJumlah = 0;
                 if (weekData.length === 0) {
-                    rowsHtml = `<tr><td colspan="7" class="py-3 px-4 text-center text-slate-400 italic text-xs">Belum ada data untuk ${w.toUpperCase()}.</td></tr>`;
+                    rowsHtml = `<tr><td colspan="8" class="py-3 px-4 text-center text-slate-400 italic text-xs">Belum ada data untuk ${w.toUpperCase()}.</td></tr>`;
                 } else {
-                    weekData.forEach((item, idx) => {
-                        let percentage = item.produksi > 0 ? ((item.reject / item.produksi) * 100).toFixed(2).replace('.', ',') + '%' : '0%';
-                        totalReject += (item.reject || 0); totalProduksi += (item.produksi || 0);
-                        rowsHtml += `<tr class="hover:bg-slate-50"><td class="py-3 px-4 text-center text-slate-500 border border-slate-300 font-bold">${idx + 1}</td><td class="py-3 px-4 text-xs border border-slate-300 font-code-item font-semibold">${item.kode}</td><td class="py-3 px-4 font-medium text-slate-700 border border-slate-300">${item.nama}</td><td class="py-3 px-4 text-xs text-slate-600 border border-slate-300">${item.detail || '-'}</td><td class="py-3 px-4 text-center border border-slate-300 font-bold">${item.reject.toLocaleString('id-ID')}</td><td class="py-3 px-4 text-center border border-slate-300 font-bold">${item.produksi.toLocaleString('id-ID')}</td><td class="py-3 px-4 text-center font-bold text-amber-600 border border-slate-300">${percentage}</td></tr>`;
+                    let grouped = {};
+                    weekData.forEach(item => {
+                        let m = (item.masalah || 'LAINNYA').toUpperCase();
+                        if (!grouped[m]) grouped[m] = [];
+                        grouped[m].push(item);
                     });
-                    let totalPercentage = totalProduksi > 0 ? ((totalReject / totalProduksi) * 100).toFixed(2).replace('.', ',') + '%' : '0%';
-                    rowsHtml += `<tr class="bg-amber-50/80 font-bold text-slate-800"><td colspan="3" class="py-3 px-4 text-right border border-slate-300 uppercase tracking-wide">TOTAL</td><td class="border border-slate-300"></td><td class="py-3 px-4 text-center border border-slate-300 font-bold">${totalReject.toLocaleString('id-ID')}</td><td class="py-3 px-4 text-center border border-slate-300 font-bold">${totalProduksi.toLocaleString('id-ID')}</td><td class="py-3 px-4 text-center font-bold text-amber-700 border border-slate-300">${totalPercentage}</td></tr>`;
+
+                    let globalIdx = 1;
+                    for (let masalah in grouped) {
+                        rowsHtml += `
+                            <tr class="bg-slate-800 text-white font-bold">
+                                <td colspan="8" class="py-2.5 px-4 text-xs uppercase tracking-wider">${masalah}</td>
+                            </tr>`;
+                        
+                        grouped[masalah].forEach(item => {
+                            totalJumlah += (item.jumlah || 0);
+                            rowsHtml += `
+                                <tr class="hover:bg-slate-50">
+                                    <td class="py-3 px-3 text-center text-slate-500 border border-slate-300 font-bold">${globalIdx++}</td>
+                                    <td class="py-3 px-3 text-xs border border-slate-300 text-center">${item.tgl || '-'}</td>
+                                    <td class="py-3 px-3 text-xs border border-slate-300 font-semibold text-center">${item.jo || '-'}</td>
+                                    <td class="py-3 px-3 text-xs border border-slate-300 font-code-item font-semibold">${item.kode}</td>
+                                    <td class="py-3 px-3 font-medium text-slate-700 border border-slate-300">${item.nama}</td>
+                                    <td class="py-3 px-3 text-xs text-slate-600 border border-slate-300">${item.kaLine || '-'}</td>
+                                    <td class="py-3 px-3 text-xs text-slate-600 border border-slate-300">${item.detail || '-'}</td>
+                                    <td class="py-3 px-3 text-center border border-slate-300 font-bold text-amber-600">${item.jumlah.toLocaleString('id-ID')}</td>
+                                </tr>`;
+                        });
+                    }
+
+                    rowsHtml += `
+                        <tr class="bg-amber-50/90 font-bold text-slate-800">
+                            <td colspan="7" class="py-3 px-4 text-right border border-slate-300 uppercase tracking-wide">TOTAL KESELURUHAN</td>
+                            <td class="py-3 px-4 text-center border border-slate-300 font-bold text-amber-700">${totalJumlah.toLocaleString('id-ID')}</td>
+                        </tr>`;
                 }
 
                 const chartDivId = `pieChart4_${w}`;
@@ -1350,14 +1470,37 @@
                         <div class="bg-amber-600 text-white font-semibold px-4 py-3 rounded-lg flex items-center">
                             <i data-lucide="alert-triangle" class="w-5 h-5 mr-3 flex-shrink-0"></i><span class="uppercase tracking-wider font-bold">4. REKAP REJECT QC LINE - HASIL PRODUKSI (${w.toUpperCase()})</span>
                         </div>
-                        <div class="overflow-x-auto pt-1"><table class="w-full text-left border-collapse border border-slate-300"><thead><tr class="bg-amber-600 text-white text-xs uppercase font-semibold"><th class="py-3 px-4 w-16 text-center border border-slate-300">No</th><th class="py-3 px-4 border border-slate-300">KODE ITEM</th><th class="py-3 px-4 border border-slate-300">ITEM NAME</th><th class="py-3 px-4 border border-slate-300">DETAIL REJECT</th><th class="py-3 px-4 text-center border border-slate-300">QTY REJECT</th><th class="py-3 px-4 text-center border border-slate-300">QTY HASIL PRODUKSI</th><th class="py-3 px-4 text-center font-bold border border-slate-300">%</th></tr></thead><tbody class="text-sm">${rowsHtml}</tbody></table></div>
+                        <div class="overflow-x-auto pt-1">
+                            <table class="w-full text-left border-collapse border border-slate-300">
+                                <thead>
+                                    <tr class="bg-amber-600 text-white text-xs uppercase font-semibold">
+                                        <th class="py-3 px-3 w-12 text-center border border-slate-300">No</th>
+                                        <th class="py-3 px-3 text-center border border-slate-300">Tgl Laporan</th>
+                                        <th class="py-3 px-3 text-center border border-slate-300">JO#</th>
+                                        <th class="py-3 px-3 border border-slate-300">Kode Item</th>
+                                        <th class="py-3 px-3 border border-slate-300">Item Name</th>
+                                        <th class="py-3 px-3 border border-slate-300">Ka. Line</th>
+                                        <th class="py-3 px-3 border border-slate-300">Detail Reject</th>
+                                        <th class="py-3 px-3 text-center border border-slate-300">Jumlah</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-sm">${rowsHtml}</tbody>
+                            </table>
+                        </div>
                         <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-center shadow-inner" style="height: 350px;" id="${chartDivId}"></div>
                     </div>`;
                 setTimeout(() => { drawWeekPieChart(w, weekData, chartDivId, `Grafik Reject ${w.toUpperCase()}`); }, 50);
             });
 
             dataTabel4.forEach((item, index) => {
-                sidebarDiv.innerHTML += `<div class="bg-white p-2 rounded border border-amber-100 text-xs space-y-1 shadow-sm"><div class="flex items-center justify-between font-semibold border-b border-amber-50 pb-1"><span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-bold uppercase">${item.week}</span><span class="truncate max-w-[150px] font-code-item text-slate-700">${item.kode}</span><button onclick="dataTabel4.splice(${index}, 1); renderSemuaData();" class="text-rose-500 hover:text-rose-700 font-bold px-1.5 py-0.5 rounded bg-rose-50">×</button></div></div>`;
+                sidebarDiv.innerHTML += `
+                    <div class="bg-white p-2 rounded border border-amber-100 text-xs space-y-1 shadow-sm">
+                        <div class="flex items-center justify-between font-semibold border-b border-amber-50 pb-1">
+                            <span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-bold uppercase">${item.week}</span>
+                            <span class="truncate max-w-[150px] font-code-item text-slate-700">${item.kode}</span>
+                            <button onclick="dataTabel4.splice(${index}, 1); renderSemuaData();" class="text-rose-500 hover:text-rose-700 font-bold px-1.5 py-0.5 rounded bg-rose-50">×</button>
+                        </div>
+                    </div>`;
             });
             if (dataTabel4.length === 0) sidebarDiv.innerHTML = '<span class="text-[10px] text-slate-400 italic">Belum ada data.</span>';
         }
