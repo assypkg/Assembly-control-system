@@ -843,6 +843,9 @@
             }
         }
 
+        // ==========================================
+        // FUNGSI RENDER GRAFIK PIE (BERDASARKAN CASE / BARIS)
+        // ==========================================
         function drawWeekPieChart(weekKey, weekData, containerId, chartTitle) {
             if (!window.googleChartsLoaded || !google.visualization || !google.visualization.PieChart) return;
             const container = document.getElementById(containerId);
@@ -853,16 +856,29 @@
                 return;
             }
 
-            const dataArray = [['Item', 'Jumlah']];
-            weekData.forEach(item => { dataArray.push([item.nama || item.kode, item.jumlah]); });
+            // MENGELOMPOKKAN DATA BERDASARKAN "CASE" (JUMLAH BARIS) BUKAN JUMLAH PRODUK
+            let groupedData = {};
+            weekData.forEach(item => {
+                let masalah = (item.masalah || 'LAINNYA').toUpperCase();
+                if (!groupedData[masalah]) groupedData[masalah] = 0;
+                groupedData[masalah] += 1; // Menghitung frekuensi kemunculan masalah per baris
+            });
+
+            const dataArray = [['Masalah', 'Jumlah Case']];
+            for (let masalah in groupedData) {
+                dataArray.push([masalah, groupedData[masalah]]);
+            }
+
             const data = google.visualization.arrayToDataTable(dataArray);
             const options = {
                 title: chartTitle,
-                is3D: true, backgroundColor: 'transparent',
-                chartArea: { width: '75%', height: '75%' },
+                is3D: true, 
+                backgroundColor: 'transparent',
+                chartArea: { width: '85%', height: '85%' },
                 legend: { position: 'right', textStyle: { fontSize: 11, color: '#334155', fontName: 'Montserrat' } },
                 titleTextStyle: { fontSize: 13, bold: true, color: '#1e293b', fontName: 'Montserrat' },
-                pieSliceTextStyle: { fontSize: 12, bold: true }
+                pieSliceTextStyle: { fontSize: 11, bold: true },
+                pieSliceText: 'percentage' 
             };
             new google.visualization.PieChart(container).draw(data, options);
         }
@@ -1343,7 +1359,7 @@
                         </div>
                         <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-center shadow-inner" style="height: 350px;" id="${chartDivId}"></div>
                     </div>`;
-                setTimeout(() => { drawWeekPieChart(w, weekData, chartDivId, `Grafik Reject ${w.toUpperCase()}`); }, 50);
+                setTimeout(() => { drawWeekPieChart(w, weekData, chartDivId, `Persentase Masalah Reject - ${w.toUpperCase()}`); }, 50);
             });
 
             dataTabel2.forEach((item, index) => {
@@ -1489,7 +1505,7 @@
                         </div>
                         <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-center shadow-inner" style="height: 350px;" id="${chartDivId}"></div>
                     </div>`;
-                setTimeout(() => { drawWeekPieChart(w, weekData, chartDivId, `Grafik Reject ${w.toUpperCase()}`); }, 50);
+                setTimeout(() => { drawWeekPieChart(w, weekData, chartDivId, `Persentase Masalah Reject - ${w.toUpperCase()}`); }, 50);
             });
 
             dataTabel4.forEach((item, index) => {
