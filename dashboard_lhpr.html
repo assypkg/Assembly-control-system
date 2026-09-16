@@ -12,7 +12,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Google Charts CDN untuk 3D Pie Chart -->
+    <!-- Google Charts CDN untuk 3D Pie Chart & Column Chart -->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <!-- HTML2Canvas CDN untuk fitur Export to Image -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -25,6 +25,16 @@
         });
     </script>
     
+    <!-- Dynamic Print Orientation Style -->
+    <style id="printOrientationStyle">
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 10mm;
+            }
+        }
+    </style>
+
     <!-- Custom Font Styles & Print Styling Optimization -->
     <style>
         body {
@@ -47,12 +57,8 @@
             font-weight: 500 !important;
         }
 
-        /* Styling spesifik untuk Print/Cetak PDF */
+        /* Styling spesifik untuk Print/Cetak PDF agar simetris & responsif */
         @media print {
-            @page {
-                size: A4 landscape;
-                margin: 10mm;
-            }
             * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
@@ -87,10 +93,26 @@
                 padding: 0 !important;
                 box-shadow: none !important;
                 border: none !important;
-                background: white !important;
+                /* Background mengikuti pilihan kontrol panel saat dicetak */
             }
 
-            /* Tiap blok turun ke halaman baru yang bersih */
+            #histogramBlock1, #histogramBlock3 {
+                page-break-before: always !important;
+                break-before: page !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: stretch !important;
+                margin: auto !important;
+                box-shadow: none !important;
+                border: none !important;
+                background: transparent !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+
             #pointBlock1, #pointBlock2, #pointBlock3, #pointBlock4 {
                 page-break-before: always !important;
                 break-before: page !important;
@@ -103,15 +125,6 @@
             #pointBlock1 {
                 page-break-before: avoid !important;
                 break-before: avoid !important;
-            }
-
-            /* Mencegah Histogram terpotong jika halamannya panjang */
-            #histogramBlock1, #histogramBlock3 {
-                page-break-before: always !important;
-                break-before: page !important;
-                page-break-inside: avoid !important;
-                break-inside: avoid !important;
-                margin-top: 5mm;
             }
 
             tr {
@@ -151,6 +164,40 @@
             
             <div class="p-4 space-y-4 flex-1 text-sm">
                 
+                <!-- PENGATURAN DIMENSI GRAFIK KUSTOM -->
+                <div class="space-y-2.5 bg-indigo-50/70 p-3 rounded-lg border border-indigo-200 shadow-sm">
+                    <label class="block text-[11px] font-semibold text-indigo-900 uppercase mb-1">Pengaturan Dimensi Grafik (Edit Angka)</label>
+                    <div class="space-y-2 text-[11px]">
+                        <div class="bg-white p-2 rounded border border-indigo-100 space-y-1.5">
+                            <span class="font-bold text-indigo-800 block text-[10px] uppercase">Grafik Histogram (Kolom)</span>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <span class="text-[9px] text-slate-500 block">Tinggi (px):</span>
+                                    <input type="number" id="inputHistHeight" value="680" oninput="updateChartDimensions()" class="w-full bg-slate-50 border border-slate-300 rounded p-1 text-xs font-bold text-center">
+                                </div>
+                                <div>
+                                    <span class="text-[9px] text-slate-500 block">Lebar Area (%):</span>
+                                    <input type="number" id="inputHistWidthPct" value="88" oninput="updateChartDimensions()" class="w-full bg-slate-50 border border-slate-300 rounded p-1 text-xs font-bold text-center">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-2 rounded border border-indigo-100 space-y-1.5">
+                            <span class="font-bold text-indigo-800 block text-[10px] uppercase">Grafik Pie Chart 3D</span>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <span class="text-[9px] text-slate-500 block">Tinggi (px):</span>
+                                    <input type="number" id="inputPieHeight" value="380" oninput="updateChartDimensions()" class="w-full bg-slate-50 border border-slate-300 rounded p-1 text-xs font-bold text-center">
+                                </div>
+                                <div>
+                                    <span class="text-[9px] text-slate-500 block">Lebar Area (%):</span>
+                                    <input type="number" id="inputPieWidthPct" value="85" oninput="updateChartDimensions()" class="w-full bg-slate-50 border border-slate-300 rounded p-1 text-xs font-bold text-center">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- PENGATURAN TAMPILAN BAGIAN -->
                 <div class="space-y-2 bg-slate-100/90 p-3 rounded-lg border border-slate-300 shadow-sm">
                     <label class="block text-[11px] font-semibold text-slate-800 uppercase mb-1">Tampilkan / Sembunyikan Bagian</label>
@@ -190,7 +237,7 @@
                     </div>
                 </div>
 
-                <!-- 0. Pengaturan Header, Plant, Week & Periode -->
+                <!-- PENGATURAN HEADER, INFORMASI & WARNA BACKGROUND MODERN -->
                 <div class="space-y-2.5 bg-slate-100/80 p-3 rounded-lg border border-slate-300 shadow-sm">
                     <label class="block text-[11px] font-semibold text-slate-700 uppercase">Pengaturan Header & Informasi</label>
                     
@@ -210,10 +257,32 @@
                         </div>
                     </div>
 
+                    <div>
+                        <span class="text-[10px] text-slate-500 block mb-1 font-medium">Orientasi Cetak PDF:</span>
+                        <select id="selectPrintOrientation" onchange="updatePrintOrientation(this.value)" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-slate-800 text-xs focus:outline-none focus:border-emerald-500 font-semibold">
+                            <option value="landscape" selected>Landscape (Mendatar)</option>
+                            <option value="portrait">Portrait (Tegak)</option>
+                        </select>
+                    </div>
+
+                    <!-- 7 Opsi Warna Background Modern (Non-Putih & Subtle Ice Blue) -->
+                    <div>
+                        <span class="text-[10px] text-slate-500 block mb-1 font-medium">Warna Background Dashboard:</span>
+                        <select id="selectDashboardBg" onchange="changeDashboardBackground(this.value)" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-slate-800 text-xs focus:outline-none focus:border-emerald-500 font-semibold">
+                            <option value="bg-slate-200" selected>1. Modern Slate Medium (Default)</option>
+                            <option value="bg-sky-50">2. Subtle Ice Blue (Dipertahankan)</option>
+                            <option value="bg-indigo-100">3. Soft Indigo Tint</option>
+                            <option value="bg-teal-100">4. Muted Teal Tone</option>
+                            <option value="bg-emerald-100">5. Fresh Mint Soft</option>
+                            <option value="bg-blue-100">6. Classic Soft Blue</option>
+                            <option value="bg-slate-300">7. Deep Cool Gray</option>
+                        </select>
+                    </div>
+
                     <select id="headerBgSelect" onchange="changeHeaderBackground(this.value)" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-slate-800 text-xs focus:outline-none focus:border-emerald-500">
-                        <option value="from-slate-800 to-emerald-700">Warna: Navy - Emerald (Default)</option>
-                        <option value="from-blue-900 to-indigo-800">Warna: Deep Blue - Indigo</option>
-                        <option value="from-slate-900 to-slate-700">Warna: Dark Minimalist</option>
+                        <option value="from-slate-800 to-emerald-700">Warna Header: Navy - Emerald (Default)</option>
+                        <option value="from-blue-900 to-indigo-800">Warna Header: Deep Blue - Indigo</option>
+                        <option value="from-slate-900 to-slate-700">Warna Header: Dark Minimalist</option>
                     </select>
                     
                     <div>
@@ -502,7 +571,7 @@
         <!-- MAIN CONTENT / PANEL KANAN -->
         <main class="flex-1 overflow-y-auto p-4 md:p-8 bg-slate-200">
             
-            <div id="captureArea" class="w-full bg-slate-100 rounded-xl shadow-sm border border-slate-300 p-4 md:p-6 space-y-8 pb-8 transition-all duration-300">
+            <div id="captureArea" class="w-full bg-slate-200 rounded-xl shadow-sm border border-slate-300 p-4 md:p-6 space-y-8 pb-8 transition-all duration-300">
                 
                 <!-- POINT 1: QC FINAL -->
                 <div id="pointBlock1" class="space-y-6 avoid-break-group">
@@ -545,11 +614,10 @@
                         </div>
                     </div>
 
-                    <div id="histogramBlock1" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
+                    <div id="histogramBlock1" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4 w-full">
                         <div class="text-center font-bold text-slate-800 uppercase tracking-wide text-sm border-b border-slate-200 pb-2" style="font-weight: 600;">DATA REJECT QC FINAL</div>
-                        <div id="legendHistogram1" class="flex flex-wrap justify-center items-center gap-4 text-xs font-semibold py-1"></div>
-                        <div class="pt-2">
-                            <div id="containerHistogram" class="bg-white border border-slate-200 rounded-lg p-4 w-full"></div>
+                        <div class="pt-2 w-full">
+                            <div id="containerHistogram" class="bg-white border border-slate-200 rounded-lg p-4 w-full" style="height: 680px; width: 100%;"></div>
                         </div>
                     </div>
                 </div>
@@ -600,11 +668,10 @@
                         </div>
                     </div>
 
-                    <div id="histogramBlock3" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
+                    <div id="histogramBlock3" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4 w-full">
                         <div class="text-center font-bold text-slate-800 uppercase tracking-wide text-sm border-b border-slate-200 pb-2" style="font-weight: 600;">DATA REJECT QC LINE</div>
-                        <div id="legendHistogram3" class="flex flex-wrap justify-center items-center gap-4 text-xs font-semibold py-1"></div>
-                        <div class="pt-2">
-                            <div id="containerHistogramLine" class="bg-white border border-slate-200 rounded-lg p-4 w-full"></div>
+                        <div class="pt-2 w-full">
+                            <div id="containerHistogramLine" class="bg-white border border-slate-200 rounded-lg p-4 w-full" style="height: 680px; width: 100%;"></div>
                         </div>
                     </div>
                 </div>
@@ -620,7 +687,6 @@
 
     <!-- Script JavaScript -->
     <script>
-        // INISIALISASI DATA KOSONG (CLEAN SLATE)
         let dataTabel1 = [];
         let dataTabel2 = [];
         let dataTabel3 = [];
@@ -633,7 +699,6 @@
         let visiblePoints = { 1: true, 2: true, 3: true, 4: true };
 
         window.addEventListener('DOMContentLoaded', () => {
-            // Sinkronisasi status checkbox awal
             ['w1','w2','w3','w4','w5'].forEach(w => {
                 const el1 = document.getElementById(`checkWeek1_${w}`);
                 if (el1) el1.checked = visibleWeeks1[w];
@@ -647,9 +712,53 @@
             renderSemuaData();
         });
 
-        // ==========================================
-        // FUNGSI RENDER KE GAMBAR (HTML2CANVAS)
-        // ==========================================
+        // Fungsi mengubah warna background dashboard secara dinamis
+        function changeDashboardBackground(bgClass) {
+            const captureArea = document.getElementById('captureArea');
+            if (captureArea) {
+                captureArea.className = captureArea.className.replace(/bg-(slate|sky|indigo|teal|emerald|blue)(-\d+)?/g, '').trim();
+                captureArea.classList.add(bgClass);
+            }
+        }
+
+        // Fungsi mengubah orientasi cetak PDF (Landscape / Portrait)
+        function updatePrintOrientation(orientation) {
+            const styleTag = document.getElementById('printOrientationStyle');
+            if (styleTag) {
+                styleTag.innerHTML = `
+                    @media print {
+                        @page {
+                            size: A4 ${orientation};
+                            margin: 10mm;
+                        }
+                    }
+                `;
+            }
+        }
+
+        // Fungsi pembaruan dimensi secara real-time dari input user
+        function updateChartDimensions() {
+            renderSemuaData();
+        }
+
+        // Fungsi pemecah kata multi-suku kata menjadi 2 baris horizontal bertumpuk tanpa terpotong
+        function getAxisLabelObject(text) {
+            if (!text) return {v: '', f: ''};
+            let upper = text.toUpperCase().trim();
+            let words = upper.split(/\s+/);
+            let formattedF = '';
+
+            if (words.length >= 2) {
+                let mid = Math.ceil(words.length / 2);
+                let line1 = words.slice(0, mid).join(' ');
+                let line2 = words.slice(mid).join(' ');
+                formattedF = line1 + '\n' + line2;
+            } else {
+                formattedF = upper;
+            }
+            return {v: upper, f: formattedF};
+        }
+
         async function downloadGambar() {
             const targetArea = document.getElementById('captureArea');
             const btn = document.getElementById('btnDownloadImg');
@@ -697,9 +806,6 @@
             }
         }
 
-        // ==========================================
-        // BACKUP & RESTORE JSON
-        // ==========================================
         function downloadBackup() {
             const payload = {
                 plantName: document.getElementById('inputPlantName').value,
@@ -843,25 +949,25 @@
             }
         }
 
-        // ==========================================
-        // FUNGSI RENDER GRAFIK PIE (BERDASARKAN CASE / BARIS)
-        // ==========================================
         function drawWeekPieChart(weekKey, weekData, containerId, chartTitle) {
             if (!window.googleChartsLoaded || !google.visualization || !google.visualization.PieChart) return;
             const container = document.getElementById(containerId);
             if (!container) return;
+
+            const pieHeight = (document.getElementById('inputPieHeight')?.value || 380) + 'px';
+            const pieWidthPct = (document.getElementById('inputPieWidthPct')?.value || 85) + '%';
+            container.style.height = pieHeight;
 
             if (!weekData || weekData.length === 0) {
                 container.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-slate-400 italic">Belum ada data untuk grafik.</div>';
                 return;
             }
 
-            // MENGELOMPOKKAN DATA BERDASARKAN "CASE" (JUMLAH BARIS) BUKAN JUMLAH PRODUK
             let groupedData = {};
             weekData.forEach(item => {
                 let masalah = (item.masalah || 'LAINNYA').toUpperCase();
                 if (!groupedData[masalah]) groupedData[masalah] = 0;
-                groupedData[masalah] += 1; // Menghitung frekuensi kemunculan masalah per baris
+                groupedData[masalah] += 1;
             });
 
             const dataArray = [['Masalah', 'Jumlah Case']];
@@ -872,9 +978,11 @@
             const data = google.visualization.arrayToDataTable(dataArray);
             const options = {
                 title: chartTitle,
+                width: '100%',
+                height: '100%',
                 is3D: true, 
                 backgroundColor: 'transparent',
-                chartArea: { width: '85%', height: '85%' },
+                chartArea: { width: pieWidthPct, height: '85%' },
                 legend: { position: 'right', textStyle: { fontSize: 11, color: '#334155', fontName: 'Montserrat' } },
                 titleTextStyle: { fontSize: 13, bold: true, color: '#1e293b', fontName: 'Montserrat' },
                 pieSliceTextStyle: { fontSize: 11, bold: true },
@@ -883,117 +991,67 @@
             new google.visualization.PieChart(container).draw(data, options);
         }
 
-        // ==========================================
-        // HORIZONTAL GROUPED BAR CHART
-        // ==========================================
-        function renderCombinedHistogram(data, containerId, legendId, visibleWeeks) {
+        function drawCombinedColumnChart(data, containerId, visibleWeeks, chartTitle) {
+            if (!window.googleChartsLoaded || !google.visualization || !google.visualization.ColumnChart) return;
             const container = document.getElementById(containerId);
-            const legendContainer = document.getElementById(legendId);
-            container.innerHTML = '';
-            legendContainer.innerHTML = '';
+            if (!container) return;
 
-            container.style.height = 'auto'; 
-            container.style.minHeight = '200px'; 
-            container.style.overflow = 'visible';
+            const histHeight = (document.getElementById('inputHistHeight')?.value || 680) + 'px';
+            const histWidthPct = (document.getElementById('inputHistWidthPct')?.value || 88) + '%';
+            container.style.height = histHeight;
 
-            let legendHtml = '';
-            if (visibleWeeks.w1) legendHtml += `<div class="flex items-center space-x-1.5"><span class="w-3 h-3 bg-blue-700 rounded-sm shadow-sm"></span><span>WEEK 1</span></div>`;
-            if (visibleWeeks.w2) legendHtml += `<div class="flex items-center space-x-1.5"><span class="w-3 h-3 bg-amber-600 rounded-sm shadow-sm"></span><span>WEEK 2</span></div>`;
-            if (visibleWeeks.w3) legendHtml += `<div class="flex items-center space-x-1.5"><span class="w-3 h-3 bg-emerald-600 rounded-sm shadow-sm"></span><span>WEEK 3</span></div>`;
-            if (visibleWeeks.w4) legendHtml += `<div class="flex items-center space-x-1.5"><span class="w-3 h-3 bg-cyan-500 rounded-sm shadow-sm"></span><span>WEEK 4</span></div>`;
-            if (visibleWeeks.w5) legendHtml += `<div class="flex items-center space-x-1.5"><span class="w-3 h-3 bg-purple-600 rounded-sm shadow-sm"></span><span>WEEK 5</span></div>`;
-            legendContainer.innerHTML = legendHtml;
-
-            if (data.length === 0) {
-                container.innerHTML = '<div class="flex items-center justify-center h-[200px] text-xs text-slate-400 italic">Belum ada data untuk ditampilkan pada grafik.</div>';
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-slate-400 italic">Belum ada data untuk ditampilkan pada grafik.</div>';
                 return;
             }
 
-            let maxDataVal = 0;
+            let headerRow = ['Masalah'];
+            let weekKeys = [];
+            if (visibleWeeks.w1) { headerRow.push('Week 1'); weekKeys.push('w1'); }
+            if (visibleWeeks.w2) { headerRow.push('Week 2'); weekKeys.push('w2'); }
+            if (visibleWeeks.w3) { headerRow.push('Week 3'); weekKeys.push('w3'); }
+            if (visibleWeeks.w4) { headerRow.push('Week 4'); weekKeys.push('w4'); }
+            if (visibleWeeks.w5) { headerRow.push('Week 5'); weekKeys.push('w5'); }
+
+            let dataArray = [headerRow];
             data.forEach(item => {
-                if (visibleWeeks.w1) maxDataVal = Math.max(maxDataVal, item.w1 || 0);
-                if (visibleWeeks.w2) maxDataVal = Math.max(maxDataVal, item.w2 || 0);
-                if (visibleWeeks.w3) maxDataVal = Math.max(maxDataVal, item.w3 || 0);
-                if (visibleWeeks.w4) maxDataVal = Math.max(maxDataVal, item.w4 || 0);
-                if (visibleWeeks.w5) maxDataVal = Math.max(maxDataVal, item.w5 || 0);
-            });
-            
-            if (maxDataVal === 0) maxDataVal = 10;
-            let step = Math.ceil(maxDataVal / 5);
-            let maxVal = step * 5;
-
-            let gridLabelsHtml = `
-                <div class="flex w-full mb-1">
-                    <div class="w-[35%] pr-4 text-right text-[10px] font-bold text-slate-500">JENIS MASALAH</div>
-                    <div class="w-[65%] relative h-4 text-[10px] text-slate-400 font-bold border-b border-slate-300">
-                        <span class="absolute top-0 transform -translate-x-1/2" style="left: 0%">0</span>
-                        <span class="absolute top-0 transform -translate-x-1/2" style="left: 20%">${step}</span>
-                        <span class="absolute top-0 transform -translate-x-1/2" style="left: 40%">${step*2}</span>
-                        <span class="absolute top-0 transform -translate-x-1/2" style="left: 60%">${step*3}</span>
-                        <span class="absolute top-0 transform -translate-x-1/2" style="left: 80%">${step*4}</span>
-                        <span class="absolute top-0 transform -translate-x-1/2" style="left: 100%">${maxVal}</span>
-                    </div>
-                </div>
-            `;
-
-            let gridLinesHtml = `
-                <div class="absolute right-0 top-0 bottom-0 w-[65%] pointer-events-none z-0">
-                    <div class="absolute top-0 bottom-0 border-l-2 border-slate-300" style="left: 0%"></div>
-                    <div class="absolute top-0 bottom-0 border-l border-dashed border-slate-200" style="left: 20%"></div>
-                    <div class="absolute top-0 bottom-0 border-l border-dashed border-slate-200" style="left: 40%"></div>
-                    <div class="absolute top-0 bottom-0 border-l border-dashed border-slate-200" style="left: 60%"></div>
-                    <div class="absolute top-0 bottom-0 border-l border-dashed border-slate-200" style="left: 80%"></div>
-                    <div class="absolute top-0 bottom-0 border-l border-slate-300" style="left: 100%"></div>
-                </div>
-            `;
-
-            let rowsHtml = '';
-            data.forEach((item) => {
-                let subBarsHtml = '';
-                const addBar = (val, colorClass, weekLabel) => {
-                    let widthPct = (val / maxVal) * 100;
-                    subBarsHtml += `
-                        <div class="flex items-center group/bar cursor-pointer" title="${weekLabel}: ${val}">
-                            <div class="${colorClass} h-3 sm:h-3.5 rounded-r transition-all duration-300 min-w-[2px] shadow-sm" style="width: ${widthPct}%"></div>
-                            <span class="text-[9px] font-bold text-slate-600 ml-1.5">${val}</span>
-                        </div>
-                    `;
-                };
-
-                if (visibleWeeks.w1) addBar(item.w1 || 0, 'bg-blue-700', 'Week 1');
-                if (visibleWeeks.w2) addBar(item.w2 || 0, 'bg-amber-600', 'Week 2');
-                if (visibleWeeks.w3) addBar(item.w3 || 0, 'bg-emerald-600', 'Week 3');
-                if (visibleWeeks.w4) addBar(item.w4 || 0, 'bg-cyan-500', 'Week 4');
-                if (visibleWeeks.w5) addBar(item.w5 || 0, 'bg-purple-600', 'Week 5');
-
-                rowsHtml += `
-                    <div class="flex w-full relative z-10 items-center hover:bg-slate-50 py-2.5 rounded group border-b border-slate-100 last:border-0">
-                        <div class="w-[35%] pr-4 text-right text-[10px] sm:text-[11px] font-bold text-slate-800 uppercase leading-snug break-words flex-shrink-0">
-                            ${item.masalah}
-                        </div>
-                        <div class="w-[65%] flex flex-col justify-center space-y-1">
-                            ${subBarsHtml}
-                        </div>
-                    </div>
-                `;
+                let labelObj = getAxisLabelObject(item.masalah);
+                let row = [labelObj];
+                weekKeys.forEach(wk => {
+                    row.push(item[wk] || 0);
+                });
+                dataArray.push(row);
             });
 
-            container.innerHTML = `
-                <div class="flex flex-col w-full">
-                    ${gridLabelsHtml}
-                    <div class="relative w-full pt-1 pb-2">
-                        ${gridLinesHtml}
-                        <div class="flex flex-col w-full">
-                            ${rowsHtml}
-                        </div>
-                    </div>
-                </div>
-            `;
+            const dataTable = google.visualization.arrayToDataTable(dataArray);
+            const options = {
+                title: chartTitle,
+                width: '100%',
+                height: '100%',
+                backgroundColor: 'transparent',
+                chartArea: { width: histWidthPct, height: '52%', top: '10%', bottom: '36%' },
+                hAxis: { 
+                    title: 'Jenis Masalah', 
+                    textStyle: { fontSize: 11, fontName: 'Montserrat', bold: true },
+                    slantedText: false, 
+                    showTextEvery: 1,      
+                    maxAlternation: 1      
+                },
+                vAxis: { title: 'Jumlah', minValue: 0, textStyle: { fontSize: 12, fontName: 'Montserrat', bold: true } },
+                legend: { position: 'top', textStyle: { fontSize: 13, fontName: 'Montserrat', bold: true } },
+                titleTextStyle: { fontSize: 14, fontName: 'Montserrat', bold: true },
+                colors: ['#1d4ed8', '#d97706', '#059669', '#06b6d4', '#7c3aed'],
+                explorer: {
+                    actions: ['dragToZoom', 'rightClickToReset'],
+                    axis: 'horizontal',
+                    keepInBounds: true,
+                    maxZoomIn: 4.0
+                }
+            };
+
+            new google.visualization.ColumnChart(container).draw(dataTable, options);
         }
 
-        // ==========================================
-        // INPUT MANUAL FUNGSI UTAMA (AUTO-MERGE)
-        // ==========================================
         function tambahDataManual() {
             const masalah = document.getElementById('inputMasalah').value.trim();
             const w1 = parseInt(document.getElementById('inputW1').value) || 0;
@@ -1104,9 +1162,6 @@
             renderSemuaData();
         }
 
-        // ==========================================
-        // LOGIKA EXCEL PASTE & RENDER TABEL
-        // ==========================================
         function prosesPasteExcel1() {
             const pasteData = document.getElementById('inputPasteExcel1').value.trim();
             const targetWeek = document.getElementById('targetWeekSelect1').value;
@@ -1280,7 +1335,7 @@
                 });
             }
 
-            renderCombinedHistogram(dataTabel1, 'containerHistogram', 'legendHistogram1', visibleWeeks1);
+            drawCombinedColumnChart(dataTabel1, 'containerHistogram', visibleWeeks1, 'DATA REJECT QC FINAL');
         }
 
         function renderTabel2() {
@@ -1357,7 +1412,7 @@
                                 <tbody class="text-sm">${rowsHtml}</tbody>
                             </table>
                         </div>
-                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-center shadow-inner" style="height: 350px;" id="${chartDivId}"></div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-center shadow-inner" id="${chartDivId}"></div>
                     </div>`;
                 setTimeout(() => { drawWeekPieChart(w, weekData, chartDivId, `Persentase Masalah Reject - ${w.toUpperCase()}`); }, 50);
             });
@@ -1426,7 +1481,7 @@
                 });
             }
 
-            renderCombinedHistogram(dataTabel3, 'containerHistogramLine', 'legendHistogram3', visibleWeeks3);
+            drawCombinedColumnChart(dataTabel3, 'containerHistogramLine', visibleWeeks3, 'DATA REJECT QC LINE');
         }
 
         function renderTabel4() {
@@ -1503,7 +1558,7 @@
                                 <tbody class="text-sm">${rowsHtml}</tbody>
                             </table>
                         </div>
-                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-center shadow-inner" style="height: 350px;" id="${chartDivId}"></div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-center shadow-inner" id="${chartDivId}"></div>
                     </div>`;
                 setTimeout(() => { drawWeekPieChart(w, weekData, chartDivId, `Persentase Masalah Reject - ${w.toUpperCase()}`); }, 50);
             });
