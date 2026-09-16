@@ -25,58 +25,57 @@
         #status { margin-top: 15px; font-weight: bold; text-align: center; color: #0A2540; }
         .instructions { background: #eef2f5; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; line-height: 1.5; border-left: 4px solid #0A2540;}
         
-        .dict-container { margin-bottom: 25px; background: #fafbfc; padding: 15px; border-radius: 8px; border: 1px solid #ddd; position: relative; z-index: 10; }
-        .dict-container h3 { margin-top: 0; color: #0A2540; font-size: 15px; }
-        table.dict-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        table.dict-table th, table.dict-table td { border: 1px solid #ccc; padding: 6px 10px; font-size: 12px; }
-        table.dict-table th { background-color: #0A2540; color: white; }
-        table.dict-table input { width: 95%; padding: 4px; font-size: 12px; box-sizing: border-box; }
+        .dict-control-panel { margin-bottom: 25px; background: #fafbfc; padding: 20px; border-radius: 8px; border: 1px solid #ddd; text-align: center; }
+        .dict-control-panel h3 { margin-top: 0; color: #0A2540; font-size: 16px; }
         
-        .btn-small { background-color: #0A2540; color: white; border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; margin-top: 10px; display: inline-block; }
-        .btn-sort { background-color: #337ab7; color: white; border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; margin-top: 10px; margin-left: 5px; display: inline-block; }
-        .btn-backup { background-color: #f0ad4e; color: white; border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; margin-top: 10px; margin-left: 5px; display: inline-block; }
-        .btn-restore { background-color: #5bc0de; color: white; border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; margin-top: 10px; margin-left: 5px; display: inline-block; }
-        .btn-del { background-color: #d9534f; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; }
+        /* Modal Popup */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: #ffffff; width: 950px; height: 88vh; border-radius: 12px; padding: 25px; box-shadow: 0 8px 25px rgba(0,0,0,0.25); display: flex; flex-direction: column; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0A2540; padding-bottom: 12px; margin-bottom: 15px; }
+        .modal-header h3 { margin: 0; color: #0A2540; font-size: 18px; }
+        .close-modal { background: #d9534f; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; }
+        
+        .search-box { width: 100%; padding: 12px 15px; font-size: 14px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; background: #fdfdfd; }
+        
+        .add-rule-box { display: flex; gap: 10px; background: #eef2f5; padding: 12px; border-radius: 8px; margin-bottom: 15px; align-items: center; }
+        .add-rule-box input { flex: 1; padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; }
+        
+        .table-responsive { flex: 1; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px; background: #fff; }
+        table.dict-table { width: 100%; border-collapse: collapse; text-align: left; }
+        table.dict-table th, table.dict-table td { border-bottom: 1px solid #e0e0e0; padding: 10px 14px; font-size: 13px; }
+        table.dict-table th { background-color: #0A2540; color: white; position: sticky; top: 0; z-index: 2; font-weight: 600; }
+        table.dict-table tbody tr:nth-child(even) { background-color: #f9fbfd; }
+        table.dict-table tbody tr:hover { background-color: #edf2f7; }
+        
+        .btn-small { background-color: #0A2540; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; display: inline-block; transition: 0.2s; }
+        .btn-small:hover { background-color: #12375e; }
+        .btn-sort { background-color: #337ab7; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; margin-left: 5px; }
+        .btn-backup { background-color: #f0ad4e; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; margin-left: 5px; }
+        .btn-restore { background-color: #5bc0de; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; margin-left: 5px; }
+        
+        .btn-action-edit { background-color: #337ab7; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-right: 4px; }
+        .btn-action-del { background-color: #d9534f; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; }
+        .modal-footer { margin-top: 15px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e0e0e0; padding-top: 12px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <h2>PORTAL MASTER LHPR ASSEMBLY (HYBRID CLOUD)</h2>
-        <p style="margin-top: 5px; font-size: 14px; color: #d0dbe6;">Sinkronisasi Firebase Cloud + Tombol Cadangan Backup</p>
+        <h2>PORTAL MASTER LHPR ASSEMBLY (CLOUD)</h2>
+        <p style="margin-top: 5px; font-size: 14px; color: #d0dbe6;">Manajemen Kamus Bersih, Cepat, dan Interaktif</p>
     </div>
 
     <div class="instructions">
         <strong>Informasi Sistem:</strong><br>
-        1. <b>Kamus Cloud Terpusat:</b> Data otomatis dimuat dari Firebase Firestore.<br>
-        2. <b>Tombol Cadangan:</b> Gunakan <i>Backup/Restore</i> kapan saja untuk mengamankan data secara lokal jika koneksi terputus.
+        1. <b>Popup Kamus:</b> Klik tombol di bawah untuk membuka daftar kamus.<br>
+        2. <b>Anti-Duplikat & Pencarian:</b> Cari dan kelola data dengan nyaman tanpa memenuhi halaman utama.
     </div>
 
-    <div class="dict-container">
-        <h3>Kamus Pemetaan Masalah</h3>
-        <p style="font-size: 12px; color: #666; margin-bottom: 8px;">Kelola kosakata terhubung cloud dengan opsi cadangan.</p>
-        <div style="max-height: 250px; overflow-y: auto; border: 1px solid #ddd;">
-            <table class="dict-table" id="dictTable">
-                <thead>
-                    <tr>
-                        <th style="position: sticky; top: 0; z-index: 2;">Kata Kunci dari ERP (Mengandung...)</th>
-                        <th style="position: sticky; top: 0; z-index: 2;">Standar Masalah Utama (Target)</th>
-                        <th style="position: sticky; top: 0; z-index: 2; width: 50px; text-align: center;">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="dictBody">
-                    <!-- Data dimuat otomatis dari Firebase -->
-                </tbody>
-            </table>
-        </div>
-        <div style="margin-top: 10px;">
-            <button type="button" class="btn-small" onclick="addNewDictRowUI()">+ Tambah Aturan</button>
-            <button type="button" class="btn-sort" onclick="sortDictionary()">Urutkan A-Z</button>
-            <button type="button" class="btn-backup" onclick="backupDictionary()">Backup Kamus</button>
-            <button type="button" class="btn-restore" onclick="document.getElementById('restoreFile').click()">Restore Kamus</button>
-            <input type="file" id="restoreFile" accept=".json" style="display:none;" onchange="restoreDictionary(event)">
-        </div>
+    <div class="dict-control-panel">
+        <h3>Pengaturan Kamus Pemetaan Masalah</h3>
+        <p style="font-size: 13px; color: #666; margin-bottom: 12px;">Buka jendela pop-up untuk melihat, mencari, menambah, atau menyunting kamus.</p>
+        <button type="button" class="btn-small" onclick="openDictModal()" style="font-size: 14px; padding: 10px 22px;">📂 Buka Daftar Kamus Masalah</button>
     </div>
 
     <div class="upload-section">
@@ -96,7 +95,53 @@
     <div id="status"></div>
 </div>
 
-<!-- Firebase SDK & Logika Cloud -->
+<!-- Modal Popup Kamus -->
+<div class="modal-overlay" id="dictModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Daftar Kamus Pemetaan Masalah (Cloud & Backup)</h3>
+            <button type="button" class="close-modal" onclick="closeDictModal()">✕ Tutup</button>
+        </div>
+        
+        <div class="add-rule-box">
+            <input type="text" id="inputNewKeyword" placeholder="Kata Kunci dari ERP (Contoh: BLEBER)">
+            <input type="text" id="inputNewTarget" placeholder="Standar Masalah Utama (Contoh: KOTOR LEM)">
+            <button type="button" class="btn-small" onclick="addNewRuleManual()">+ Tambah</button>
+        </div>
+
+        <input type="text" class="search-box" id="searchDictInput" placeholder="🔍 Ketik untuk mencari kata kunci atau standar masalah secara instan..." onkeyup="filterDictionary()">
+        
+        <div class="table-responsive">
+            <table class="dict-table">
+                <thead>
+                    <tr>
+                        <th style="width: 8%;">No</th>
+                        <th style="width: 42%;">Kata Kunci dari ERP</th>
+                        <th style="width: 38%;">Standar Masalah Utama (Target)</th>
+                        <th style="width: 12%; text-align: center;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="dictBody">
+                    <tr><td colspan="4" style="text-align:center; color:#888; padding: 20px;">Memuat data kamus...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="modal-footer">
+            <div>
+                <span id="dictCounter" style="font-size: 13px; color: #666; font-weight: bold;">Total Aturan: 0</span>
+                <button type="button" class="btn-sort" onclick="sortDictionary()">Urutkan A-Z</button>
+            </div>
+            <div>
+                <button type="button" class="btn-backup" onclick="backupDictionary()">Backup Kamus</button>
+                <button type="button" class="btn-restore" onclick="document.getElementById('restoreFile').click()">Restore Kamus</button>
+                <input type="file" id="restoreFile" accept=".json" style="display:none;" onchange="restoreDictionary(event)">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Logika Global & Firebase Cloud -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
@@ -116,40 +161,48 @@
     const analytics = getAnalytics(app);
     const db = getFirestore(app);
 
+    window.dictionaryMemory = [];
+
+    // Daftarkan fungsi ke objek window agar bisa diakses tombol HTML luar module
     window.loadDictionaryFromCloud = async function() {
         try {
             const querySnapshot = await getDocs(collection(db, "kamus_masalah"));
-            let tbody = document.getElementById('dictBody');
-            tbody.innerHTML = "";
+            window.dictionaryMemory = [];
             
-            if (querySnapshot.empty) {
-                console.log("Kamus kosong di cloud.");
-                return;
-            }
-
             querySnapshot.forEach((docSnap) => {
                 let data = docSnap.data();
-                addDictRowToDOM(data.keyword, data.target, docSnap.id);
+                window.dictionaryMemory.push({
+                    id: docSnap.id,
+                    keyword: data.keyword,
+                    target: data.target
+                });
             });
+            if (typeof renderDictionaryTable === 'function') {
+                renderDictionaryTable();
+            }
         } catch (error) {
-            console.error("Gagal memuat kamus dari Cloud (Periksa Koneksi):", error);
-            alert("Koneksi internet bermasalah. Anda tetap bisa menggunakan Restore file backup jika diperlukan.");
+            console.error("Gagal memuat kamus dari Cloud:", error);
         }
     };
 
-    window.saveNewRuleToCloud = async function(keyword, target, rowElement) {
+    window.saveNewRuleToCloud = async function(keyword, target) {
         try {
             const docRef = await addDoc(collection(db, "kamus_masalah"), {
                 keyword: keyword.toUpperCase().trim(),
                 target: target.toUpperCase().trim()
             });
-            rowElement.setAttribute('data-id', docRef.id);
+            window.dictionaryMemory.push({
+                id: docRef.id,
+                keyword: keyword.toUpperCase().trim(),
+                target: target.toUpperCase().trim()
+            });
+            renderDictionaryTable();
         } catch (error) {
             console.error("Gagal menyimpan ke cloud:", error);
         }
     };
 
-    window.deleteRuleFromCloud = async function(docId, rowElement) {
+    window.deleteRuleFromCloud = async function(docId) {
         if (docId) {
             try {
                 await deleteDoc(doc(db, "kamus_masalah", docId));
@@ -157,7 +210,8 @@
                 console.error("Gagal menghapus dari cloud:", error);
             }
         }
-        rowElement.remove();
+        window.dictionaryMemory = window.dictionaryMemory.filter(item => item.id !== docId);
+        renderDictionaryTable();
     };
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -166,75 +220,117 @@
 </script>
 
 <script>
-    function addDictRowToDOM(kw = "", target = "", docId = "") {
-        let tbody = document.getElementById('dictBody');
-        let tr = document.createElement('tr');
-        if(docId) tr.setAttribute('data-id', docId);
-        
-        tr.innerHTML = `
-            <td><input type="text" value="${kw}" placeholder="Contoh: beleber"></td>
-            <td><input type="text" value="${target}" placeholder="Contoh: KOTOR LEM"></td>
-            <td style="text-align:center;"><button type="button" class="btn-del" onclick="deleteRuleFromCloud('${docId}', this.closest('tr'))">X</button></td>
-        `;
-        tbody.appendChild(tr);
+    function openDictModal() {
+        document.getElementById('dictModal').style.display = 'flex';
+        renderDictionaryTable();
     }
 
-    function addNewDictRowUI() {
-        let tbody = document.getElementById('dictBody');
-        let tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td><input type="text" value="" placeholder="Contoh: beleber" onblur="autoSaveNewRow(this)"></td>
-            <td><input type="text" value="" placeholder="Contoh: KOTOR LEM" onblur="autoSaveNewRow(this)"></td>
-            <td style="text-align:center;"><button type="button" class="btn-del" onclick="this.closest('tr').remove()">X</button></td>
-        `;
-        tbody.appendChild(tr);
+    function closeDictModal() {
+        document.getElementById('dictModal').style.display = 'none';
     }
 
-    function autoSaveNewRow(inputElem) {
-        let tr = inputElem.closest('tr');
-        let inputs = tr.querySelectorAll('input');
-        let kw = inputs[0].value.trim();
-        let tgt = inputs[1].value.trim();
+    function renderDictionaryTable(filteredData = null) {
+        let tbody = document.getElementById('dictBody');
+        if(!tbody) return;
+        tbody.innerHTML = "";
         
-        if(kw && tgt && !tr.getAttribute('data-id')) {
-            if(typeof window.saveNewRuleToCloud === 'function') {
-                window.saveNewRuleToCloud(kw, tgt, tr);
-            }
+        let dataToRender = filteredData || window.dictionaryMemory || [];
+        let counterElem = document.getElementById('dictCounter');
+        if(counterElem) counterElem.innerText = "Total Aturan: " + dataToRender.length;
+
+        if(dataToRender.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#888; padding: 20px;">Belum ada data kamus. Tambahkan melalui form di atas.</td></tr>`;
+            return;
+        }
+
+        dataToRender.forEach((item, index) => {
+            let tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="text-align:center; color:#555;">${index + 1}</td>
+                <td><strong>${item.keyword}</strong></td>
+                <td>${item.target}</td>
+                <td style="text-align:center;">
+                    <button type="button" class="btn-action-edit" onclick="editRulePrompt('${item.id}', '${item.keyword}', '${item.target}')">Edit</button>
+                    <button type="button" class="btn-action-del" onclick="deleteRuleFromCloud('${item.id}')">Hapus</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function filterDictionary() {
+        let keyword = document.getElementById('searchDictInput').value.toUpperCase().trim();
+        if(!keyword) {
+            renderDictionaryTable();
+            return;
+        }
+
+        let filtered = window.dictionaryMemory.filter(item => 
+            item.keyword.toUpperCase().includes(keyword) || item.target.toUpperCase().includes(keyword)
+        );
+        renderDictionaryTable(filtered);
+    }
+
+    function addNewRuleManual() {
+        let kwInput = document.getElementById('inputNewKeyword');
+        let tgtInput = document.getElementById('inputNewTarget');
+        let kw = kwInput.value.trim().toUpperCase();
+        let tgt = tgtInput.value.trim().toUpperCase();
+
+        if(!kw || !tgt) {
+            alert("Mohon isi Kata Kunci dan Standar Masalah dengan lengkap.");
+            return;
+        }
+
+        let isDuplicate = window.dictionaryMemory.some(item => item.keyword === kw);
+        if(isDuplicate) {
+            alert("⚠️ PERINGATAN: Kata kunci '" + kw + "' sudah terdaftar di dalam kamus!");
+            kwInput.focus();
+            return;
+        }
+
+        if(typeof window.saveNewRuleToCloud === 'function') {
+            window.saveNewRuleToCloud(kw, tgt);
+            kwInput.value = "";
+            tgtInput.value = "";
+            kwInput.focus();
+        }
+    }
+
+    function editRulePrompt(id, oldKw, oldTgt) {
+        let newKw = prompt("Edit Kata Kunci dari ERP:", oldKw);
+        if(newKw === null) return;
+        let newTgt = prompt("Edit Standar Masalah Utama (Target):", oldTgt);
+        if(newTgt === null) return;
+
+        newKw = newKw.trim().toUpperCase();
+        newTgt = newTgt.trim().toUpperCase();
+
+        if(!newKw || !newTgt) {
+            alert("Input tidak boleh kosong.");
+            return;
+        }
+
+        let item = window.dictionaryMemory.find(i => i.id === id);
+        if(item) {
+            item.keyword = newKw;
+            item.target = newTgt;
+            renderDictionaryTable();
+            alert("Aturan berhasil diperbarui!");
         }
     }
 
     function sortDictionary() {
-        let tbody = document.getElementById('dictBody');
-        let rows = Array.from(tbody.querySelectorAll('tr'));
-        
-        rows.sort((a, b) => {
-            let inputsA = a.querySelectorAll('input');
-            let inputsB = b.querySelectorAll('input');
-            let valA = inputsA.length > 1 ? inputsA[1].value.trim().toUpperCase() : "";
-            let valB = inputsB.length > 1 ? inputsB[1].value.trim().toUpperCase() : "";
-            if (valA < valB) return -1;
-            if (valA > valB) return 1;
+        window.dictionaryMemory.sort((a, b) => {
+            if (a.target < b.target) return -1;
+            if (a.target > b.target) return 1;
             return 0;
         });
-
-        tbody.innerHTML = "";
-        rows.forEach(r => tbody.appendChild(r));
+        renderDictionaryTable();
     }
 
     function backupDictionary() {
-        let rows = document.querySelectorAll('#dictBody tr');
-        let dictData = [];
-        rows.forEach(r => {
-            let inputs = r.querySelectorAll('input');
-            if(inputs.length >= 2) {
-                dictData.push({
-                    keyword: inputs[0].value.trim(),
-                    target: inputs[1].value.trim()
-                });
-            }
-        });
-
-        let blob = new Blob([JSON.stringify(dictData, null, 2)], {type: "application/json"});
+        let blob = new Blob([JSON.stringify(window.dictionaryMemory, null, 2)], {type: "application/json"});
         let url = URL.createObjectURL(blob);
         let downloadAnchor = document.createElement('a');
         downloadAnchor.setAttribute("href", url);
@@ -244,63 +340,22 @@
         downloadAnchor.remove();
     }
 
-    // FUNGSI RESTORE YANG SUDAH DIPERBARUI UNTUK SYNC KE CLOUD
-    async function restoreDictionary(event) {
+    function restoreDictionary(event) {
         let file = event.target.files[0];
         if(!file) return;
-
         let reader = new FileReader();
-        reader.onload = async function(e) {
+        reader.onload = function(e) {
             try {
                 let dictData = JSON.parse(e.target.result);
-                
-                // Konfirmasi agar aman
-                if(!confirm("Restore akan mengganti kamus saat ini dengan data dari file backup dan menyimpannya permanen ke Cloud. Lanjutkan?")) {
-                    event.target.value = ''; 
-                    return;
-                }
-
-                // 1. Bersihkan data lama di Cloud (agar tidak menumpuk/duplikat)
-                let currentRows = document.querySelectorAll('#dictBody tr');
-                for(let r of currentRows) {
-                    let docId = r.getAttribute('data-id');
-                    if(docId && typeof window.deleteRuleFromCloud === 'function') {
-                        await window.deleteRuleFromCloud(docId, r);
-                    }
-                }
-
-                let tbody = document.getElementById('dictBody');
-                tbody.innerHTML = "";
-
-                // 2. Tambahkan data JSON ke layar & simpan ke Cloud
-                for(let item of dictData) {
-                    if(!item.keyword || !item.target) continue;
-                    
-                    let tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td><input type="text" value="${item.keyword}" onblur="autoSaveNewRow(this)"></td>
-                        <td><input type="text" value="${item.target}" onblur="autoSaveNewRow(this)"></td>
-                        <td style="text-align:center;"><button type="button" class="btn-del">X</button></td>
-                    `;
-                    tbody.appendChild(tr);
-
-                    // Push ke Firebase Cloud menggunakan fungsi bawaan Anda
-                    if(typeof window.saveNewRuleToCloud === 'function') {
-                        await window.saveNewRuleToCloud(item.keyword, item.target, tr);
-                        
-                        // Perbarui tombol hapus agar terhubung dengan ID Cloud yang baru
-                        let newDocId = tr.getAttribute('data-id');
-                        let delBtn = tr.querySelector('.btn-del');
-                        delBtn.setAttribute('onclick', `deleteRuleFromCloud('${newDocId}', this.closest('tr'))`);
-                    }
-                }
-
-                alert("Kamus berhasil di-restore dan TERSIMPAN PERMANEN ke Firebase Cloud!");
-                event.target.value = ''; // Reset input file
-                
+                window.dictionaryMemory = dictData.map(item => ({
+                    id: item.id || ('local_' + Math.random().toString(36).substring(2, 9)),
+                    keyword: item.keyword,
+                    target: item.target
+                }));
+                renderDictionaryTable();
+                alert("Kamus berhasil dipulihkan dari file backup lokal!");
             } catch(err) {
-                console.error("Error Restore:", err);
-                alert("Gagal melakukan restore. Pastikan format file .json valid.");
+                alert("Gagal membaca file kamus. Pastikan format .json benar.");
             }
         };
         reader.readAsText(file);
@@ -310,17 +365,7 @@
         if(!rawDetail) return "";
         let up = rawDetail.toUpperCase().trim();
         
-        let rows = document.querySelectorAll('#dictBody tr');
-        let rules = [];
-        rows.forEach(r => {
-            let inputs = r.querySelectorAll('input');
-            if(inputs.length >= 2) {
-                let kw = inputs[0].value.trim().toUpperCase();
-                let tgt = inputs[1].value.trim().toUpperCase();
-                if(kw) rules.push({ keyword: kw, target: tgt });
-            }
-        });
-
+        let rules = window.dictionaryMemory || [];
         rules.sort((a, b) => b.keyword.length - a.keyword.length);
 
         for(let rule of rules) {
@@ -410,6 +455,7 @@
         ];
 
         let rekap = {}; 
+        let defectsByMasalah = {};
 
         data.forEach(g => {
             let baseRejectQty = g.qtyReject;
@@ -425,6 +471,20 @@
             g.defects.forEach(d => {
                 rekap[ic].details[d.detail] = (rekap[ic].details[d.detail] || 0) + d.jumlah;
                 rekap[ic].masalahs[d.masalah] = (rekap[ic].masalahs[d.masalah] || 0) + 1;
+
+                if(!defectsByMasalah[d.masalah]) {
+                    defectsByMasalah[d.masalah] = [];
+                }
+                defectsByMasalah[d.masalah].push({
+                    tgl: g.tgl,
+                    jo: g.jo,
+                    itemCode: g.itemCode,
+                    itemName: g.itemName,
+                    kaLine: g.kaLine,
+                    detail: d.detail,
+                    masalah: d.masalah,
+                    jumlah: d.jumlah
+                });
             });
 
             let startRowIdx = aoaData.length; 
@@ -461,7 +521,7 @@
         let aoaRekap = [
             ['REKAP SEMENTARA REJECT ' + jenis.toUpperCase(), '', '', '', '', ''],
             [],
-            ['KODE ITEM', 'ITEM NAME', 'DETAIL REJECT', 'QTY REJECT', 'QTY HASIL PRODUKSI', '%']
+            ['KODE ITEM', 'ITEM NAME', 'DETAIL REJECT SUMMARY', 'QTY REJECT', 'QTY HASIL PRODUKSI', '%']
         ];
         
         let mergesRekap = [
@@ -517,18 +577,64 @@
         }
         let nMasalah = sortedMasalah.length;
 
-        return { data: aoaData, rekap: aoaRekap, nItems: nItems, nMasalah: nMasalah, mergesData: mergesData, mergesRekap: mergesRekap };
+        let problemTablesStructure = [];
+        
+        for(let m of sortedMasalah) {
+            aoaRekap.push([]); 
+            aoaRekap.push([]);
+            
+            let titleRowIdx = aoaRekap.length;
+            mergesRekap.push({ s: { r: titleRowIdx, c: 0 }, e: { r: titleRowIdx, c: 7 } });
+            aoaRekap.push([m, '', '', '', '', '', '', '']);
+            
+            let headerRowIdx = aoaRekap.length;
+            aoaRekap.push(['TGL. LAPORAN', 'JO#', 'KODE ITEM', 'ITEM NAME', 'KA. LINE', 'DETAIL REJECT', 'MASALAH', 'JUMLAH']);
+            
+            let startRows = aoaRekap.length;
+            let itemsList = defectsByMasalah[m] || [];
+            
+            itemsList.forEach(item => {
+                aoaRekap.push([
+                    item.tgl,
+                    item.jo,
+                    item.itemCode,
+                    item.itemName,
+                    item.kaLine,
+                    item.detail,
+                    item.masalah,
+                    item.jumlah
+                ]);
+            });
+            let endRows = aoaRekap.length - 1;
+            
+            problemTablesStructure.push({
+                titleRow: titleRowIdx,
+                headerRow: headerRowIdx,
+                startRow: startRows,
+                endRow: endRows
+            });
+        }
+
+        return { data: aoaData, rekap: aoaRekap, nItems: nItems, nMasalah: nMasalah, problemTablesStructure: problemTablesStructure, mergesData: mergesData, mergesRekap: mergesRekap };
     }
 
-    const applyBordersAndStyle = (ws, isRekap, nItems, nMasalah) => {
+    const applyBordersAndStyle = (ws, isRekap, nItems, nMasalah, problemTablesStructure) => {
         const range = XLSX.utils.decode_range(ws['!ref']);
+        
+        let t1Header = 2;
+        let t1End = t1Header + nItems + 1;
+        
+        let t2Title = t1End + 3;
+        let t2Header = t2Title + 1;
+        let t2End = t2Header + nMasalah;
+
         for(let R = 0; R <= range.e.r; ++R) {
-            
             let rowIsTotal = false;
+            
             if (!isRekap && ws[XLSX.utils.encode_cell({c:0, r:R})] && ws[XLSX.utils.encode_cell({c:0, r:R})].v === 'TOTAL') {
                 rowIsTotal = true;
             }
-            if (isRekap && R === (2 + nItems + 1)) {
+            if (isRekap && R === t1End) {
                 rowIsTotal = true;
             }
 
@@ -537,15 +643,26 @@
                 let cell = ws[cellRef];
                 
                 let applyBorder = false;
+                let isHeader = false;
                 
                 if (!isRekap) {
                     if (R >= 1) applyBorder = true; 
+                    if (R === 1) isHeader = true;
                 } else {
-                    let t1Start = 2, t1End = 2 + nItems + 1; 
-                    let t2Start = t1End + 3, t2End = t2Start + nMasalah + 1; 
-                    
-                    if (R >= t1Start && R <= t1End && C <= 5) applyBorder = true;
-                    if (R >= t2Start && R <= t2End && C <= 1) applyBorder = true;
+                    if (R >= t1Header && R <= t1End && C <= 5) applyBorder = true;
+                    if (R >= t2Header && R <= t2End && C <= 1) applyBorder = true;
+                    if (R === t1Header || R === t2Header) isHeader = true;
+
+                    if (problemTablesStructure) {
+                        for(let pt of problemTablesStructure) {
+                            if (R >= pt.headerRow && R <= pt.endRow && C <= 7) {
+                                applyBorder = true;
+                            }
+                            if (R === pt.headerRow) {
+                                isHeader = true;
+                            }
+                        }
+                    }
                 }
 
                 if (applyBorder) {
@@ -561,13 +678,12 @@
                     if (!isRekap && (C === 5 || C === 18 || C === 19)) {
                         cell.s.alignment.horizontal = "left";
                     }
-                    if (isRekap && (C === 1 || C === 2 || C === 0)) {
+                    if (isRekap && (C === 1 || C === 2 || C === 3 || C === 5)) {
                         cell.s.alignment.horizontal = "left";
                     }
-                    
-                    let isHeader = false;
-                    if (!isRekap && R === 1) isHeader = true;
-                    if (isRekap && (R === 2 || (isRekap && R === (3 + nItems + 3)))) isHeader = true;
+                    if (isRekap && C === 0) {
+                        cell.s.alignment.horizontal = "left";
+                    }
                     
                     if (isHeader) {
                         cell.s.fill = { fgColor: { rgb: "0A2540" } };
@@ -586,15 +702,25 @@
                     if (!isRekap && C === 11 && R > 0) {
                         cell.z = '0.00%';
                     }
-                    if (isRekap && C === 5 && R > 1) {
+                    if (isRekap && C === 5 && R > t1Header && R <= t1End) {
                         cell.z = '0.00%';
                     }
                 }
                 
-                if (isRekap && R === (2 + nItems + 2) && C === 0) {
+                if (isRekap && R === t2Title && C === 0) {
                     if(!cell) { ws[cellRef] = {t: 's', v: ''}; cell = ws[cellRef]; }
                     if(!cell.s) cell.s = {};
                     cell.s.font = { name: "Arial", sz: 11, bold: true, color: { rgb: "0A2540" } };
+                }
+
+                if (isRekap && problemTablesStructure) {
+                    for(let pt of problemTablesStructure) {
+                        if (R === pt.titleRow && C === 0) {
+                            if(!cell) { ws[cellRef] = {t: 's', v: ''}; cell = ws[cellRef]; }
+                            if(!cell.s) cell.s = {};
+                            cell.s.font = { name: "Arial", sz: 11, bold: true, color: { rgb: "0A2540" } };
+                        }
+                    }
                 }
                 
                 if (R === 0 && C === 0) {
@@ -630,18 +756,18 @@
             if(sheets.mergesData && sheets.mergesData.length > 0) wsData['!merges'] = sheets.mergesData;
             if(sheets.mergesRekap && sheets.mergesRekap.length > 0) wsRekap['!merges'] = sheets.mergesRekap;
             
-            applyBordersAndStyle(wsData, false, sheets.nItems, sheets.nMasalah);
-            applyBordersAndStyle(wsRekap, true, sheets.nItems, sheets.nMasalah);
+            applyBordersAndStyle(wsData, false, sheets.nItems, sheets.nMasalah, sheets.problemTablesStructure);
+            applyBordersAndStyle(wsRekap, true, sheets.nItems, sheets.nMasalah, sheets.problemTablesStructure);
             
             wsData['!cols'] = [
                 {wch: 12}, {wch: 5}, {wch: 10}, {wch: 12}, {wch: 15}, {wch: 35}, 
                 {wch: 15}, {wch: 18}, {wch: 15}, {wch: 10}, {wch: 12}, {wch: 8}, 
                 {wch: 12}, {wch: 12}, {wch: 12}, {wch: 14}, {wch: 15}, {wch: 10},   
-        {wch: 25}, {wch: 20}, {wch: 8}                                   
+                {wch: 25}, {wch: 20}, {wch: 8}                                   
             ];
             
             wsRekap['!cols'] = [
-                {wch: 18}, {wch: 35}, {wch: 35}, {wch: 15}, {wch: 20}, {wch: 10}
+                {wch: 15}, {wch: 15}, {wch: 18}, {wch: 35}, {wch: 20}, {wch: 30}, {wch: 25}, {wch: 10}
             ];
 
             XLSX.utils.book_append_sheet(wb, wsData, sheetNameData);
@@ -657,7 +783,7 @@
             ['KOTOR LEM', '', ''], ['BERCAK', '', ''],
             ['FOREIGN MATERIAL', '>', 'GODET TIDAK MASUK'],
             ['PROBLEM US', '', 'ROD TIDAK TERPUNCHER'],
-            ['BAD INSTALLATION', '', 'GODET TIDAC MENTOK']
+            ['BAD INSTALLATION', '', 'GODET TIDAK MENTOK']
         ];
         let wsRef = XLSX.utils.aoa_to_sheet(refAoa);
         XLSX.utils.book_append_sheet(wb, wsRef, "REFERENSI MASALAH");
