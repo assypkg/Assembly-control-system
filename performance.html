@@ -11,6 +11,11 @@
     <!-- Pustaka html2canvas untuk fitur unduh gambar -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
+    <!-- Dynamic Print Style (Dikontrol via JavaScript) -->
+    <style id="dynamic-print-style">
+        @page { size: A4 landscape; margin: 0; }
+    </style>
+
     <style>
         :root {
             --navy-blue: #1a237e;
@@ -21,6 +26,7 @@
             --bg-gray: #f4f6f9;
             --border-color: #dce1e6;
             --table-pad-y: 8px;
+            --print-bg: #ffffff; /* Variabel dinamis untuk warna background cetak */
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; }
@@ -85,7 +91,7 @@
         .form-row .form-group { flex: 1; margin-bottom: 0; }
         
         label { display: block; font-size: 11px; font-weight: 700; color: #444; margin-bottom: 4px; }
-        input[type="text"], input[type="number"], input[type="file"], input[type="range"], textarea {
+        input[type="text"], input[type="number"], input[type="file"], input[type="range"], select, textarea {
             width: 100%;
             padding: 6px 8px;
             border: 1px solid #ccc;
@@ -96,7 +102,7 @@
             transition: border 0.2s;
         }
         textarea { resize: vertical; min-height: 50px; }
-        input:focus, textarea:focus { border-color: var(--navy-blue); outline: none; }
+        input:focus, select:focus, textarea:focus { border-color: var(--navy-blue); outline: none; }
 
         .excel-paste-box {
             background: #e8f5e9;
@@ -152,9 +158,10 @@
         /* --- DASHBOARD DESIGN --- */
         .dashboard {
             width: 1200px;
-            background: white;
+            background-color: var(--print-bg);
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             padding: 20px;
+            transition: width 0.3s ease, background-color 0.3s ease;
         }
 
         .dash-header {
@@ -260,7 +267,7 @@
 
         /* --- GOOGLE CHARTS CONTAINER --- */
         .histogram-container {
-            background: #fdfdfd;
+            background: rgba(255, 255, 255, 0.7);
             border: 1px solid #ddd;
             border-radius: 6px;
             padding: 20px;
@@ -289,7 +296,7 @@
 
         /* --- GOOGLE CHARTS WRAPPERS --- */
         .gchart-section-box {
-            background: #fff;
+            background: rgba(255, 255, 255, 0.7);
             border: 1px solid #ddd;
             border-radius: 6px;
             padding: 10px;
@@ -320,6 +327,7 @@
             text-align: center; 
             font-weight: 600; 
             transition: padding 0.2s ease;
+            background-color: rgba(255, 255, 255, 0.5); /* Semi transparan menyesuaikan bg */
         }
         table.std-table th { background-color: var(--purple-dark); color: white; font-weight: 700; letter-spacing: 0.3px; }
         table.std-table th.orange-th { background-color: #ef6c00; }
@@ -337,10 +345,9 @@
         /* --- PRINT / PDF OPTIMIZATION STYLES (MARGIN: NONE) --- */
         @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            @page { size: A4 landscape; margin: 0; }
             
             body { 
-                background-color: white !important; 
+                background-color: var(--print-bg) !important; 
                 display: block !important; 
                 height: auto !important; 
                 overflow: visible !important; 
@@ -348,7 +355,7 @@
             }
             .editor-sidebar, .preview-topbar { display: none !important; }
             .preview-area { 
-                background: white !important; 
+                background-color: var(--print-bg) !important; 
                 padding: 0 !important; 
                 overflow: visible !important; 
                 height: auto !important; 
@@ -362,6 +369,7 @@
                 padding: 10px !important; 
                 margin: 0 !important; 
                 height: auto !important; 
+                background-color: var(--print-bg) !important;
             }
             
             [id^="sec-"] {
@@ -370,40 +378,16 @@
                 margin-bottom: 20px;
             }
 
-            /* Blok pengaman agar Judul dan Tabel Utama tidak pernah terpisah */
-            .sec-block {
-                break-inside: avoid !important;
-                page-break-inside: avoid !important;
-            }
+            .sec-block { break-inside: avoid !important; page-break-inside: avoid !important; }
 
-            /* Header Utama di awal dokumen */
-            #out-header-bg {
-                break-inside: avoid;
-                page-break-inside: avoid;
-                break-after: avoid;
-                page-break-after: avoid;
-                margin-bottom: 15px;
-            }
+            #out-header-bg { break-inside: avoid; page-break-inside: avoid; break-after: avoid; page-break-after: avoid; margin-bottom: 15px; }
+            .dash-header:not(#out-header-bg) { break-before: page; page-break-before: always; break-after: avoid; page-break-after: avoid; break-inside: avoid; page-break-inside: avoid; margin-top: 0; margin-bottom: 15px; }
 
-            /* Header Klon untuk section lanjutan */
-            .dash-header:not(#out-header-bg) {
-                break-before: page;
-                page-break-before: always;
-                break-after: avoid;
-                page-break-after: avoid;
-                break-inside: avoid;
-                page-break-inside: avoid;
-                margin-top: 0;
-                margin-bottom: 15px;
-            }
-
-            /* Pengaturan Tabel & Baris */
             table { width: 100% !important; break-inside: auto; }
             thead { display: table-header-group !important; }
             tr { break-inside: avoid !important; page-break-inside: avoid !important; }
             td, th { break-inside: avoid !important; }
 
-            /* Grafik Google Charts & Kotak Tabel */
             .gchart-section-box, .histogram-container, .perf-table, .std-table {
                 break-inside: avoid;
                 page-break-inside: avoid;
@@ -452,12 +436,34 @@
                 </div>
             </fieldset>
 
-            <!-- PAGE LAYOUT SETTINGS -->
+            <!-- PAGE LAYOUT SETTINGS (KINI DENGAN ORIENTASI & WARNA) -->
             <fieldset class="form-section" style="background-color: #fff9c4; border-color: #fbc02d;">
                 <legend style="background-color: #fff9c4;">
                     <span class="legend-title" style="color: #f57f17;">PAGE LAYOUT SETTINGS (CETAK)</span>
                 </legend>
+                
                 <div class="form-group" style="margin-top: 8px;">
+                    <label>Orientasi Cetak (PDF)</label>
+                    <select id="in-print-orientation" onchange="updatePrintSettings()">
+                        <option value="landscape">A4 Landscape (Mendatar)</option>
+                        <option value="portrait">A4 Portrait (Tegak)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Warna Background Kertas (7 Pilihan)</label>
+                    <select id="in-print-bg" onchange="updatePrintSettings()">
+                        <option value="#ffffff">1. Putih (Standard)</option>
+                        <option value="#f4f6f9">2. Abu-abu Terang (Light Gray)</option>
+                        <option value="#e3f2fd">3. Biru Lembut (Soft Blue)</option>
+                        <option value="#e8f5e9">4. Hijau Lembut (Soft Green)</option>
+                        <option value="#fff9c4">5. Kuning Lembut (Soft Yellow)</option>
+                        <option value="#fce4ec">6. Merah Muda Lembut (Soft Pink)</option>
+                        <option value="#f3e5f5">7. Ungu Lembut (Soft Purple)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
                     <label>Jarak / Tinggi Baris Tabel</label>
                     <input type="range" id="in-table-padding" min="4" max="25" value="8" oninput="updateTablePadding()">
                     <div style="display: flex; justify-content: space-between; font-size: 10px; color: #666; margin-top: 4px;">
@@ -642,7 +648,7 @@
 
     <!-- PREVIEW AREA -->
     <div class="preview-area">
-        <div class="preview-topbar">LIVE PREVIEW - 1200 x Auto px</div>
+        <div class="preview-topbar">LIVE PREVIEW - Tampilan Responsif (Mendatar / Tegak)</div>
         
         <div class="preview-content">
             <div class="dashboard" id="printable-dashboard">
@@ -680,7 +686,7 @@
                                     </th>
                                 </tr>
                                 <tr>
-                                    <th style="width: 20%; background: #fdfdfd;"></th>
+                                    <th style="width: 20%; background: rgba(255,255,255,0.7);"></th>
                                     <th style="width: 13%;" class="col-w1">WEEK 1</th>
                                     <th style="width: 13%;" class="col-w2">WEEK 2</th>
                                     <th style="width: 13%;" class="col-w3">WEEK 3</th>
@@ -741,7 +747,7 @@
                                     </th>
                                 </tr>
                                 <tr>
-                                    <th style="width: 20%; background: #fdfdfd;"></th>
+                                    <th style="width: 20%; background: rgba(255,255,255,0.7);"></th>
                                     <th style="width: 13%;" class="col-w1">WEEK 1</th>
                                     <th style="width: 13%;" class="col-w2">WEEK 2</th>
                                     <th style="width: 13%;" class="col-w3">WEEK 3</th>
@@ -802,7 +808,7 @@
                                     </th>
                                 </tr>
                                 <tr>
-                                    <th style="width: 20%; background: #fdfdfd;"></th>
+                                    <th style="width: 20%; background: rgba(255,255,255,0.7);"></th>
                                     <th style="width: 13%;" class="col-w1">WEEK 1</th>
                                     <th style="width: 13%;" class="col-w2">WEEK 2</th>
                                     <th style="width: 13%;" class="col-w3">WEEK 3</th>
@@ -1132,6 +1138,34 @@
         function updateTablePadding() {
             const paddingValue = document.getElementById('in-table-padding').value;
             document.documentElement.style.setProperty('--table-pad-y', paddingValue + 'px');
+        }
+
+        // --- MENGATUR UKURAN PDF & WARNA KERTAS ---
+        function updatePrintSettings() {
+            const orientation = document.getElementById('in-print-orientation').value;
+            const bgColor = document.getElementById('in-print-bg').value;
+            
+            // 1. Ubah ukuran PDF (Landscape/Portrait)
+            const styleTag = document.getElementById('dynamic-print-style');
+            styleTag.innerHTML = `@page { size: A4 ${orientation}; margin: 0; }`;
+            
+            // 2. Terapkan warna background
+            document.documentElement.style.setProperty('--print-bg', bgColor);
+
+            // 3. Sesuaikan lebar layout agar tampil nyata di preview saat portrait
+            const dashboard = document.getElementById('printable-dashboard');
+            if (orientation === 'portrait') {
+                dashboard.style.width = '880px'; // Lebar lebih sempit untuk Portrait
+            } else {
+                dashboard.style.width = '1200px'; // Standard Landscape
+            }
+
+            // 4. Render ulang diagram Google Charts agar proporsinya menyesuaikan lebar baru
+            if (isGoogleChartsReady) {
+                calcMatrixPerformance();
+                renderProdLogChart();
+                renderMachineIssuesChart();
+            }
         }
 
         function toggleSections() {
@@ -1896,6 +1930,7 @@
         
         document.getElementById('toggle-w5').checked = false;
         calcMatrixPerformance();
+        updatePrintSettings(); // Set nilai standar saat pertama kali load
     </script>
 </body>
 </html>
