@@ -11,7 +11,7 @@
     <!-- Pustaka html2canvas untuk fitur unduh gambar -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
-    <!-- Dynamic Print Style (Dikontrol via JavaScript) -->
+    <!-- Dynamic Print Style -->
     <style id="dynamic-print-style">
         @page { size: A4 landscape; margin: 0; }
     </style>
@@ -26,7 +26,7 @@
             --bg-gray: #f4f6f9;
             --border-color: #dce1e6;
             --table-pad-y: 8px;
-            --print-bg: #ffffff; /* Variabel dinamis untuk warna background cetak */
+            --print-bg: #ffffff;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; }
@@ -54,35 +54,81 @@
         .editor-header p { font-size: 11px; color: #666; line-height: 1.4; font-weight: 600; }
 
         .editor-form { padding: 20px; }
+        
+        /* --- FOLDER / ACCORDION SYSTEM --- */
         .form-section {
             border: 1px solid var(--border-color);
             border-radius: 6px;
-            padding: 15px;
-            margin-bottom: 20px;
+            padding: 0;
+            margin-bottom: 15px;
             background: white;
+            overflow: hidden;
         }
         .form-section legend {
             font-size: 12px;
             font-weight: 700;
             color: var(--navy-blue);
-            padding: 0 10px;
-            background: white;
+            padding: 12px 15px;
+            background: #f8fafc;
             display: flex;
             justify-content: space-between;
             align-items: center;
             width: 100%;
+            cursor: pointer;
+            user-select: none;
+            border-bottom: 1px solid transparent;
+            transition: background-color 0.2s, border-bottom 0.2s;
         }
-        .legend-title { flex: 1; }
+        .form-section legend:hover { background-color: #e2e8f0; }
+        
+        .legend-title { display: flex; align-items: center; flex: 1; }
+        .toggle-icon {
+            display: inline-block;
+            margin-right: 10px;
+            font-size: 10px;
+            transition: transform 0.3s ease;
+        }
+        
+        /* State saat folder tertutup (collapsed) */
+        .form-section.collapsed .section-content { display: none; }
+        .form-section.collapsed legend { border-bottom: none; }
+        .form-section.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .form-section:not(.collapsed) legend { border-bottom: 1px solid var(--border-color); }
+
+        .section-content {
+            padding: 15px;
+        }
+
+        .global-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .btn-global {
+            flex: 1;
+            padding: 8px;
+            background: #cbd5e1;
+            color: #334155;
+            border: none;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-global:hover { background: #94a3b8; color: white; }
+
         .btn-section-clear {
             background: #d32f2f;
             color: white;
             border: none;
             border-radius: 3px;
-            padding: 2px 6px;
+            padding: 4px 8px;
             font-size: 10px;
             font-weight: 700;
             cursor: pointer;
             margin-left: 10px;
+            transition: background 0.2s;
         }
         .btn-section-clear:hover { background: #b71c1c; }
         
@@ -221,7 +267,7 @@
         .text-bold { font-weight: 800 !important; }
         .text-blue-link { color: #1976d2; text-decoration: underline; }
 
-        /* --- SECTION 1 TABLE STYLES (MODERN SLATE DESIGN) --- */
+        /* --- SECTION 1 TABLE STYLES --- */
         .perf-table { 
             width: 100%; 
             border-collapse: collapse; 
@@ -293,8 +339,6 @@
             width: 2px;
             background-color: #dce1e6;
         }
-
-        /* --- GOOGLE CHARTS WRAPPERS --- */
         .gchart-section-box {
             background: rgba(255, 255, 255, 0.7);
             border: 1px solid #ddd;
@@ -306,7 +350,6 @@
             justify-content: center;
             align-items: center;
         }
-        
         .empty-chart-msg {
             width: 100%;
             height: 100%;
@@ -327,7 +370,7 @@
             text-align: center; 
             font-weight: 600; 
             transition: padding 0.2s ease;
-            background-color: rgba(255, 255, 255, 0.5); /* Semi transparan menyesuaikan bg */
+            background-color: rgba(255, 255, 255, 0.5);
         }
         table.std-table th { background-color: var(--purple-dark); color: white; font-weight: 700; letter-spacing: 0.3px; }
         table.std-table th.orange-th { background-color: #ef6c00; }
@@ -338,7 +381,6 @@
         table.std-table td.text-left { text-align: left; }
         table.std-table td.text-right { text-align: right; }
         .row-total { background-color: var(--purple-dark) !important; color: white; font-weight: 700; }
-
         .fokus-masalah-cell { font-size: 10px; color: #555; line-height: 1.4; font-weight: 600; }
         .nama-produk-cell { font-size: 10px; color: #333; line-height: 1.3; font-weight: 600; }
 
@@ -372,14 +414,8 @@
                 background-color: var(--print-bg) !important;
             }
             
-            [id^="sec-"] {
-                break-inside: auto;
-                page-break-inside: auto;
-                margin-bottom: 20px;
-            }
-
+            [id^="sec-"] { break-inside: auto; page-break-inside: auto; margin-bottom: 20px; }
             .sec-block { break-inside: avoid !important; page-break-inside: avoid !important; }
-
             #out-header-bg { break-inside: avoid; page-break-inside: avoid; break-after: avoid; page-break-after: avoid; margin-bottom: 15px; }
             .dash-header:not(#out-header-bg) { break-before: page; page-break-before: always; break-after: avoid; page-break-after: avoid; break-inside: avoid; page-break-inside: avoid; margin-top: 0; margin-bottom: 15px; }
 
@@ -388,11 +424,7 @@
             tr { break-inside: avoid !important; page-break-inside: avoid !important; }
             td, th { break-inside: avoid !important; }
 
-            .gchart-section-box, .histogram-container, .perf-table, .std-table {
-                break-inside: avoid;
-                page-break-inside: avoid;
-                margin-bottom: 15px;
-            }
+            .gchart-section-box, .histogram-container, .perf-table, .std-table { break-inside: avoid; page-break-inside: avoid; margin-bottom: 15px; }
         }
     </style>
 </head>
@@ -406,238 +438,250 @@
         </div>
         
         <div class="editor-form">
+            
+            <!-- Global Accordion Controls -->
+            <div class="global-controls">
+                <button type="button" class="btn-global" onclick="collapseAllFolders()">Tutup Semua Folder</button>
+                <button type="button" class="btn-global" onclick="expandAllFolders()">Buka Semua Folder</button>
+            </div>
+
             <!-- SECTION VISIBILITY SETTINGS -->
-            <fieldset class="form-section" style="background-color: #e8f4fd; border-color: #2196f3;">
-                <legend style="background-color: #e8f4fd;">
-                    <span class="legend-title" style="color: #0d47a1;">PENGATURAN TAMPILAN POIN (SECTION)</span>
+            <fieldset class="form-section collapsed" style="border-color: #2196f3;">
+                <legend onclick="toggleFolder(this)" style="background-color: #e8f4fd;">
+                    <span class="legend-title" style="color: #0d47a1;"><span class="toggle-icon">▼</span> PENGATURAN TAMPILAN POIN (SECTION)</span>
                 </legend>
-                <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px; font-size: 11px; font-weight: 700;">
-                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                        <input type="checkbox" id="toggle-sec-1" checked onchange="toggleSections()"> 1. Performance Assembly
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                        <input type="checkbox" id="toggle-sec-2" checked onchange="toggleSections()"> 2. Result Assembly - Line Leaders
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                        <input type="checkbox" id="toggle-sec-3" checked onchange="toggleSections()"> 3. Performance Analysis
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                        <input type="checkbox" id="toggle-sec-4" checked onchange="toggleSections()"> 4. KPI Tracker
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                        <input type="checkbox" id="toggle-sec-5" checked onchange="toggleSections()"> 5. Laporan Pergantian SPA Assembling
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                        <input type="checkbox" id="toggle-sec-6" checked onchange="toggleSections()"> 6. Machine Issues &lt;85%
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                        <input type="checkbox" id="toggle-sec-7" checked onchange="toggleSections()"> 7. Quality Issues &lt;85%
-                    </label>
+                <div class="section-content">
+                    <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px; font-size: 11px; font-weight: 700;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" id="toggle-sec-1" checked onchange="toggleSections()"> 1. Performance Assembly</label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" id="toggle-sec-2" checked onchange="toggleSections()"> 2. Result Assembly - Line Leaders</label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" id="toggle-sec-3" checked onchange="toggleSections()"> 3. Performance Analysis</label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" id="toggle-sec-4" checked onchange="toggleSections()"> 4. KPI Tracker</label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" id="toggle-sec-5" checked onchange="toggleSections()"> 5. Laporan Pergantian SPA Assembling</label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" id="toggle-sec-6" checked onchange="toggleSections()"> 6. Machine Issues &lt;85%</label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" id="toggle-sec-7" checked onchange="toggleSections()"> 7. Quality Issues &lt;85%</label>
+                    </div>
                 </div>
             </fieldset>
 
-            <!-- PAGE LAYOUT SETTINGS (KINI DENGAN ORIENTASI & WARNA) -->
-            <fieldset class="form-section" style="background-color: #fff9c4; border-color: #fbc02d;">
-                <legend style="background-color: #fff9c4;">
-                    <span class="legend-title" style="color: #f57f17;">PAGE LAYOUT SETTINGS (CETAK)</span>
+            <!-- PAGE LAYOUT SETTINGS -->
+            <fieldset class="form-section collapsed" style="border-color: #fbc02d;">
+                <legend onclick="toggleFolder(this)" style="background-color: #fff9c4;">
+                    <span class="legend-title" style="color: #f57f17;"><span class="toggle-icon">▼</span> PAGE LAYOUT SETTINGS (CETAK)</span>
                 </legend>
-                
-                <div class="form-group" style="margin-top: 8px;">
-                    <label>Orientasi Cetak (PDF)</label>
-                    <select id="in-print-orientation" onchange="updatePrintSettings()">
-                        <option value="landscape">A4 Landscape (Mendatar)</option>
-                        <option value="portrait">A4 Portrait (Tegak)</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Warna Background Kertas (7 Pilihan)</label>
-                    <select id="in-print-bg" onchange="updatePrintSettings()">
-                        <option value="#ffffff">1. Putih (Standard)</option>
-                        <option value="#f4f6f9">2. Abu-abu Terang (Light Gray)</option>
-                        <option value="#e3f2fd">3. Biru Lembut (Soft Blue)</option>
-                        <option value="#e8f5e9">4. Hijau Lembut (Soft Green)</option>
-                        <option value="#fff9c4">5. Kuning Lembut (Soft Yellow)</option>
-                        <option value="#fce4ec">6. Merah Muda Lembut (Soft Pink)</option>
-                        <option value="#f3e5f5">7. Ungu Lembut (Soft Purple)</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Jarak / Tinggi Baris Tabel</label>
-                    <input type="range" id="in-table-padding" min="4" max="25" value="8" oninput="updateTablePadding()">
-                    <div style="display: flex; justify-content: space-between; font-size: 10px; color: #666; margin-top: 4px;">
-                        <span>Rapat</span><span>Renggang</span>
+                <div class="section-content">
+                    <div class="form-group" style="margin-top: 8px;">
+                        <label>Orientasi Cetak (PDF)</label>
+                        <select id="in-print-orientation" onchange="updatePrintSettings()">
+                            <option value="landscape">A4 Landscape (Mendatar)</option>
+                            <option value="portrait">A4 Portrait (Tegak)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Warna Background Kertas (7 Pilihan)</label>
+                        <select id="in-print-bg" onchange="updatePrintSettings()">
+                            <option value="#ffffff">1. Putih (Standard)</option>
+                            <option value="#f4f6f9">2. Abu-abu Terang (Light Gray)</option>
+                            <option value="#e3f2fd">3. Biru Lembut (Soft Blue)</option>
+                            <option value="#e8f5e9">4. Hijau Lembut (Soft Green)</option>
+                            <option value="#fff9c4">5. Kuning Lembut (Soft Yellow)</option>
+                            <option value="#fce4ec">6. Merah Muda Lembut (Soft Pink)</option>
+                            <option value="#f3e5f5">7. Ungu Lembut (Soft Purple)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Jarak / Tinggi Baris Tabel</label>
+                        <input type="range" id="in-table-padding" min="4" max="25" value="8" oninput="updateTablePadding()">
+                        <div style="display: flex; justify-content: space-between; font-size: 10px; color: #666; margin-top: 4px;">
+                            <span>Rapat</span><span>Renggang</span>
+                        </div>
                     </div>
                 </div>
             </fieldset>
 
             <!-- BACKUP & RESTORE SECTION -->
-            <fieldset class="form-section" style="background-color: #f0f4f8; border-color: #1a237e;">
-                <legend style="background-color: #f0f4f8;">
-                    <span class="legend-title" style="color: var(--navy-blue);">DATA BACKUP & RESTORE</span>
+            <fieldset class="form-section collapsed" style="border-color: #1a237e;">
+                <legend onclick="toggleFolder(this)" style="background-color: #f0f4f8;">
+                    <span class="legend-title" style="color: var(--navy-blue);"><span class="toggle-icon">▼</span> DATA BACKUP & RESTORE</span>
                 </legend>
-                <div style="margin-top: 8px;">
-                    <button type="button" onclick="backupData()" style="width: 100%; padding: 10px; background: var(--navy-blue); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 700; margin-bottom: 10px; font-size: 11px;">Download Backup (.JSON)</button>
-                    <label style="margin-bottom: 4px; color: #333;">Restore Data (.JSON)</label>
-                    <input type="file" id="in-restore" accept=".json" onchange="restoreData(event)" style="padding: 4px; font-size: 11px;">
+                <div class="section-content">
+                    <div style="margin-top: 8px;">
+                        <button type="button" onclick="backupData()" style="width: 100%; padding: 10px; background: var(--navy-blue); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 700; margin-bottom: 10px; font-size: 11px;">Download Backup (.JSON)</button>
+                        <label style="margin-bottom: 4px; color: #333;">Restore Data (.JSON)</label>
+                        <input type="file" id="in-restore" accept=".json" onchange="restoreData(event)" style="padding: 4px; font-size: 11px;">
+                    </div>
                 </div>
             </fieldset>
 
             <!-- HEADER SETTINGS -->
-            <fieldset class="form-section">
-                <legend>
-                    <span class="legend-title">HEADER SETTINGS</span>
-                    <button type="button" class="btn-section-clear" onclick="clearSection('header')">Reset</button>
+            <fieldset class="form-section collapsed">
+                <legend onclick="toggleFolder(this)">
+                    <span class="legend-title"><span class="toggle-icon">▼</span> HEADER SETTINGS</span>
+                    <button type="button" class="btn-section-clear" onclick="clearSection('header'); event.stopPropagation();">Reset</button>
                 </legend>
-                <div class="form-group" style="margin-top: 8px;">
-                    <label>Nama Plant</label>
-                    <input type="text" id="in-plant" value="">
-                </div>
-                <div class="form-row">
-                    <div class="form-group"><label>Week</label><input type="text" id="in-week" value=""></div>
-                    <div class="form-group"><label>Periode</label><input type="text" id="in-periode" value=""></div>
-                </div>
-                <div class="form-group">
-                    <label>Upload Foto Background Header</label>
-                    <input type="file" id="in-photo" accept="image/*">
+                <div class="section-content">
+                    <div class="form-group" style="margin-top: 8px;">
+                        <label>Nama Plant</label>
+                        <input type="text" id="in-plant" value="">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Week</label><input type="text" id="in-week" value=""></div>
+                        <div class="form-group"><label>Periode</label><input type="text" id="in-periode" value=""></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Upload Foto Background Header</label>
+                        <input type="file" id="in-photo" accept="image/*">
+                    </div>
                 </div>
             </fieldset>
 
             <!-- 1. PERFORMANCE ASSEMBLY -->
-            <fieldset class="form-section">
-                <legend>
-                    <span class="legend-title">1. PERFORMANCE ASSEMBLY</span>
-                    <button type="button" class="btn-section-clear" onclick="clearSection(1)">Hapus Data</button>
+            <fieldset class="form-section collapsed">
+                <legend onclick="toggleFolder(this)">
+                    <span class="legend-title"><span class="toggle-icon">▼</span> 1. PERFORMANCE ASSEMBLY</span>
+                    <button type="button" class="btn-section-clear" onclick="clearSection(1); event.stopPropagation();">Hapus Data</button>
                 </legend>
                 
-                <div style="font-size: 11px; font-weight: 800; margin: 8px 0 6px 0; color: #1e293b; background: #e2e8f0; padding: 6px; text-align: center; border-radius: 4px;">
-                    TAMPILAN KOLOM MINGGU (W1 - W5)
+                <div class="section-content">
+                    <div style="font-size: 11px; font-weight: 800; margin: 8px 0 6px 0; color: #1e293b; background: #e2e8f0; padding: 6px; text-align: center; border-radius: 4px;">
+                        TAMPILAN KOLOM MINGGU (W1 - W5)
+                    </div>
+                    <div style="display: flex; justify-content: space-around; margin-bottom: 15px; font-size: 11px; font-weight: 700; background: #fafafa; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        <label style="cursor: pointer;"><input type="checkbox" id="toggle-w1" checked onchange="calcMatrixPerformance()"> W1</label>
+                        <label style="cursor: pointer;"><input type="checkbox" id="toggle-w2" checked onchange="calcMatrixPerformance()"> W2</label>
+                        <label style="cursor: pointer;"><input type="checkbox" id="toggle-w3" checked onchange="calcMatrixPerformance()"> W3</label>
+                        <label style="cursor: pointer;"><input type="checkbox" id="toggle-w4" checked onchange="calcMatrixPerformance()"> W4</label>
+                        <label style="cursor: pointer; color: #1976d2;"><input type="checkbox" id="toggle-w5" onchange="calcMatrixPerformance()"> W5 (Opsional)</label>
+                    </div>
+
+                    <div style="font-size: 11px; font-weight: 800; margin: 12px 0 8px 0; color: var(--navy-blue); background: #eee; padding: 4px; text-align: center;">A. PERFORMANCE (pcs)</div>
+                    <div class="form-row"><div class="form-group"><label>W1 Plan</label><input type="number" id="in-a-w1-plan" value="0"></div><div class="form-group"><label>W1 Act</label><input type="number" id="in-a-w1-act" value="0"></div></div>
+                    <div class="form-row"><div class="form-group"><label>W2 Plan</label><input type="number" id="in-a-w2-plan" value="0"></div><div class="form-group"><label>W2 Act</label><input type="number" id="in-a-w2-act" value="0"></div></div>
+                    <div class="form-row"><div class="form-group"><label>W3 Plan</label><input type="number" id="in-a-w3-plan" value="0"></div><div class="form-group"><label>W3 Act</label><input type="number" id="in-a-w3-act" value="0"></div></div>
+                    <div class="form-row"><div class="form-group"><label>W4 Plan</label><input type="number" id="in-a-w4-plan" value="0"></div><div class="form-group"><label>W4 Act</label><input type="number" id="in-a-w4-act" value="0"></div></div>
+                    <div class="form-row" id="row-in-a-w5"><div class="form-group"><label>W5 Plan</label><input type="number" id="in-a-w5-plan" value="0"></div><div class="form-group"><label>W5 Act</label><input type="number" id="in-a-w5-act" value="0"></div></div>
+
+                    <div style="font-size: 11px; font-weight: 800; margin: 15px 0 8px 0; color: var(--navy-blue); background: #eee; padding: 4px; text-align: center;">B. PRODUCTION TIME (jam)</div>
+                    <div class="form-row"><div class="form-group"><label>W1 Plan Time</label><input type="number" id="in-b-w1-plan" value="0"></div><div class="form-group"><label>W1 Act Time</label><input type="number" id="in-b-w1-act" value="0"></div></div>
+                    <div class="form-row"><div class="form-group"><label>W2 Plan Time</label><input type="number" id="in-b-w2-plan" value="0"></div><div class="form-group"><label>W2 Act Time</label><input type="number" id="in-b-w2-act" value="0"></div></div>
+                    <div class="form-row"><div class="form-group"><label>W3 Plan Time</label><input type="number" id="in-b-w3-plan" value="0"></div><div class="form-group"><label>W3 Act Time</label><input type="number" id="in-b-w3-act" value="0"></div></div>
+                    <div class="form-row"><div class="form-group"><label>W4 Plan Time</label><input type="number" id="in-b-w4-plan" value="0"></div><div class="form-group"><label>W4 Act Time</label><input type="number" id="in-b-w4-act" value="0"></div></div>
+                    <div class="form-row" id="row-in-b-w5"><div class="form-group"><label>W5 Plan Time</label><input type="number" id="in-b-w5-plan" value="0"></div><div class="form-group"><label>W5 Act Time</label><input type="number" id="in-b-w5-act" value="0"></div></div>
+
+                    <div style="font-size: 11px; font-weight: 800; margin: 15px 0 8px 0; color: var(--navy-blue); background: #eee; padding: 4px; text-align: center;">C. PEMAKAIAN OPERATOR</div>
+                    <div class="form-row"><div class="form-group"><label>W1 Std Opr</label><input type="number" id="in-c-w1-std" value="0"></div><div class="form-group"><label>W1 Act Opr</label><input type="number" id="in-c-w1-act" value="0"></div></div>
+                    <div class="form-row"><div class="form-group"><label>W2 Std Opr</label><input type="number" id="in-c-w2-std" value="0"></div><div class="form-group"><label>W2 Act Opr</label><input type="number" id="in-c-w2-act" value="0"></div></div>
+                    <div class="form-row"><div class="form-group"><label>W3 Std Opr</label><input type="number" id="in-c-w3-std" value="0"></div><div class="form-group"><label>W3 Act Opr</label><input type="number" id="in-c-w3-act" value="0"></div></div>
+                    <div class="form-row"><div class="form-group"><label>W4 Std Opr</label><input type="number" id="in-c-w4-std" value="0"></div><div class="form-group"><label>W4 Act Opr</label><input type="number" id="in-c-w4-act" value="0"></div></div>
+                    <div class="form-row" id="row-in-c-w5"><div class="form-group"><label>W5 Std Opr</label><input type="number" id="in-c-w5-std" value="0"></div><div class="form-group"><label>W5 Act Opr</label><input type="number" id="in-c-w5-act" value="0"></div></div>
                 </div>
-                <div style="display: flex; justify-content: space-around; margin-bottom: 15px; font-size: 11px; font-weight: 700; background: #fafafa; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                    <label style="cursor: pointer;"><input type="checkbox" id="toggle-w1" checked onchange="calcMatrixPerformance()"> W1</label>
-                    <label style="cursor: pointer;"><input type="checkbox" id="toggle-w2" checked onchange="calcMatrixPerformance()"> W2</label>
-                    <label style="cursor: pointer;"><input type="checkbox" id="toggle-w3" checked onchange="calcMatrixPerformance()"> W3</label>
-                    <label style="cursor: pointer;"><input type="checkbox" id="toggle-w4" checked onchange="calcMatrixPerformance()"> W4</label>
-                    <label style="cursor: pointer; color: #1976d2;"><input type="checkbox" id="toggle-w5" onchange="calcMatrixPerformance()"> W5 (Opsional)</label>
-                </div>
-
-                <div style="font-size: 11px; font-weight: 800; margin: 12px 0 8px 0; color: var(--navy-blue); background: #eee; padding: 4px; text-align: center;">A. PERFORMANCE (pcs)</div>
-                <div class="form-row"><div class="form-group"><label>W1 Plan</label><input type="number" id="in-a-w1-plan" value="0"></div><div class="form-group"><label>W1 Act</label><input type="number" id="in-a-w1-act" value="0"></div></div>
-                <div class="form-row"><div class="form-group"><label>W2 Plan</label><input type="number" id="in-a-w2-plan" value="0"></div><div class="form-group"><label>W2 Act</label><input type="number" id="in-a-w2-act" value="0"></div></div>
-                <div class="form-row"><div class="form-group"><label>W3 Plan</label><input type="number" id="in-a-w3-plan" value="0"></div><div class="form-group"><label>W3 Act</label><input type="number" id="in-a-w3-act" value="0"></div></div>
-                <div class="form-row"><div class="form-group"><label>W4 Plan</label><input type="number" id="in-a-w4-plan" value="0"></div><div class="form-group"><label>W4 Act</label><input type="number" id="in-a-w4-act" value="0"></div></div>
-                <div class="form-row" id="row-in-a-w5"><div class="form-group"><label>W5 Plan</label><input type="number" id="in-a-w5-plan" value="0"></div><div class="form-group"><label>W5 Act</label><input type="number" id="in-a-w5-act" value="0"></div></div>
-
-                <div style="font-size: 11px; font-weight: 800; margin: 15px 0 8px 0; color: var(--navy-blue); background: #eee; padding: 4px; text-align: center;">B. PRODUCTION TIME (jam)</div>
-                <div class="form-row"><div class="form-group"><label>W1 Plan Time</label><input type="number" id="in-b-w1-plan" value="0"></div><div class="form-group"><label>W1 Act Time</label><input type="number" id="in-b-w1-act" value="0"></div></div>
-                <div class="form-row"><div class="form-group"><label>W2 Plan Time</label><input type="number" id="in-b-w2-plan" value="0"></div><div class="form-group"><label>W2 Act Time</label><input type="number" id="in-b-w2-act" value="0"></div></div>
-                <div class="form-row"><div class="form-group"><label>W3 Plan Time</label><input type="number" id="in-b-w3-plan" value="0"></div><div class="form-group"><label>W3 Act Time</label><input type="number" id="in-b-w3-act" value="0"></div></div>
-                <div class="form-row"><div class="form-group"><label>W4 Plan Time</label><input type="number" id="in-b-w4-plan" value="0"></div><div class="form-group"><label>W4 Act Time</label><input type="number" id="in-b-w4-act" value="0"></div></div>
-                <div class="form-row" id="row-in-b-w5"><div class="form-group"><label>W5 Plan Time</label><input type="number" id="in-b-w5-plan" value="0"></div><div class="form-group"><label>W5 Act Time</label><input type="number" id="in-b-w5-act" value="0"></div></div>
-
-                <div style="font-size: 11px; font-weight: 800; margin: 15px 0 8px 0; color: var(--navy-blue); background: #eee; padding: 4px; text-align: center;">C. PEMAKAIAN OPERATOR</div>
-                <div class="form-row"><div class="form-group"><label>W1 Std Opr</label><input type="number" id="in-c-w1-std" value="0"></div><div class="form-group"><label>W1 Act Opr</label><input type="number" id="in-c-w1-act" value="0"></div></div>
-                <div class="form-row"><div class="form-group"><label>W2 Std Opr</label><input type="number" id="in-c-w2-std" value="0"></div><div class="form-group"><label>W2 Act Opr</label><input type="number" id="in-c-w2-act" value="0"></div></div>
-                <div class="form-row"><div class="form-group"><label>W3 Std Opr</label><input type="number" id="in-c-w3-std" value="0"></div><div class="form-group"><label>W3 Act Opr</label><input type="number" id="in-c-w3-act" value="0"></div></div>
-                <div class="form-row"><div class="form-group"><label>W4 Std Opr</label><input type="number" id="in-c-w4-std" value="0"></div><div class="form-group"><label>W4 Act Opr</label><input type="number" id="in-c-w4-act" value="0"></div></div>
-                <div class="form-row" id="row-in-c-w5"><div class="form-group"><label>W5 Std Opr</label><input type="number" id="in-c-w5-std" value="0"></div><div class="form-group"><label>W5 Act Opr</label><input type="number" id="in-c-w5-act" value="0"></div></div>
             </fieldset>
 
             <!-- 2. RESULT ASSEMBLY - LINE LEADERS -->
-            <fieldset class="form-section">
-                <legend>
-                    <span class="legend-title">2. RESULT ASSEMBLY - LINE LEADERS</span>
-                    <button type="button" class="btn-section-clear" onclick="clearSection(2)">Hapus Data</button>
+            <fieldset class="form-section collapsed">
+                <legend onclick="toggleFolder(this)">
+                    <span class="legend-title"><span class="toggle-icon">▼</span> 2. RESULT ASSEMBLY - LINE LEADERS</span>
+                    <button type="button" class="btn-section-clear" onclick="clearSection(2); event.stopPropagation();">Hapus Data</button>
                 </legend>
-                <div class="excel-paste-box">
-                    <label>📋 Paste Baris Excel (Leader, Plan, Act):</label>
-                    <textarea placeholder="Blok & paste data excel di sini..." onpaste="handleExcelPaste(event, 'leaders')"></textarea>
-                </div>
-                
-                <div class="form-row" style="background:#e3f2fd; padding:10px; border-radius:4px; margin-bottom:10px; border: 1px dashed #1565c0;">
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label style="color:#1565c0; font-size:10px;">Override Total Plan (Opsional)</label>
-                        <input type="number" id="override-plan" placeholder="Ketik manual di sini..." oninput="renderLeaderTable()">
+                <div class="section-content">
+                    <div class="excel-paste-box">
+                        <label>📋 Paste Baris Excel (Leader, Plan, Act):</label>
+                        <textarea placeholder="Blok & paste data excel di sini..." onpaste="handleExcelPaste(event, 'leaders')"></textarea>
                     </div>
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label style="color:#1565c0; font-size:10px;">Override Total Act (Opsional)</label>
-                        <input type="number" id="override-act" placeholder="Otomatis jika kosong..." oninput="renderLeaderTable()">
+                    
+                    <div class="form-row" style="background:#e3f2fd; padding:10px; border-radius:4px; margin-bottom:10px; border: 1px dashed #1565c0;">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label style="color:#1565c0; font-size:10px;">Override Total Plan (Opsional)</label>
+                            <input type="number" id="override-plan" placeholder="Ketik manual di sini..." oninput="renderLeaderTable()">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label style="color:#1565c0; font-size:10px;">Override Total Act (Opsional)</label>
+                            <input type="number" id="override-act" placeholder="Otomatis jika kosong..." oninput="renderLeaderTable()">
+                        </div>
                     </div>
-                </div>
 
-                <div id="leader-container"></div>
-                <button type="button" class="btn-action btn-add" onclick="addLeaderRow()">+ Tambah Line Leader</button>
+                    <div id="leader-container"></div>
+                    <button type="button" class="btn-action btn-add" onclick="addLeaderRow()">+ Tambah Line Leader</button>
+                </div>
             </fieldset>
 
             <!-- 3. PERFORMANCE ANALYSIS -->
-            <fieldset class="form-section">
-                <legend>
-                    <span class="legend-title">3. PERFORMANCE ANALYSIS</span>
-                    <button type="button" class="btn-section-clear" onclick="clearSection(3)">Hapus Data</button>
+            <fieldset class="form-section collapsed">
+                <legend onclick="toggleFolder(this)">
+                    <span class="legend-title"><span class="toggle-icon">▼</span> 3. PERFORMANCE ANALYSIS</span>
+                    <button type="button" class="btn-section-clear" onclick="clearSection(3); event.stopPropagation();">Hapus Data</button>
                 </legend>
-                <div class="excel-paste-box">
-                    <label>📋 Paste Excel (Item Code, Nama, Opr, Fail, Fail%, Avg, Low, Fokus):</label>
-                    <textarea placeholder="Blok data tabel Excel lalu paste (Ctrl+V) di sini..." onpaste="handleExcelPaste(event, 'analyses')"></textarea>
+                <div class="section-content">
+                    <div class="excel-paste-box">
+                        <label>📋 Paste Excel (Item Code, Nama, Opr, Fail, Fail%, Avg, Low, Fokus):</label>
+                        <textarea placeholder="Blok data tabel Excel lalu paste (Ctrl+V) di sini..." onpaste="handleExcelPaste(event, 'analyses')"></textarea>
+                    </div>
+                    <div id="analysis-container"></div>
+                    <button type="button" class="btn-action btn-add" onclick="addAnalysisRow()">+ Tambah Analisis</button>
                 </div>
-                <div id="analysis-container"></div>
-                <button type="button" class="btn-action btn-add" onclick="addAnalysisRow()">+ Tambah Analisis</button>
             </fieldset>
 
             <!-- 4. KPI TRACKER -->
-            <fieldset class="form-section">
-                <legend>
-                    <span class="legend-title">4. KPI TRACKER</span>
-                    <button type="button" class="btn-section-clear" onclick="clearSection(4)">Hapus Data</button>
+            <fieldset class="form-section collapsed">
+                <legend onclick="toggleFolder(this)">
+                    <span class="legend-title"><span class="toggle-icon">▼</span> 4. KPI TRACKER</span>
+                    <button type="button" class="btn-section-clear" onclick="clearSection(4); event.stopPropagation();">Hapus Data</button>
                 </legend>
-                <div class="excel-paste-box">
-                    <label>📋 Paste Excel (Category, Performance &lt;85%):</label>
-                    <textarea placeholder="Blok data tabel Excel lalu paste (Ctrl+V) di sini..." onpaste="handleExcelPaste(event, 'prodLogs')"></textarea>
+                <div class="section-content">
+                    <div class="excel-paste-box">
+                        <label>📋 Paste Excel (Category, Performance &lt;85%):</label>
+                        <textarea placeholder="Blok data tabel Excel lalu paste (Ctrl+V) di sini..." onpaste="handleExcelPaste(event, 'prodLogs')"></textarea>
+                    </div>
+                    <div id="prod-log-container"></div>
+                    <button type="button" class="btn-action btn-add" onclick="addProdLogRow()">+ Tambah KPI Tracker</button>
                 </div>
-                <div id="prod-log-container"></div>
-                <button type="button" class="btn-action btn-add" onclick="addProdLogRow()">+ Tambah KPI Tracker</button>
             </fieldset>
 
             <!-- 5. LAPORAN PERGANTIAN SPA ASSEMBLING -->
-            <fieldset class="form-section">
-                <legend>
-                    <span class="legend-title">5. LAPORAN PERGANTIAN SPA</span>
-                    <button type="button" class="btn-section-clear" onclick="clearSection(5)">Hapus Data</button>
+            <fieldset class="form-section collapsed">
+                <legend onclick="toggleFolder(this)">
+                    <span class="legend-title"><span class="toggle-icon">▼</span> 5. LAPORAN PERGANTIAN SPA</span>
+                    <button type="button" class="btn-section-clear" onclick="clearSection(5); event.stopPropagation();">Hapus Data</button>
                 </legend>
-                <div class="excel-paste-box">
-                    <label>📋 Paste Excel (Week, Tanggal, Line, SPA1 Item, SPA1 Job, SPA2 Item, SPA2 Job, Ket):</label>
-                    <textarea placeholder="Blok & paste data excel di sini..." onpaste="handleExcelPaste(event, 'spaChanges')"></textarea>
+                <div class="section-content">
+                    <div class="excel-paste-box">
+                        <label>📋 Paste Excel (Week, Tanggal, Line, SPA1 Item, SPA1 Job, SPA2 Item, SPA2 Job, Ket):</label>
+                        <textarea placeholder="Blok & paste data excel di sini..." onpaste="handleExcelPaste(event, 'spaChanges')"></textarea>
+                    </div>
+                    <div id="spa-change-container"></div>
+                    <button type="button" class="btn-action btn-add" onclick="addSpaChangeRow()">+ Tambah Pergantian SPA</button>
                 </div>
-                <div id="spa-change-container"></div>
-                <button type="button" class="btn-action btn-add" onclick="addSpaChangeRow()">+ Tambah Pergantian SPA</button>
             </fieldset>
 
             <!-- 6. MACHINE ISSUES BY PERFORMANCE <85% -->
-            <fieldset class="form-section">
-                <legend>
-                    <span class="legend-title">6. MACHINE ISSUES &lt;85%</span>
-                    <button type="button" class="btn-section-clear" onclick="clearSection(6)">Hapus Data</button>
+            <fieldset class="form-section collapsed">
+                <legend onclick="toggleFolder(this)">
+                    <span class="legend-title"><span class="toggle-icon">▼</span> 6. MACHINE ISSUES &lt;85%</span>
+                    <button type="button" class="btn-section-clear" onclick="clearSection(6); event.stopPropagation();">Hapus Data</button>
                 </legend>
-                <div class="excel-paste-box">
-                    <label>📋 Paste Excel (Tanggal, Kp.Line, Code, Produk, %, Masalah):</label>
-                    <textarea placeholder="Blok & paste data excel di sini..." onpaste="handleExcelPaste(event, 'machineIssues')"></textarea>
+                <div class="section-content">
+                    <div class="excel-paste-box">
+                        <label>📋 Paste Excel (Tanggal, Kp.Line, Code, Produk, %, Masalah):</label>
+                        <textarea placeholder="Blok & paste data excel di sini..." onpaste="handleExcelPaste(event, 'machineIssues')"></textarea>
+                    </div>
+                    <div id="machine-issue-container"></div>
+                    <button type="button" class="btn-action btn-add" onclick="addMachineIssueRow()">+ Tambah Masalah Mesin</button>
                 </div>
-                <div id="machine-issue-container"></div>
-                <button type="button" class="btn-action btn-add" onclick="addMachineIssueRow()">+ Tambah Masalah Mesin</button>
             </fieldset>
 
             <!-- 7. QUALITY ISSUES BY PERFORMANCE <85% -->
-            <fieldset class="form-section">
-                <legend>
-                    <span class="legend-title">7. QUALITY ISSUES &lt;85%</span>
-                    <button type="button" class="btn-section-clear" onclick="clearSection(7)">Hapus Data</button>
+            <fieldset class="form-section collapsed">
+                <legend onclick="toggleFolder(this)">
+                    <span class="legend-title"><span class="toggle-icon">▼</span> 7. QUALITY ISSUES &lt;85%</span>
+                    <button type="button" class="btn-section-clear" onclick="clearSection(7); event.stopPropagation();">Hapus Data</button>
                 </legend>
-                <div class="excel-paste-box">
-                    <label>📋 Paste Baris Excel (Tanggal, Kp.Line, Code, Produk, %, Masalah):</label>
-                    <textarea placeholder="Blok & paste data excel di sini..." onpaste="handleExcelPaste(event, 'qualityIssues')"></textarea>
+                <div class="section-content">
+                    <div class="excel-paste-box">
+                        <label>📋 Paste Baris Excel (Tanggal, Kp.Line, Code, Produk, %, Masalah):</label>
+                        <textarea placeholder="Blok & paste data excel di sini..." onpaste="handleExcelPaste(event, 'qualityIssues')"></textarea>
+                    </div>
+                    <div id="quality-issue-container"></div>
+                    <button type="button" class="btn-action btn-add" onclick="addQualityIssueRow()">+ Tambah Masalah Kualitas</button>
                 </div>
-                <div id="quality-issue-container"></div>
-                <button type="button" class="btn-action btn-add" onclick="addQualityIssueRow()">+ Tambah Masalah Kualitas</button>
             </fieldset>
             
             <button onclick="clearAllData()" style="width: 100%; padding: 12px; background: #b71c1c; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 700; margin-top: 10px;">Kosongkan Semua Data</button>
@@ -1092,6 +1136,18 @@
     </div>
 
     <script>
+        // --- FUNGSI ACCORDION FOLDER ---
+        function toggleFolder(legendEl) {
+            const fieldset = legendEl.parentElement;
+            fieldset.classList.toggle('collapsed');
+        }
+        function collapseAllFolders() {
+            document.querySelectorAll('.form-section').forEach(el => el.classList.add('collapsed'));
+        }
+        function expandAllFolders() {
+            document.querySelectorAll('.form-section').forEach(el => el.classList.remove('collapsed'));
+        }
+
         const formatNumber = (num, decimals = 0) => {
             return new Intl.NumberFormat('id-ID', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(num);
         };
@@ -1140,27 +1196,22 @@
             document.documentElement.style.setProperty('--table-pad-y', paddingValue + 'px');
         }
 
-        // --- MENGATUR UKURAN PDF & WARNA KERTAS ---
         function updatePrintSettings() {
             const orientation = document.getElementById('in-print-orientation').value;
             const bgColor = document.getElementById('in-print-bg').value;
             
-            // 1. Ubah ukuran PDF (Landscape/Portrait)
             const styleTag = document.getElementById('dynamic-print-style');
             styleTag.innerHTML = `@page { size: A4 ${orientation}; margin: 0; }`;
             
-            // 2. Terapkan warna background
             document.documentElement.style.setProperty('--print-bg', bgColor);
 
-            // 3. Sesuaikan lebar layout agar tampil nyata di preview saat portrait
             const dashboard = document.getElementById('printable-dashboard');
             if (orientation === 'portrait') {
-                dashboard.style.width = '880px'; // Lebar lebih sempit untuk Portrait
+                dashboard.style.width = '880px'; 
             } else {
-                dashboard.style.width = '1200px'; // Standard Landscape
+                dashboard.style.width = '1200px'; 
             }
 
-            // 4. Render ulang diagram Google Charts agar proporsinya menyesuaikan lebar baru
             if (isGoogleChartsReady) {
                 calcMatrixPerformance();
                 renderProdLogChart();
@@ -1205,7 +1256,6 @@
             }
         }
 
-        // --- DATA STATE (DIKOSONGKAN) ---
         let leaders = [];
         let analyses = [];
         let prodLogs = [];
@@ -1213,7 +1263,6 @@
         let machineIssues = [];
         let qualityIssues = [];
 
-        // --- INISIALISASI GOOGLE CHARTS ---
         let isGoogleChartsReady = false;
         google.charts.load('current', {'packages':['corechart']});
         google.charts.setOnLoadCallback(() => {
@@ -1265,31 +1314,26 @@
                 if (cols.length === 1 && cols[0].trim() === "") return;
                 
                 if (targetKey === 'leaders' && cols.length >= 3) {
-                    newItems.push({ name: cols[1].trim(), plan: parseAnyNumber(cols[2]), act: parseAnyNumber(cols[3]) });
+                    newItems.push({ name: cols[0].trim(), plan: parseAnyNumber(cols[1]), act: parseAnyNumber(cols[2]) });
                 }
                 else if (targetKey === 'analyses' && cols.length >= 8) {
-                    newItems.push({ item_code: cols[1]||'', product_name: cols[2]||'', opr: parseInt(cols[3])||0, fail: parseInt(cols[4])||0, f_pct: cols[5]||'0%', avg_p: cols[6]||'0', low_p: cols[7]||'0', focus: cols[8]||'' });
+                    newItems.push({ item_code: cols[0]||'', product_name: cols[1]||'', opr: parseInt(cols[2])||0, fail: parseInt(cols[3])||0, f_pct: cols[4]||'0%', avg_p: cols[5]||'0', low_p: cols[6]||'0', focus: cols[7]||'' });
                 }
                 else if (targetKey === 'prodLogs' && cols.length >= 2) {
                     newItems.push({ cat: cols[0] ? cols[0].trim() : '', perfVal: parseAnyNumber(cols[1]).toString() });
                 }
-                else if (targetKey === 'spaChanges' && cols.length >= 3) {
+                else if (targetKey === 'spaChanges' && cols.length >= 8) {
                     newItems.push({
-                        week: cols[0] ? cols[0].trim() : '',
-                        date: cols[1] ? cols[1].trim() : '',
-                        leader: cols[2] ? cols[2].trim() : '',
-                        spa1_item: cols[3] ? cols[3].trim() : '',
-                        spa1_job: cols[4] ? cols[4].trim() : '',
-                        spa2_item: cols[5] ? cols[5].trim() : '',
-                        spa2_job: cols[6] ? cols[6].trim() : '',
-                        notes: cols[7] ? cols[7].trim() : ''
+                        week: cols[0] ? cols[0].trim() : '', date: cols[1] ? cols[1].trim() : '', leader: cols[2] ? cols[2].trim() : '',
+                        spa1_item: cols[3] ? cols[3].trim() : '', spa1_job: cols[4] ? cols[4].trim() : '',
+                        spa2_item: cols[5] ? cols[5].trim() : '', spa2_job: cols[6] ? cols[6].trim() : '', notes: cols[7] ? cols[7].trim() : ''
                     });
                 }
                 else if (targetKey === 'machineIssues' && cols.length >= 6) {
-                    newItems.push({ date: cols[1] ? cols[1].trim() : '', leader: cols[2] ? cols[2].trim() : '', item_code: cols[3] ? cols[3].trim() : '', product: cols[4] ? cols[4].trim() : '', pct: cols[5] ? cols[5].trim() : '0%', issue: cols[6] ? cols[6].trim() : '' });
+                    newItems.push({ date: cols[0] ? cols[0].trim() : '', leader: cols[1] ? cols[1].trim() : '', item_code: cols[2] ? cols[2].trim() : '', product: cols[3] ? cols[3].trim() : '', pct: cols[4] ? cols[4].trim() : '0%', issue: cols[5] ? cols[5].trim() : '' });
                 }
                 else if (targetKey === 'qualityIssues' && cols.length >= 6) {
-                    newItems.push({ date: cols[1] ? cols[1].trim() : '', leader: cols[2] ? cols[2].trim() : '', item_code: cols[3] ? cols[3].trim() : '', product: cols[4] ? cols[4].trim() : '', pct: cols[5] ? cols[5].trim() : '0%', issue: cols[6] ? cols[6].trim() : '' });
+                    newItems.push({ date: cols[0] ? cols[0].trim() : '', leader: cols[1] ? cols[1].trim() : '', item_code: cols[2] ? cols[2].trim() : '', product: cols[3] ? cols[3].trim() : '', pct: cols[4] ? cols[4].trim() : '0%', issue: cols[5] ? cols[5].trim() : '' });
                 }
             });
         
@@ -1303,7 +1347,7 @@
                 e.target.value = ''; 
                 alert(`Berhasil memuat ${newItems.length} baris data dari Excel!`);
             } else { 
-                alert("Format paste tidak dikenali. Pastikan Anda memblok baris dari Excel dengan benar."); 
+                alert("Format paste tidak dikenali. Pastikan Anda memblok isi data dari Excel dengan benar."); 
             }
         }
 
@@ -1618,7 +1662,6 @@
             });
         }
 
-        // Action Buttons
         function addLeaderRow() { leaders.push({ name: "BARU", plan: 0, act: 0 }); renderLeaderEditor(); } function removeLeaderRow(index) { leaders.splice(index, 1); renderLeaderEditor(); }
         function addAnalysisRow() { analyses.push({ item_code: "KODE", product_name: "NAMA", opr: 0, fail: 0, f_pct: "0%", avg_p: "0", low_p: "0", focus: "Detail" }); renderAnalysisEditor(); } function removeAnalysisRow(index) { analyses.splice(index, 1); renderAnalysisEditor(); }
         function addProdLogRow() { prodLogs.push({ cat: "Kategori Baru", perfVal: "0" }); renderProdLogEditor(); } function removeProdLogRow(index) { prodLogs.splice(index, 1); renderProdLogEditor(); }
@@ -1626,7 +1669,6 @@
         function addMachineIssueRow() { machineIssues.push({ date: "", leader: "Leader", item_code: "KODE", product: "PRODUK", pct: "0%", issue: "Masalah" }); renderMachineIssueEditor(); } function removeMachineIssueRow(index) { machineIssues.splice(index, 1); renderMachineIssueEditor(); }
         function addQualityIssueRow() { qualityIssues.push({ date: "", leader: "Leader", item_code: "KODE", product: "PRODUK", pct: "0%", issue: "Kualitas" }); renderQualityIssueEditor(); } function removeQualityIssueRow(index) { qualityIssues.splice(index, 1); renderQualityIssueEditor(); }
 
-        // --- BACKUP & RESTORE ---
         function backupData() {
             let kpiData = { a: {}, b: {}, c: {}, leaderOverride: {} };
             for(let i=1; i<=5; i++) {
@@ -1729,7 +1771,6 @@
             } 
         }
 
-        // --- SECTION 1 MATRIX CALCULATION & GOOGLE CHARTS COMBO RENDERING ---
         const calcMatrixPerformance = () => {
             const weeks = [1, 2, 3, 4, 5];
             
@@ -1884,7 +1925,6 @@
             }
         });
 
-        // --- FITUR UNDUH KE GAMBAR (.PNG) ---
         function downloadAsImage(btn) {
             const originalText = btn.innerText;
             btn.innerText = "Memproses Gambar HD...";
@@ -1892,11 +1932,12 @@
             btn.style.opacity = "0.7";
 
             const captureArea = document.getElementById('printable-dashboard');
+            const currentBgColor = getComputedStyle(document.documentElement).getPropertyValue('--print-bg').trim() || '#ffffff';
             
             html2canvas(captureArea, {
-                scale: 2, // Kualitas HD
+                scale: 2, 
                 useCORS: true, 
-                backgroundColor: '#ffffff'
+                backgroundColor: currentBgColor
             }).then(canvas => {
                 const plantName = document.getElementById('in-plant').value || 'PLANT';
                 const weekName = document.getElementById('in-week').value || 'WEEK';
@@ -1919,6 +1960,14 @@
             });
         }
 
+        window.addEventListener('resize', () => {
+            if (isGoogleChartsReady) {
+                calcMatrixPerformance();
+                renderProdLogChart();
+                renderMachineIssuesChart();
+            }
+        });
+
         // Init
         toggleSections();
         renderLeaderEditor(); 
@@ -1930,7 +1979,7 @@
         
         document.getElementById('toggle-w5').checked = false;
         calcMatrixPerformance();
-        updatePrintSettings(); // Set nilai standar saat pertama kali load
+        updatePrintSettings(); 
     </script>
 </body>
 </html>
