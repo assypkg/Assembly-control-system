@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assembly Control Portal</title>
+    
+    <!-- 🌟 FAVICON / ICON WEB -->
+    <link rel="icon" type="image/png" href="97799.png">
+
     <style>
         :root {
             --navy-blue: #0A192F;
@@ -52,6 +56,16 @@
             font-weight: 800;
             letter-spacing: 0.5px;
             text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .brand-title img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+            border-radius: 4px;
         }
 
         .brand-title span {
@@ -153,7 +167,11 @@
     <!-- Header & Top Navigasi -->
     <header class="top-navbar">
         <div class="brand-header">
-            <div class="brand-title">Assembly <span>Cloud Portal</span></div>
+            <div class="brand-title">
+                <!-- 🌟 Logo Mini di Samping Judul Portal -->
+                <img src="97799.png" alt="Logo">
+                Assembly <span>Weekly Report</span>
+            </div>
             <div class="cloud-badge">
                 <div class="cloud-dot"></div> Connected
             </div>
